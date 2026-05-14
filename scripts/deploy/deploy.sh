@@ -165,7 +165,7 @@ main() {
 
     # 4. 停止已有服务
     if [ "$STOP_EXISTING" = true ]; then
-        stop_all_services
+        stop_services "$DEPLOY_MODE"
     fi
 
     # 5. 安装

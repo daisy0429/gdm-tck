@@ -11,18 +11,25 @@ stop_tmux_session() {
     ssh_exec "tmux kill-session -t '${session_name}' 2>/dev/null || true"
 }
 
-# 停止所有 GDM 相关的 tmux 会话
-stop_all_services() {
-    log_step "停止已有的 GDM 服务"
+# 停止已有服务（按部署模式）
+# 参数: $1 - 部署模式: standalone, cluster, all
+stop_services() {
+    local mode="$1"
 
-    stop_tmux_session "$TMUX_STANDALONE_SESSION"
-    for session in "${TMUX_CLUSTER_SESSIONS[@]}"; do
-        stop_tmux_session "$session"
-    done
+    log_step "停止已有服务 (模式: ${mode})"
 
-    # 等待进程退出
+    if [[ "$mode" == "standalone" || "$mode" == "all" ]]; then
+        stop_tmux_session "$TMUX_STANDALONE_SESSION"
+    fi
+
+    if [[ "$mode" == "cluster" || "$mode" == "all" ]]; then
+        for session in "${TMUX_CLUSTER_SESSIONS[@]}"; do
+            stop_tmux_session "$session"
+        done
+    fi
+
     sleep 2
-    log_info "所有 GDM 服务已停止"
+    log_info "相关服务已停止"
 }
 
 # 启动单机版服务
@@ -42,11 +49,11 @@ start_standalone() {
     fi
 
     local config_path="${standalone_dir}/${STANDALONE_CONFIG}"
-    local work_dir
-    work_dir=$(dirname "$binary_path")
 
-    # 通过 tmux 启动
-    ssh_exec "tmux new-session -d -s '${TMUX_STANDALONE_SESSION}' 'cd ${work_dir} && ./${GDM_BINARY_NAME} --config ${config_path}'"
+    local work_dir
+    work_dir=$(ssh_exec "dirname '\$(dirname '${binary_path}')'")
+
+    ssh_exec "tmux new-session -d -s '${TMUX_STANDALONE_SESSION}' 'cd ${work_dir} && bin/${GDM_BINARY_NAME} --config ${config_path}'"
     if [ $? -ne 0 ]; then
         log_error "启动单机版失败"
         return 1
@@ -76,10 +83,11 @@ start_cluster() {
         fi
 
         local config_path="${node_dir}/${config}"
-        local work_dir
-        work_dir=$(dirname "$binary_path")
 
-        ssh_exec "tmux new-session -d -s '${session}' 'cd ${work_dir} && ./${GDM_BINARY_NAME} --config ${config_path}'"
+        local work_dir
+        work_dir=$(ssh_exec "dirname '\$(dirname '${binary_path}')'")
+
+        ssh_exec "tmux new-session -d -s '${session}' 'cd ${work_dir} && bin/${GDM_BINARY_NAME} --config ${config_path}'"
         if [ $? -ne 0 ]; then
             log_error "启动 ${session} 失败"
             return 1
