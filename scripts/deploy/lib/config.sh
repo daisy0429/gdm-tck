@@ -33,6 +33,10 @@ CLUSTER_CONFIGS=("node1.toml" "node2.toml" "node3.toml")
 # ---- GDM 二进制相关 ----
 GDM_BINARY_NAME="gdm"
 
+# ---- GDM 启动账号密码 ----
+GDM_USER="${GDM_DEPLOY_GDM_USER:-admin}"
+GDM_INITIAL_PASSWORD="${GDM_DEPLOY_GDM_PASSWORD:-admin123}"
+
 # ---- tmux 会话名称 ----
 TMUX_STANDALONE_SESSION="standalone"
 TMUX_CLUSTER_SESSIONS=("node1" "node2" "node3")

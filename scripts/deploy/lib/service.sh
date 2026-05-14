@@ -50,7 +50,7 @@ start_standalone() {
 
     local config_path="${standalone_dir}/config/${STANDALONE_CONFIG}"
 
-    ssh_exec "tmux new-session -d -s '${TMUX_STANDALONE_SESSION}' 'cd ${standalone_dir} && bin/${GDM_BINARY_NAME} --config ${config_path}'"
+    ssh_exec "tmux new-session -d -s '${TMUX_STANDALONE_SESSION}' 'cd ${standalone_dir} && GDM_USER=${GDM_USER} GDM_INITIAL_PASSWORD=${GDM_INITIAL_PASSWORD} bin/${GDM_BINARY_NAME} --config ${config_path}'"
     if [ $? -ne 0 ]; then
         log_error "启动单机版失败"
         return 1
@@ -81,7 +81,7 @@ start_cluster() {
 
         local config_path="${node_dir}/config/${config}"
 
-        ssh_exec "tmux new-session -d -s '${session}' 'cd ${node_dir} && bin/${GDM_BINARY_NAME} --config ${config_path}'"
+        ssh_exec "tmux new-session -d -s '${session}' 'cd ${node_dir} && GDM_USER=${GDM_USER} GDM_INITIAL_PASSWORD=${GDM_INITIAL_PASSWORD} bin/${GDM_BINARY_NAME} --config ${config_path}'"
         if [ $? -ne 0 ]; then
             log_error "启动 ${session} 失败"
             return 1
