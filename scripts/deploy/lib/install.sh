@@ -3,10 +3,18 @@
 # 负责解压安装包、创建目录结构、上传配置文件
 
 # 在远程服务器上创建部署目录结构
+# 如果同名目录已存在，自动追加后缀 -2, -3, ...
 # 参数: $1 - 版本标识 (如 gdm-v0.1.0.preview-linux-amd64-2.17)
 create_deploy_dirs() {
     local version_tag="$1"
     local base_dir="${REMOTE_WORK_DIR}/${version_tag}"
+
+    # 检查远程目录是否已存在，若存在则追加递增后缀
+    local suffix=1
+    while ssh_exec "test -d '${base_dir}'" 2>/dev/null; do
+        suffix=$((suffix + 1))
+        base_dir="${REMOTE_WORK_DIR}/${version_tag}-${suffix}"
+    done
 
     log_info "创建部署目录: ${base_dir}"
 
@@ -90,7 +98,7 @@ upload_configs() {
     # 上传单机配置
     if [[ "$DEPLOY_MODE" == "standalone" || "$DEPLOY_MODE" == "all" ]]; then
         local standalone_dir="${base_dir}/standalone"
-        scp_upload "${PROJECT_DIR}/${LOCAL_CONFIG_DIR}/${STANDALONE_CONFIG}" "${standalone_dir}/${STANDALONE_CONFIG}"
+        scp_upload "${LOCAL_CONFIG_DIR}/${STANDALONE_CONFIG}" "${standalone_dir}/${STANDALONE_CONFIG}"
         log_info "单机配置已上传: ${STANDALONE_CONFIG}"
     fi
 
@@ -99,7 +107,7 @@ upload_configs() {
         for i in "${!CLUSTER_CONFIGS[@]}"; do
             local config="${CLUSTER_CONFIGS[$i]}"
             local node_dir="${base_dir}/cluster/node$((i+1))"
-            scp_upload "${PROJECT_DIR}/${LOCAL_CONFIG_DIR}/${config}" "${node_dir}/${config}"
+            scp_upload "${LOCAL_CONFIG_DIR}/${config}" "${node_dir}/${config}"
             log_info "集群配置已上传: ${config} -> node$((i+1))"
         done
     fi

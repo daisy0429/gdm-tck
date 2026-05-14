@@ -72,6 +72,9 @@ scripts/deploy/
 ```bash
 ./scripts/deploy/deploy.sh -s -p '/ssd/workspace/gdm-v0.1.0.preview-linux-amd64-2.17.tar.gz'
 ```
+使用已有安装包，单机部署
+./scripts/deploy/deploy.sh -s -p '/ssd/workspace/gdm-v0.1.0.preview-linux-amd64-2.17.tar.gz' -m standalone
+
 
 ### 跳过环境验证
 

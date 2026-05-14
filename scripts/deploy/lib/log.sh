@@ -10,11 +10,11 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 log_info() {
-    echo -e "${GREEN}[INFO]${NC} $(date '+%H:%M:%S') $*"
+    echo -e "${GREEN}[INFO]${NC} $(date '+%H:%M:%S') $*" >&2
 }
 
 log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $(date '+%H:%M:%S') $*"
+    echo -e "${YELLOW}[WARN]${NC} $(date '+%H:%M:%S') $*" >&2
 }
 
 log_error() {
@@ -22,10 +22,10 @@ log_error() {
 }
 
 log_step() {
-    echo -e "${BLUE}[STEP]${NC} $(date '+%H:%M:%S') $*"
+    echo -e "${BLUE}[STEP]${NC} $(date '+%H:%M:%S') $*" >&2
 }
 
 # 打印分隔线
 log_separator() {
-    echo "================================================================"
+    echo "================================================================" >&2
 }

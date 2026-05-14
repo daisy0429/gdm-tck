@@ -25,8 +25,8 @@ PKG_PROJECT="${GDM_PKG_PROJECT:-gdm}"
 # all: 同时部署单机和集群
 DEPLOY_MODE="${GDM_DEPLOY_MODE:-standalone}"
 
-# ---- 本地配置文件路径（相对于项目根目录）----
-LOCAL_CONFIG_DIR="config/gdmconfig"
+# ---- 本地配置文件路径（相对于 scripts/deploy/ 目录）----
+LOCAL_CONFIG_DIR="${SCRIPT_DIR}/config"
 STANDALONE_CONFIG="standalone.toml"
 CLUSTER_CONFIGS=("node1.toml" "node2.toml" "node3.toml")
 

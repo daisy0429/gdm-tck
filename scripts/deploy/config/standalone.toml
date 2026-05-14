@@ -983,7 +983,7 @@ output_len = 32
 enabled = true
 
 # 审计 JSONL 文件路径；不配置时只保留内存 ring。
-path = "/ssd/workspace/010/standalone/gdm-v0.1.0.preview-linux-amd64-2.17/audit/audit.jsonl"
+# path = "./audit/audit.jsonl"
 
 # 内存审计 ring 容量；必须大于 0。
 ring_cap = 256
