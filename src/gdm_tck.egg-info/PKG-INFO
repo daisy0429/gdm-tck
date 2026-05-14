@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: gdm-tck
+Version: 0.1.0
+Summary: GDM Graph Database TCK (Technology Compatibility Kit) Test Framework
+Requires-Python: >=3.11
+Requires-Dist: neo4j<6,>=5.20
+Requires-Dist: pytest<9,>=8.2
+Requires-Dist: pytest-bdd<8,>=7.0
+Requires-Dist: allure-pytest<3,>=2.13
+Requires-Dist: pytest-xdist<4,>=3.5
+Requires-Dist: pytest-timeout<3,>=2.2
+Provides-Extra: grpc
+Requires-Dist: grpcio>=1.60; extra == "grpc"
+Requires-Dist: grpcio-tools>=1.60; extra == "grpc"
+Provides-Extra: dev
+Requires-Dist: ruff>=0.4; extra == "dev"
+Requires-Dist: mypy>=1.10; extra == "dev"

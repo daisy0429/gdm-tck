@@ -1,0 +1,1 @@
+{"uuid": "610cd68e-fd90-4b82-a950-bc29c3df8306", "befores": [{"name": "pytestbdd_stepdef_then_a (?P<error_type>\\w+) should be raised at runtime: (?P<detail>\\S+)", "status": "passed", "start": 1778738250250, "stop": 1778738250250}], "start": 1778738250250, "stop": 1778738250258}
