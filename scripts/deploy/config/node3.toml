@@ -14,7 +14,7 @@ shutdown_grace_secs = 30
 
 # todo for cluster: 节点 3 独立数据目录
 #data_dir = "/data/workspace/010/cluster/node3/data"
-data_dir = "../data"
+data_dir = "./data"
 
 engine = "rocksdb"
 
@@ -119,7 +119,7 @@ tick_interval_ms = 100
 
 # todo for cluster: 节点 3 独立 Raft 日志目录
 #log_dir = "/data/workspace/010/cluster/node3/data/raft-log"
-log_dir = "../log/raft-log"
+log_dir = "./log/raft-log"
 
 election_tick = 30
 heartbeat_tick = 3
@@ -446,7 +446,7 @@ enabled = true
 enabled = true
 # todo for cluster: 节点 3 独立日志目录
 #dir = "/data/workspace/010/cluster/node3/logs"
-dir = "../logs"
+dir = "./logs"
 
 prefix = "gdm-node3"
 rotation = "daily"
@@ -481,7 +481,7 @@ output_len = 32
 enabled = true
 # todo for cluster: 节点 3 独立审计落盘路径
 #path = "/data/workspace/010/cluster/node3/data/audit.jsonl"
-path = "../audit/audit.jsonl"
+path = "./audit/audit.jsonl"
 
 ring_cap = 256
 ring_enabled = true

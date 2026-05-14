@@ -27,7 +27,7 @@ create_deploy_dirs() {
     echo "${base_dir}"
 }
 
-# 解压安装包到指定目录
+# 解压安装包到指定目录，并将 tar 包产生的子目录内容提升到目标目录
 # 参数: $1 - 安装包路径, $2 - 目标目录
 extract_package() {
     local pkg_path="$1"
@@ -38,6 +38,17 @@ extract_package() {
     if [ $? -ne 0 ]; then
         log_error "解压安装包失败"
         return 1
+    fi
+
+    local subdir
+    subdir=$(ssh_exec "ls -1 '${target_dir}' | head -1")
+    if [ -n "$subdir" ] && ssh_exec "test -d '${target_dir}/${subdir}/bin'"; then
+        log_info "提升目录: ${subdir}/ -> ."
+        ssh_exec "mv '${target_dir}/${subdir}'/* '${target_dir}/' && rmdir '${target_dir}/${subdir}'"
+        if [ $? -ne 0 ]; then
+            log_error "提升目录失败"
+            return 1
+        fi
     fi
 }
 
@@ -98,7 +109,7 @@ upload_configs() {
     # 上传单机配置
     if [[ "$DEPLOY_MODE" == "standalone" || "$DEPLOY_MODE" == "all" ]]; then
         local standalone_dir="${base_dir}/standalone"
-        scp_upload "${LOCAL_CONFIG_DIR}/${STANDALONE_CONFIG}" "${standalone_dir}/${STANDALONE_CONFIG}"
+        scp_upload "${LOCAL_CONFIG_DIR}/${STANDALONE_CONFIG}" "${standalone_dir}/config/${STANDALONE_CONFIG}"
         log_info "单机配置已上传: ${STANDALONE_CONFIG}"
     fi
 
@@ -107,7 +118,7 @@ upload_configs() {
         for i in "${!CLUSTER_CONFIGS[@]}"; do
             local config="${CLUSTER_CONFIGS[$i]}"
             local node_dir="${base_dir}/cluster/node$((i+1))"
-            scp_upload "${LOCAL_CONFIG_DIR}/${config}" "${node_dir}/${config}"
+            scp_upload "${LOCAL_CONFIG_DIR}/${config}" "${node_dir}/config/${config}"
             log_info "集群配置已上传: ${config} -> node$((i+1))"
         done
     fi

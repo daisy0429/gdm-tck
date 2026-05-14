@@ -18,7 +18,7 @@ shutdown_grace_secs = 30
 
 # todo for cluster: 每个节点有独立的 data_dir
 #data_dir = "/data/workspace/010/cluster/node1/data"
-data_dir = "../data"
+data_dir = "./data"
 
 engine = "rocksdb"
 
@@ -132,7 +132,7 @@ tick_interval_ms = 100
 
 # todo for cluster: distributed 下 Raft 日志目录独立配置
 #log_dir = "/data/workspace/010/cluster/node1/data/raft-log"
-log_dir = "../log/raft-log"
+log_dir = "./log/raft-log"
 
 # todo for cluster: Raft 选举 tick。distributed 默认未覆盖时运行时会使用 30；standalone 默认 10。
 election_tick = 30
@@ -465,7 +465,7 @@ enabled = true
 # todo for cluster: 生产环境必须启用文件日志，确保日志持久化可追溯
 enabled = true
 #dir = "/data/workspace/010/cluster/node1/logs"
-dir = "../logs"
+dir = "./logs"
 
 prefix = "gdm-node1"
 rotation = "daily"
@@ -502,7 +502,7 @@ enabled = true
 
 # todo for cluster: 生产环境审计落盘——配置 JSONL 文件路径，确保审计数据持久保存
 #path = "/data/workspace/010/cluster/node1/data/audit.jsonl"
-path = "../audit/audit.jsonl"
+path = "./audit/audit.jsonl"
 
 ring_cap = 256
 ring_enabled = true
