@@ -120,7 +120,7 @@ cors_origins = []
 
 [metadata]
 # 元数据校验策略。枚举值：strict、non_strict。
-mode = "non_strict"
+mode = "strict"
 
 # 是否在访问不存在的 graph routing 时自动创建。仅建议开发/演示环境使用；生产建议 false。
 auto_create_graph_routing = false

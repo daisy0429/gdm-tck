@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import tomllib
 from dataclasses import dataclass
@@ -14,6 +15,8 @@ from pathlib import Path
 from typing import Any
 
 from .exceptions import ConfigurationError
+
+logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_DIR = PROJECT_ROOT / "config"
@@ -49,6 +52,7 @@ class MetricsSettings:
 class ServerSettings:
     """服务器连接配置。"""
 
+    backend: str
     mode: str
     bolt_uri: str
     bolt_uris: list[str]
@@ -125,7 +129,7 @@ def _apply_env_overrides(config: dict) -> dict:
         if not env_key.startswith(ENV_PREFIX):
             continue
         # 去除前缀并转为小写键路径
-        key_path = env_key[len(ENV_PREFIX):].lower().split("__")
+        key_path = env_key[len(ENV_PREFIX) :].lower().split("__")
         _set_nested(config, key_path, _cast_env_value(env_value))
     return config
 
@@ -189,6 +193,7 @@ def _build_settings(config: dict) -> Settings:
     metrics = MetricsSettings(url=str(metrics_cfg.get("url", "http://127.0.0.1:9095")))
 
     server = ServerSettings(
+        backend=str(server_cfg.get("backend", "gdm")),
         mode=str(server_cfg.get("mode", "standalone")),
         bolt_uri=str(server_cfg.get("bolt_uri", "bolt://127.0.0.1:7690")),
         bolt_uris=list(server_cfg.get("bolt_uris", [])),
@@ -239,13 +244,19 @@ def _validate_settings(settings: Settings) -> None:
             f"server.mode must be 'standalone' or 'distributed', got: {settings.server.mode}"
         )
     if settings.server.mode == "distributed" and not settings.server.bolt_uris:
-        raise ConfigurationError(
-            "server.bolt_uris must be provided in distributed mode"
-        )
+        raise ConfigurationError("server.bolt_uris must be provided in distributed mode")
     if settings.server.timeouts.connect_secs <= 0:
         raise ConfigurationError("server.timeouts.connect_secs must be positive")
     if settings.server.timeouts.query_secs <= 0:
         raise ConfigurationError("server.timeouts.query_secs must be positive")
+    _KNOWN_BACKENDS = {"gdm", "neo4j", "memgraph"}
+    if settings.server.backend not in _KNOWN_BACKENDS:
+        logger.warning(
+            "Unknown backend '%s'; agent patch will be skipped. "
+            "If the server uses a non-standard agent prefix, "
+            "register it in BACKEND_AGENT_PREFIXES.",
+            settings.server.backend,
+        )
 
 
 def load_settings(config_path: Path | str | None = None) -> Settings:
@@ -286,4 +297,5 @@ def load_settings(config_path: Path | str | None = None) -> Settings:
     # 构建并验证
     settings = _build_settings(config)
     _validate_settings(settings)
+    logger.info("Active backend: %s", settings.server.backend)
     return settings

@@ -42,6 +42,10 @@ class ScenarioContext:
 
     # 当前使用的数据库名
     current_database: str = "default"
+    _initial_database: str = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        self._initial_database = self.current_database
 
     def reset(self) -> None:
         """重置所有状态（场景开始前调用）。"""
@@ -50,7 +54,7 @@ class ScenarioContext:
         self.parameters = {}
         self._close_sessions()
         self._close_user_clients()
-        self.current_database = "default"
+        self.current_database = self._initial_database
 
     def _close_sessions(self) -> None:
         """关闭所有打开的事务和会话。"""

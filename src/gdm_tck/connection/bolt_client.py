@@ -14,7 +14,7 @@ from neo4j import GraphDatabase
 
 from ..config import ServerSettings
 from ..exceptions import ConnectionError, QueryExecutionError
-from .agent_patch import apply_gdm_agent_patch
+from .agent_patch import apply_agent_patch
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +34,16 @@ class BoltClient:
     封装 neo4j Driver 的生命周期管理、会话创建和查询执行。
     """
 
-    def __init__(self, uri: str, username: str, password: str, database: str,
-                 pool_size: int = 100, timeout_secs: float = 60.0):
+    def __init__(
+        self,
+        uri: str,
+        username: str,
+        password: str,
+        database: str,
+        backend: str = "gdm",
+        pool_size: int = 100,
+        timeout_secs: float = 60.0,
+    ):
         """初始化 Bolt 客户端。
 
         Args:
@@ -43,10 +51,11 @@ class BoltClient:
             username: 认证用户名。
             password: 认证密码。
             database: 目标数据库名称。
+            backend: 后端类型，如 "gdm"、"neo4j"、"memgraph"。
             pool_size: 连接池最大连接数。
             timeout_secs: 查询超时时间（秒）。
         """
-        apply_gdm_agent_patch()
+        apply_agent_patch(backend)
         self._uri = uri
         self._username = username
         self._password = password
@@ -97,8 +106,9 @@ class BoltClient:
             self._driver = None
             logger.info("Disconnected from %s", self._uri)
 
-    def execute(self, cypher: str, parameters: dict[str, Any] | None = None,
-                database: str | None = None) -> QueryResult:
+    def execute(
+        self, cypher: str, parameters: dict[str, Any] | None = None, database: str | None = None
+    ) -> QueryResult:
         """执行 Cypher 查询并返回结果。
 
         Args:
@@ -131,8 +141,9 @@ class BoltClient:
         except Exception as e:
             raise QueryExecutionError(cypher, str(e), cause=e) from e
 
-    def execute_no_throw(self, cypher: str, parameters: dict[str, Any] | None = None,
-                         database: str | None = None) -> tuple[QueryResult | None, Exception | None]:
+    def execute_no_throw(
+        self, cypher: str, parameters: dict[str, Any] | None = None, database: str | None = None
+    ) -> tuple[QueryResult | None, Exception | None]:
         """执行查询，不抛出异常，返回 (result, error) 元组。
 
         用于 BDD 场景中需要延迟验证错误的情况。
@@ -152,8 +163,9 @@ class BoltClient:
         except Exception as e:
             return None, e
 
-    def create_session(self, database: str | None = None,
-                       access_mode: int = neo4j.WRITE_ACCESS) -> neo4j.Session:
+    def create_session(
+        self, database: str | None = None, access_mode: int = neo4j.WRITE_ACCESS
+    ) -> neo4j.Session:
         """创建一个新的会话对象（用于事务控制）。
 
         Args:
@@ -188,6 +200,7 @@ class BoltClient:
             username=settings.username,
             password=settings.password,
             database=settings.database,
+            backend=settings.backend,
             pool_size=settings.pool.max_size,
             timeout_secs=settings.timeouts.query_secs,
         )

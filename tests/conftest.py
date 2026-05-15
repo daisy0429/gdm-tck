@@ -51,12 +51,12 @@ def bolt_pool(settings: Settings) -> BoltConnectionPool:
 
 
 @pytest.fixture
-def scenario_ctx() -> ScenarioContext:
+def scenario_ctx(settings: Settings) -> ScenarioContext:
     """创建场景状态容器（每个测试函数独立实例）。
 
     每次测试/场景开始时提供全新的状态容器，
     确保场景间完全隔离。
     """
-    ctx = ScenarioContext()
+    ctx = ScenarioContext(current_database=settings.server.database)
     yield ctx
     ctx.reset()

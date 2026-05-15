@@ -45,6 +45,7 @@ class BoltConnectionPool:
                     username=server.username,
                     password=server.password,
                     database=server.database,
+                    backend=server.backend,
                     pool_size=server.pool.max_size,
                     timeout_secs=server.timeouts.query_secs,
                 )
@@ -90,8 +91,9 @@ class BoltConnectionPool:
             )
         return self._clients[name]
 
-    def execute_on_any(self, cypher: str, parameters: dict[str, Any] | None = None,
-                       database: str | None = None) -> QueryResult:
+    def execute_on_any(
+        self, cypher: str, parameters: dict[str, Any] | None = None, database: str | None = None
+    ) -> QueryResult:
         """在任一可用节点上执行查询。
 
         Args:
@@ -104,8 +106,9 @@ class BoltConnectionPool:
         """
         return self.primary.execute(cypher, parameters, database)
 
-    def execute_on_all(self, cypher: str, parameters: dict[str, Any] | None = None,
-                       database: str | None = None) -> dict[str, QueryResult]:
+    def execute_on_all(
+        self, cypher: str, parameters: dict[str, Any] | None = None, database: str | None = None
+    ) -> dict[str, QueryResult]:
         """在所有节点上执行查询。
 
         Args:
@@ -121,8 +124,9 @@ class BoltConnectionPool:
             results[name] = client.execute(cypher, parameters, database)
         return results
 
-    def create_user_client(self, username: str, password: str,
-                           database: str | None = None) -> BoltClient:
+    def create_user_client(
+        self, username: str, password: str, database: str | None = None
+    ) -> BoltClient:
         """为特定用户创建独立客户端（用于 RBAC 测试）。
 
         Args:
@@ -139,6 +143,7 @@ class BoltConnectionPool:
             username=username,
             password=password,
             database=database or server.database,
+            backend=server.backend,
             pool_size=10,
             timeout_secs=server.timeouts.query_secs,
         )
