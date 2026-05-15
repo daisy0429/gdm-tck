@@ -23,6 +23,7 @@ uv.lock
 # pytest
 .pytest_cache/
 .pytest_timeout/
+tests/tck/_dynamic_features_collector.py
 
 # Allure
 allure-results/

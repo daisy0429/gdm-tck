@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 # GDM TCK 测试套件运行脚本
-# 用法: ./scripts/run_suite.sh <suite> [options]
+# 用法:
+#   ./scripts/run_suite.sh <suite> [options]
+#   ./scripts/run_suite.sh --features <features_path> [options]
 # 套件: tck, clauses, expressions, ddl, dml, index, constraint, national_std, functional, performance, all
+# --features: 指定 features/ 下的子路径执行用例
+#   例如: --features 0-original/clauses/match
+#         --features 1-metadata/Concurrent
 
 set -euo pipefail
 
@@ -9,11 +14,35 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_DIR"
 
+ALLURE_DIR="${GDM_TCK_REPORT__ALLURE_RESULTS_DIR:-allure-results}"
+
+if [[ "${1:-}" == "--features" ]]; then
+    FEATURES_PATH="${2:-}"
+    if [[ -z "$FEATURES_PATH" ]]; then
+        echo "Error: --features 需要指定路径参数"
+        echo "用法: $0 --features <features_path> [options]"
+        echo "例如: $0 --features 0-original/clauses/match"
+        exit 1
+    fi
+    shift 2 || true
+    # Strip leading -- if present (convention for separating script args from pytest args)
+    [[ "${1:-}" == "--" ]] && shift || true
+    EXTRA_ARGS="${*:-}"
+    echo "=== Running features: ${FEATURES_PATH} ==="
+    uv run pytest tests/tck/ \
+        --features="$FEATURES_PATH" \
+        --alluredir="$ALLURE_DIR" \
+        $EXTRA_ARGS
+    echo "=== Features '$FEATURES_PATH' completed ==="
+    echo "Allure results at: $ALLURE_DIR"
+    exit 0
+fi
+
 SUITE="${1:-all}"
 shift || true
+# Strip leading -- if present
+[[ "${1:-}" == "--" ]] && shift || true
 EXTRA_ARGS="${*:-}"
-
-ALLURE_DIR="${GDM_TCK_REPORT__ALLURE_RESULTS_DIR:-allure-results}"
 
 run_pytest() {
     local marker="$1"
@@ -61,6 +90,7 @@ case "$SUITE" in
     *)
         echo "Unknown suite: $SUITE"
         echo "Available: tck, clauses, expressions, ddl, dml, index, constraint, national_std, functional, performance, all"
+        echo "Or use: --features <path>  (e.g. --features 0-original/clauses/match)"
         exit 1
         ;;
 esac

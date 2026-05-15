@@ -76,6 +76,16 @@ tests/               Test collection modules
 # Single feature category
 uv run pytest tests/tck/test_clauses.py -v
 
+# Run by features/ subdirectory path (--features option)
+uv run pytest tests/tck/ --features=0-original
+uv run pytest tests/tck/ --features=0-original/clauses/match
+uv run pytest tests/tck/ --features=1-metadata/Concurrent
+uv run pytest tests/tck/ --features=.
+
+# Via run_suite.sh
+./scripts/run_suite.sh --features 0-original/clauses/match
+./scripts/run_suite.sh --features 1-metadata/Concurrent -- -v -n 4
+
 # With tag filtering
 uv run pytest tests/tck/ -k "not ignore"
 
@@ -85,6 +95,12 @@ uv run pytest tests/tck/ -n 4
 # With Allure reporting
 uv run pytest tests/ --alluredir=allure-results
 ```
+
+### --features option
+
+The `--features` option allows running tests from any subdirectory under `features/`. It recursively discovers all `.feature` files under the specified path. When combined with the existing test collectors, it filters to only run scenarios from matching `.feature` files.
+
+When no `--features` is specified, all existing `test_*.py` collectors work as before (fully backward compatible).
 
 ## Gotchas
 
