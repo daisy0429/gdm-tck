@@ -30,13 +30,13 @@ Feature: path_length
       | <result>   |
     Then drop all graph
     Examples:
-      | GQL                                                                                                                | result |  备注         |
-      | MATCH p = (:人{姓名: "王武"})-[]->(人{姓名: "周萌"}) LET len = PATH_LENGTH(p) RETURN len;                              | 1      |  单跳路径      |
-      | MATCH p = (:人{姓名: "王武"})-[:朋友]-()-[:朋友]->() LET len =  PATH_LENGTH(p) RETURN len;                             | 2      |  两跳路径      |
-      | MATCH p = (:人{姓名: "王武"})-[:朋友]-()-[:朋友]->()-[:籍贯]->() LET len =  PATH_LENGTH(p) RETURN len;                  | 3      |  三跳路径      |
-      | MATCH p = (:人{姓名: "王武"})-[:朋友]-()-[:朋友]->() LET len =  PATH_LENGTH(p) RETURN len;                             | 2      |  单向路径      |
-      | MATCH p = (:人{姓名: "李明"})-[:朋友]-(:人{姓名: "陈阳"})<-[:朋友]-() LET len =  PATH_LENGTH(p) RETURN len;              | 2      |  双向路径      |
-      | MATCH p = (:人{姓名: "李明"})-[:朋友]-(:人{姓名: "陈阳"})<-[:朋友]-()-[:就读于]->() LET len =  PATH_LENGTH(p) RETURN len; | 3      |  混合方向路径   |
+      | GQL | result |
+      | MATCH p = (:人{姓名: "王武"})-[]->(人{姓名: "周萌"}) LET len = PATH_LENGTH(p) RETURN len; | 1 |
+      | MATCH p = (:人{姓名: "王武"})-[:朋友]-()-[:朋友]->() LET len =  PATH_LENGTH(p) RETURN len; | 2 |
+      | MATCH p = (:人{姓名: "王武"})-[:朋友]-()-[:朋友]->()-[:籍贯]->() LET len =  PATH_LENGTH(p) RETURN len; | 3 |
+      | MATCH p = (:人{姓名: "王武"})-[:朋友]-()-[:朋友]->() LET len =  PATH_LENGTH(p) RETURN len; | 2 |
+      | MATCH p = (:人{姓名: "李明"})-[:朋友]-(:人{姓名: "陈阳"})<-[:朋友]-() LET len =  PATH_LENGTH(p) RETURN len; | 2 |
+      | MATCH p = (:人{姓名: "李明"})-[:朋友]-(:人{姓名: "陈阳"})<-[:朋友]-()-[:就读于]->() LET len =  PATH_LENGTH(p) RETURN len; | 3 |
 
   Scenario: positive-cases-变长路径
     Given drop all graph
@@ -217,9 +217,9 @@ Feature: path_length
       | <result>   |
     Then drop all graph
     Examples:
-      | GQL                                                                                                                | result |  备注         |
-      | MATCH p = (:人{姓名: "王武"}) LET len = PATH_LENGTH(p) RETURN len;                                                   | 0      |  无关系类型    |
-      | LET len = PATH_LENGTH(NULL) RETURN len;                                                                            | null   |  NULL路径参数  |
+      | GQL | result |
+      | MATCH p = (:人{姓名: "王武"}) LET len = PATH_LENGTH(p) RETURN len; | 0 |
+      | LET len = PATH_LENGTH(NULL) RETURN len; | null |
 
   Scenario: positive-cases-自环路径
     Given drop all graph
@@ -339,17 +339,17 @@ Feature: path_length
 
   Scenario Outline: castToFloat-negative-cases-<备注>
     When executing queries:
-    """
+      """
     <GQL>
     """
     Then the error should be contain:
-    """
+      """
     <error>
     """
     Examples:
-      | GQL                                                  | error                                                  | 备注             |
-      | LET len = PATH_LENGTH('not_a_path') RETURN len;      | [2725]Type mismatch: expected Path but was String      | 非路径类型         |
-      | LET len = PATH_LENGTH(path) RETURN len;              | [2701]Variable `path` not defined                      | 未定义变量         |
-      | LET len = PATH_LENGTH() RETURN len;                  | Insufficient parameters for function 'PathLength'      | 缺少参数          |
-      | MATCH p = (a) LET len = PATH_LENGTH(p,p) RETURN len; | Too many parameters for function 'PathLength'          | 参数数量过多       |
-      | LET len = PATH_LENGTH{} RETURN len;                  | [2700]Invalid input                                    | 语法错误          |
+      | GQL | error |
+      | LET len = PATH_LENGTH('not_a_path') RETURN len; | [2725]Type mismatch: expected Path but was String |
+      | LET len = PATH_LENGTH(path) RETURN len; | [2701]Variable `path` not defined |
+      | LET len = PATH_LENGTH() RETURN len; | Insufficient parameters for function 'PathLength' |
+      | MATCH p = (a) LET len = PATH_LENGTH(p,p) RETURN len; | Too many parameters for function 'PathLength' |
+      | LET len = PATH_LENGTH{} RETURN len; | [2700]Invalid input |

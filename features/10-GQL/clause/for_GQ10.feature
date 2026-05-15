@@ -1,5 +1,4 @@
 #encoding: utf-8
-#xzq
 #https://neo4j.com/docs/cypher-manual/current/appendix/gql-conformance/analogous-cypher/
 #GQ10, GQ11, GQ23, GQ24
 #FOR statement: list value support, binding table support, WITH ORDINALITY, WITH OFFSET

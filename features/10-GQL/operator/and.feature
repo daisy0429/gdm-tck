@@ -6,29 +6,29 @@ Feature: and
 
   Scenario Outline: and-operator-positive-cases
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                               | result | 备注                    |
-      | LET x = TRUE AND TRUE RETURN x;   | true   | 两个布尔值均为 true，应返回 true |
-      | LET x = TRUE AND FALSE RETURN x;  | false  | 一个为 false，应返回 false   |
-      | LET x = FALSE AND TRUE RETURN x;  | false  | 一个为 false，应返回 false   |
-      | LET x = FALSE AND FALSE RETURN x; | false  | 两个均为 false，应返回 false  |
-      | LET x = TRUE AND NULL RETURN x;   | null   | NULL 参与运算             |
+      | GQL | result |
+      | LET x = TRUE AND TRUE RETURN x; | true |
+      | LET x = TRUE AND FALSE RETURN x; | false |
+      | LET x = FALSE AND TRUE RETURN x; | false |
+      | LET x = FALSE AND FALSE RETURN x; | false |
+      | LET x = TRUE AND NULL RETURN x; | null |
 
   Scenario Outline: and-operator-negative-cases
     When executing queries:
-  """
+      """
   <GQL>
   """
     Then the error should be contain:
-  """
+      """
   <error>
   """
     Examples:
-      | GQL                                 | error                           | 备注        |
-      | LET x = 'string' AND TRUE RETURN x; | Type mismatch: expected Boolean | 类型错误：非布尔值 |
+      | GQL | error |
+      | LET x = 'string' AND TRUE RETURN x; | Type mismatch: expected Boolean |

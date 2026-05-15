@@ -21,7 +21,7 @@ Feature: any
 
   Scenario: 测试ANY关键字匹配特定条件路径（起点为 Pershore，终点为 Bromsgrove，距离小于 10）-bug5520挂起
     When executing queries without error:
-    """
+      """
     MATCH path = ANY (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]->(:Station {name: 'Bromsgrove'})
     RETURN [r IN relationships(path) | r.distance] AS distances;
     """
@@ -31,7 +31,7 @@ Feature: any
 
   Scenario: 测试ANY关键字匹配特定条件路径（起点为 A，终点为 B，距离小于 15）-bug5520挂起
     When executing queries without error:
-    """
+      """
     MATCH path = ANY (:Station {name: 'A'})-[l:LINK WHERE l.distance < 15]->(:Station {name: 'B'})
     RETURN [r IN relationships(path) | r.distance] AS distances;
     """
@@ -41,7 +41,7 @@ Feature: any
 
   Scenario: 测试ANY关键字在路径条件无法满足时返回空结果-bug5520挂起
     When executing queries without error:
-    """
+      """
     MATCH path = ANY (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance > 50]->(:Station {name: 'Bromsgrove'})
     RETURN [r IN relationships(path) | r.distance] AS distances;
     """
@@ -51,7 +51,7 @@ Feature: any
 
   Scenario: 测试ANY关键字在起点节点不存在时返回空结果-bug5520挂起
     When executing queries without error:
-    """
+      """
     MATCH path = ANY (:Station {name: 'NonExistent'})-[l:LINK WHERE l.distance < 10]->(:Station {name: 'Bromsgrove'})
     RETURN [r IN relationships(path) | r.distance] AS distances;
     """
@@ -61,7 +61,7 @@ Feature: any
 
   Scenario: ANY 检查多个属性的条件-使用ANY关键字匹配距离小于10的路径
     When executing queries without error:
-    """
+      """
     MATCH (s:Station)-[l:LINK]->(t:Station)
     WHERE ANY(distance IN [l.distance] WHERE distance < 10)
     RETURN s.name AS start, t.name AS end, l.distance AS distance;
@@ -73,7 +73,7 @@ Feature: any
 
   Scenario: ANY 检查单一属性的条件-检查是否存在LINK关系，其distance等于5
     When executing queries without error:
-    """
+      """
     MATCH (s:Station)-[l:LINK]->(t:Station)
     WHERE ANY(x IN [l.distance] WHERE x = 5)
     RETURN s.name, t.name, l.distance;
@@ -84,7 +84,7 @@ Feature: any
 
   Scenario: ANY与复杂属性条件-检查是否存在 LINK 关系，distance 或起点/终点站名称长度中至少有一个大于8-关键字忽略大小写
     When executing queries without error:
-    """
+      """
     MATCH (s:Station)-[l:LINK]->(t:Station)
     WHERE AnY(x IN [l.distance, size(s.name), size(t.name)] WHERE x > 8)
     RETURN s.name, t.name, l.distance;
@@ -96,7 +96,7 @@ Feature: any
 
   Scenario: ANY应用在空列表
     When executing queries without error:
-    """
+      """
     MATCH (s:Station)-[l:LINK]->(t:Station)
     WHERE ANY(x IN [] WHERE x > 10)
     RETURN s.name, t.name, l.distance;
@@ -111,7 +111,7 @@ Feature: any
     RETURN s.name, t.name, l.distance;
       """
     Then the error should be contain:
-    """
+      """
     unsupported value type in CoercedPredicate
     """
 

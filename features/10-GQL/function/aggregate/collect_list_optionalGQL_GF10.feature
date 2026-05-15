@@ -10,16 +10,16 @@ Feature: COLLECT_LIST
 
   Scenario Outline: collect-list-positive-cases
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                                                               | result          | 备注        |
-      | UNWIND RANGE(1, 3) AS m LET x = COLLECT_LIST(ALL m) RETURN x;     | [1, 2, 3]       | 数值集合      |
-      | UNWIND ['a', 'b', 'c'] AS m LET x = COLLECT_LIST(ALL m) RETURN x; | ['a', 'b', 'c'] | 字符串集合     |
-      | UNWIND [] AS m LET x = COLLECT_LIST(ALL m) RETURN x;              | []              | 空集合，返回空列表 |
+      | GQL | result |
+      | UNWIND RANGE(1, 3) AS m LET x = COLLECT_LIST(ALL m) RETURN x; | [1, 2, 3] |
+      | UNWIND ['a', 'b', 'c'] AS m LET x = COLLECT_LIST(ALL m) RETURN x; | ['a', 'b', 'c'] |
+      | UNWIND [] AS m LET x = COLLECT_LIST(ALL m) RETURN x; | [] |
 
 

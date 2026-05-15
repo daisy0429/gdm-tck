@@ -1,15 +1,17 @@
 """图初始化 step definitions。
 
-对应 Gherkin 中的 Given 步骤：
+对应 Gherkin 中的 Given/When/Then 步骤：
 - an empty graph
 - any graph
 - an load graph
+- an already exist graph
+- drop all graph / drop all graphType
 """
 
 import logging
 import re
 
-from pytest_bdd import given, parsers
+from pytest_bdd import given, parsers, when, then
 
 from gdm_tck.connection import BoltConnectionPool
 from gdm_tck.state import ScenarioContext
@@ -35,8 +37,7 @@ def any_graph():
 
 
 @given(parsers.parse('having executed:\n"""\n{cypher}\n"""'))
-def having_executed(cypher: str, bolt_pool: BoltConnectionPool,
-                    scenario_ctx: ScenarioContext):
+def having_executed(cypher: str, bolt_pool: BoltConnectionPool, scenario_ctx: ScenarioContext):
     """在场景开始前执行初始化查询。
 
     用于 Given 步骤中设置前置数据。
@@ -57,5 +58,117 @@ def there_exists_a_procedure(proc_signature: str):
     GDM 目前不支持自定义存储过程，此步骤作为 noop 记录。
     测试中 CALL 语句可能因 procedure 不存在而失败，属于已知不兼容项。
     """
-    logger.info("TCK procedure declaration (not supported in GDM): %s",
-                proc_signature.split("::")[0].strip())
+    logger.info(
+        "TCK procedure declaration (not supported in GDM): %s",
+        proc_signature.split("::")[0].strip(),
+    )
+
+
+@given(parsers.parse("an already exist graph:\n{name}"))
+def an_already_exist_graph(name: str, bolt_pool: BoltConnectionPool, scenario_ctx: ScenarioContext):
+    """断言指定名称的图已存在（noop 标记步骤）。
+
+    在 GDM 中此步骤仅记录图名，不做额外操作，
+    因为图已在之前步骤中创建。
+    """
+    graph_name = name.strip().strip('"""').strip()
+    logger.debug("Asserting graph '%s' already exists (noop)", graph_name)
+
+
+@given("drop all graph")
+@when("drop all graph")
+@then("drop all graph")
+def drop_all_graph(bolt_pool: BoltConnectionPool, scenario_ctx: ScenarioContext):
+    """删除所有非系统图。
+
+    查询 SHOW GRAPH，逐一删除非 default/sys/system 图。
+    对于 offline 图先设为 online 再删除。
+    """
+    client = bolt_pool.primary
+    try:
+        show_result = client.execute("SHOW GRAPH", database=scenario_ctx.current_database)
+    except Exception as e:
+        logger.warning("SHOW GRAPH failed: %s", e)
+        return
+
+    protected = {"default", "sys", "system"}
+    for record in show_result.records:
+        graph_name = str(record.get("name", ""))
+        if graph_name.lower() in protected:
+            continue
+        status = str(record.get("status", ""))
+        if status.lower() == "offline":
+            try:
+                client.execute(
+                    f"ALTER GRAPH {graph_name} ONLINE",
+                    database=scenario_ctx.current_database,
+                )
+            except Exception as e:
+                logger.warning("Failed to set graph %s online: %s", graph_name, e)
+        try:
+            client.execute(
+                f"DROP GRAPH {graph_name}",
+                database=scenario_ctx.current_database,
+            )
+            logger.debug("Dropped graph: %s", graph_name)
+        except Exception as e:
+            logger.warning("Failed to drop graph %s: %s", graph_name, e)
+
+
+@given("drop all graphType")
+@when("drop all graphType")
+@then("drop all graphType")
+def drop_all_graph_type(bolt_pool: BoltConnectionPool, scenario_ctx: ScenarioContext):
+    """删除所有图类型。"""
+    client = bolt_pool.primary
+    try:
+        show_result = client.execute("SHOW GRAPH TYPE", database=scenario_ctx.current_database)
+    except Exception as e:
+        logger.warning("SHOW GRAPH TYPE failed: %s", e)
+        return
+
+    for record in show_result.records:
+        type_name = str(record.get("name", ""))
+        if not type_name:
+            continue
+        try:
+            client.execute(
+                f"DROP GRAPH TYPE {type_name}",
+                database=scenario_ctx.current_database,
+            )
+            logger.debug("Dropped graph type: %s", type_name)
+        except Exception as e:
+            logger.warning("Failed to drop graph type %s: %s", type_name, e)
+
+
+@when(
+    parsers.re(
+        r'login in user for USER\["(?P<user>[^"]+)"\]-PWD\["(?P<pwd>[^"]+)"\]-DB\["(?P<db>[^"]+)"\]'
+    )
+)
+def login_in_user(
+    user: str, pwd: str, db: str, bolt_pool: BoltConnectionPool, scenario_ctx: ScenarioContext
+):
+    """以指定用户密码登录并切换到指定数据库。"""
+    scenario_ctx.current_database = db
+    client = bolt_pool.create_user_client(user, pwd, db)
+    if user not in scenario_ctx.user_clients:
+        scenario_ctx.user_clients[user] = []
+    scenario_ctx.user_clients[user].append(client)
+    logger.debug("Logged in as user '%s', DB '%s'", user, db)
+
+
+@then(
+    parsers.re(
+        r'init GraphRelationship by user\["(?P<user>[^"]+)"\]-\[(?P<idx>\d+)\]-DB\["(?P<db>[^"]+)"\]'
+    )
+)
+@when(
+    parsers.re(r'init graphGQL by user\["(?P<user>[^"]+)"\]-\[(?P<idx>\d+)\]-DB\["(?P<db>[^"]+)"\]')
+)
+def init_graph_by_user(
+    user: str, idx: str, db: str, bolt_pool: BoltConnectionPool, scenario_ctx: ScenarioContext
+):
+    """初始化图关系/GQL（noop 标记步骤，实际操作在前置步骤中完成）。"""
+    scenario_ctx.current_database = db
+    logger.debug("Init graph for user '%s', DB '%s' (noop)", user, db)

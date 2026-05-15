@@ -15,7 +15,7 @@ Feature: union
 
   Scenario: union
     When executing queries without error:
-    """
+      """
     UNWIND [1, 2] AS x RETURN x UNION UNWIND [2,3] AS x RETURN x;
     """
     Then the result should be, in any order:
@@ -26,7 +26,7 @@ Feature: union
 
   Scenario: union different types
     When executing queries without error:
-    """
+      """
     UNWIND [1] AS x RETURN x AS num UNION UNWIND ['a'] AS x RETURN x AS num;
     """
     Then the result should be, in any order:
@@ -36,7 +36,7 @@ Feature: union
 
   Scenario: union all
     When executing queries without error:
-    """
+      """
     UNWIND [1, 2] AS x RETURN x UNION ALL UNWIND [2,3] AS x RETURN x;
     """
     Then the result should be, in any order:
@@ -48,15 +48,15 @@ Feature: union
 
   Scenario Outline: union-clause-negative-cases
     When executing queries:
-    """
+      """
     <GQL>
     """
     Then the error should be contain:
-    """
+      """
     <error>
     """
     Examples:
-      | GQL                                                                                        | error                                                       | 备注         |
-      | MATCH (p:Person) RETURN p.name AS name UNION MATCH (n:Number) RETURN n;                    | All sub queries in an UNION must have the same column names | 返回列数量或结构不同 |
-      | UNWIND [1, 2, 3] AS x RETURN x UNION UNWIND ['a', 'b', 'c'] AS x RETURN x, "extra_column"; | All sub queries in an UNION must have the same column names | 返回列数量不一致   |
-      | UNWIND [1, 2, 3] AS x RETURN x AS num UNION UNWIND [3, 4, 5] AS x RETURN x AS value;       | All sub queries in an UNION must have the same column names | 列名不一致      |
+      | GQL | error |
+      | MATCH (p:Person) RETURN p.name AS name UNION MATCH (n:Number) RETURN n; | All sub queries in an UNION must have the same column names |
+      | UNWIND [1, 2, 3] AS x RETURN x UNION UNWIND ['a', 'b', 'c'] AS x RETURN x, "extra_column"; | All sub queries in an UNION must have the same column names |
+      | UNWIND [1, 2, 3] AS x RETURN x AS num UNION UNWIND [3, 4, 5] AS x RETURN x AS value; | All sub queries in an UNION must have the same column names |

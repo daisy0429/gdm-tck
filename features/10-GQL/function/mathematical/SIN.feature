@@ -7,20 +7,20 @@ Feature:SIN正弦值
 
   Scenario Outline: SIN-正常计算
     When executing queries without error:
-  """
+      """
   <GQL>
   """
     Then the result should be, in any order:
       | x   |
       | <a> |
     Examples:
-      | GQL                            | a                                | 备注             |
-      | let x = SIN(0) return x;       | 0                                | SIN(0) = 0     |
-      | let x = SIN(30) return x;      | -0.9880316240928618              |                |
-      | let x = SIN(PI()/2) return x;  | 1                                | SIN(π/2) = 1   |
-      | let x = SIN(PI()) return x;    | 1.2246467991473515e-16           | SIN(π) = 0     |
-      | let x = SIN(-PI()/2) return x; | -1                               | SIN(-π/2) = -1 |
-      | let x = SIN(NULL) return x;    | null                             | NULL 值处理       |
+      | GQL | a |
+      | let x = SIN(0) return x; | 0 |
+      | let x = SIN(30) return x; | -0.9880316240928618 |
+      | let x = SIN(PI()/2) return x; | 1 |
+      | let x = SIN(PI()) return x; | 1.2246467991473515e-16 |
+      | let x = SIN(-PI()/2) return x; | -1 |
+      | let x = SIN(NULL) return x; | null |
 #      | let x = SIN([]) return x;      | expected Float but was List<Any> | bug5499        |
 
 

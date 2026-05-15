@@ -9,26 +9,26 @@ Feature: string-btrim
 
   Scenario Outline: string-BTRIM-移除字符串两端的指定字符
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                                                           | result                  | 备注            |
-      | LET x = BTRIM(' Hello GQL ', ' ') RETURN x ;                  | 'Hello GQL'             | 参数2空串         |
-      | LET x = BTRIM(' Hello World ', 'Hello ') RETURN x;            | 'World'                 |               |
-      | LET x = BTRIM('Hello', 'Hello ') RETURN x;                    | ''                      |               |
-      | LET x = BTRIM('abcdef Hello World abcdef', 'fecd') RETURN x;  | 'abcdef Hello World ab' | 右侧匹配          |
-      | LET x = BTRIM(' ', ' ') RETURN x;                             | ''                      | 参数1和参数2均空串    |
-      | LET x = BTRIM(' Hello World ', 'Hello AA') RETURN x;          | 'World'                 | 部分匹配          |
-      | LET x = BTRIM(' Hello World ', ' no') RETURN x;               | 'Hello World'           | 修剪字符与目标字符串不匹配 |
-      | LET x = BTRIM(' Hello World ', ' Hello World test') RETURN x; | ''                      | 超出匹配          |
-      | LET x = BTRIM('!@#$%^& Hello GQL !!!', '!@#$%^& ') RETURN x;  | 'Hello GQL'             |               |
-      | LET x = BTRIM('!@#$%^&HelloGQL !!!', '!@#$%^& ') RETURN x;    | 'HelloGQL'              |               |
-      | LET x = BTRIM('!@#$%^&HelloGQL!!!', '!@#$%^&') RETURN x;      | 'HelloGQL'              |               |
-      | LET x = BTRIM('中文 Hello GQL 中文', '中文 ') RETURN x;             | 'Hello GQL'             | 中文            |
+      | GQL | result |
+      | LET x = BTRIM(' Hello GQL ', ' ') RETURN x ; | 'Hello GQL' |
+      | LET x = BTRIM(' Hello World ', 'Hello ') RETURN x; | 'World' |
+      | LET x = BTRIM('Hello', 'Hello ') RETURN x; | '' |
+      | LET x = BTRIM('abcdef Hello World abcdef', 'fecd') RETURN x; | 'abcdef Hello World ab' |
+      | LET x = BTRIM(' ', ' ') RETURN x; | '' |
+      | LET x = BTRIM(' Hello World ', 'Hello AA') RETURN x; | 'World' |
+      | LET x = BTRIM(' Hello World ', ' no') RETURN x; | 'Hello World' |
+      | LET x = BTRIM(' Hello World ', ' Hello World test') RETURN x; | '' |
+      | LET x = BTRIM('!@#$%^& Hello GQL !!!', '!@#$%^& ') RETURN x; | 'Hello GQL' |
+      | LET x = BTRIM('!@#$%^&HelloGQL !!!', '!@#$%^& ') RETURN x; | 'HelloGQL' |
+      | LET x = BTRIM('!@#$%^&HelloGQL!!!', '!@#$%^&') RETURN x; | 'HelloGQL' |
+      | LET x = BTRIM('中文 Hello GQL 中文', '中文 ') RETURN x; | 'Hello GQL' |
 
   Scenario: size(list)
     Given an empty graph
@@ -42,7 +42,7 @@ Feature: string-btrim
 
   Scenario Outline: string-BTRIM-移除字符串两端的空格
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -56,14 +56,14 @@ Feature: string-btrim
 
   Scenario Outline: string-BTRIM-异常参数
     When executing queries:
-    """
+      """
     <GQL>
     """
     Then the error should be contain:
-    """
+      """
     <error>
     """
     Examples:
-      | GQL                               | error                                          | 备注        |
-      | LET x = BTRIM('22', 2) RETURN x ; | Type mismatch: expected String but was Integer | 参数2-类型不匹配 |
-      | let x = LEFT(22, '2') return x;   | Type mismatch: expected String but was Integer | 参数1-类型不匹配 |
+      | GQL | error |
+      | LET x = BTRIM('22', 2) RETURN x ; | Type mismatch: expected String but was Integer |
+      | let x = LEFT(22, '2') return x; | Type mismatch: expected String but was Integer |

@@ -8,21 +8,21 @@ Feature: size
 
   Scenario Outline: size(string|list) - positive-cases - bug5507
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                                      | result | 备注                   |
-      | LET x = SIZE('12345') RETURN x;          | 5      | 计算字符串的字符数            |
-      | LET x = SIZE('') RETURN x;               | 0      | 空字符串返回 0             |
-      | LET x = SIZE(null) RETURN x;             | null   | 空字符串返回 0             |
-      | LET x = SIZE([1, 2, 3, 4, 5]) RETURN x;  | 5      | 计算列表元素数量             |
-      | LET x = SIZE([]) RETURN x;               | 0      | 空列表返回 0              |
-      | LET x = SIZE([null, null]) RETURN x;     | 2      | 列表中的 `null` 元素也被计入长度 |
-      | LET x = SIZE([1, 'abc', true]) RETURN x; | 3      | 列表中混合类型元素的数量         |
+      | GQL | result |
+      | LET x = SIZE('12345') RETURN x; | 5 |
+      | LET x = SIZE('') RETURN x; | 0 |
+      | LET x = SIZE(null) RETURN x; | null |
+      | LET x = SIZE([1, 2, 3, 4, 5]) RETURN x; | 5 |
+      | LET x = SIZE([]) RETURN x; | 0 |
+      | LET x = SIZE([null, null]) RETURN x; | 2 |
+      | LET x = SIZE([1, 'abc', true]) RETURN x; | 3 |
 
 
   Scenario: size(path)
@@ -56,20 +56,20 @@ Feature: size
 
   Scenario Outline: size-negative-cases
     When executing queries:
-    """
+      """
     CREATE (a:Person {name: "Alice"})-[:KNOWS]->(b:Person {name: "Bob"})-[:KNOWS]->(c:Person {name: "Charlie"});
     """
     When executing queries:
-    """
+      """
     <GQL>
     """
     Then the error should be contain:
-    """
+      """
     <error>
     """
     Examples:
-      | GQL                                                                 | error                                                       | 备注                    |
-      | LET x = SIZE(123) RETURN x;                                         | Type mismatch: expected List<Any> or String but was Integer | 不支持的类型（整数）            |
-      | LET x = SIZE(true) RETURN x;                                        | Type mismatch: expected List<Any> or String but was Boolean | 不支持的类型（布尔值）           |
-      | LET x = SIZE({key: 'value'}) RETURN x;                              | Type mismatch: expected List<Any> or String but was Map             | 不支持的类型（Map 对象）        |
-      | MATCH p = (a:Person)-[*]->(c:Person) RETURN size(p) AS path_length; | Type mismatch: expected List<Any> or String but was Path    | 此处应该用length(p)而不是size |
+      | GQL | error |
+      | LET x = SIZE(123) RETURN x; | Type mismatch: expected List<Any> or String but was Integer |
+      | LET x = SIZE(true) RETURN x; | Type mismatch: expected List<Any> or String but was Boolean |
+      | LET x = SIZE({key: 'value'}) RETURN x; | Type mismatch: expected List<Any> or String but was Map |
+      | MATCH p = (a:Person)-[*]->(c:Person) RETURN size(p) AS path_length; | Type mismatch: expected List<Any> or String but was Path |

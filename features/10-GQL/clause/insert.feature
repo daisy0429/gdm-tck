@@ -16,7 +16,7 @@ Feature: insert
 
   Scenario Outline: []insert冒烟测试
     When executing query without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -35,11 +35,11 @@ Feature: insert
 
   Scenario Outline: []insert异常测试
     When executing query:
-    """
+      """
     <GQL>
     """
     Then the error should be contain:
-    """
+      """
     <result>
     """
     Examples:

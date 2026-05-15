@@ -19,15 +19,15 @@ Feature: cast类型转换函数-toString-bug5433
       | x        |
       | <result> |
     Examples:
-      | GQL                                                          | result           | 备注           |
-      | LET x = CAST("hello" AS STRING) RETURN x;                    | 'hello'          | 字符串转字符串      |
-      | LET x = CAST(true AS STRING) RETURN x;                       | 'true'           | 布尔转字符串-fixme |
-      | LET x = CAST(123.45 AS STRING) RETURN x;                     | '123.45'         | 浮点数转字符串      |
-      | LET x = CAST(123 AS STRING) RETURN x;                        | '123'            | 长整型转字符串      |
-      | LET x = CAST(2*4 AS STRING) RETURN x;                        | '8'              | 表达式转字符串      |
-      | LET x = CAST(DATE("2024-01-01") AS STRING) RETURN x;         | '2024-01-01'     | 日期转字符串       |
-      | LET x = CAST(DURATION("P1Y2M3DT4H5M6S") AS STRING) RETURN x; | 'P1Y2M3DT4H5M6S' | bug-时间段转字符串  |
-      | LET x = CAST(null AS STRING) RETURN x;                       | null             | bug-         |
+      | GQL | result |
+      | LET x = CAST("hello" AS STRING) RETURN x; | 'hello' |
+      | LET x = CAST(true AS STRING) RETURN x; | 'true' |
+      | LET x = CAST(123.45 AS STRING) RETURN x; | '123.45' |
+      | LET x = CAST(123 AS STRING) RETURN x; | '123' |
+      | LET x = CAST(2*4 AS STRING) RETURN x; | '8' |
+      | LET x = CAST(DATE("2024-01-01") AS STRING) RETURN x; | '2024-01-01' |
+      | LET x = CAST(DURATION("P1Y2M3DT4H5M6S") AS STRING) RETURN x; | 'P1Y2M3DT4H5M6S' |
+      | LET x = CAST(null AS STRING) RETURN x; | null |
 
   Scenario Outline: castToFloat-positive-cases-数值到STRING转换
     When executing queries without error:
@@ -122,6 +122,6 @@ Feature: cast类型转换函数-toString-bug5433
        <error>
        """
     Examples:
-      | GQL                                                                        | error                                           | 备注       |
-      | LET x =  CAST(123, 456) RETURN x;                                          | unsupported value type in FunctionInvocation    | 参数数量错误   |
-      | LET x = CAST(POINT({longitude: 13.4, latitude: 52.5}) AS STRING) RETURN x; | unsupported type in ConstructedValueType.CastTo | 坐标类型转字符串 |
+      | GQL | error |
+      | LET x =  CAST(123, 456) RETURN x; | unsupported value type in FunctionInvocation |
+      | LET x = CAST(POINT({longitude: 13.4, latitude: 52.5}) AS STRING) RETURN x; | unsupported type in ConstructedValueType.CastTo |

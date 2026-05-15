@@ -109,18 +109,12 @@ Feature: cast类型转换函数-toFloatList
        <error>
        """
     Examples:
-      | GQL                                                                          | error                                           | 备注             |
-      | LET x = CAST([1,DATE("2024-01-01")] AS LIST<FLOAT64>) RETURN x;              | unsupported type in TemporalType.CastTo         | Date类型转浮点数     |
-      | LET x = CAST([1,TIME("12:00:00")] AS LIST<FLOAT32>) RETURN x;                | unsupported type in TemporalType.CastTo         | Time类型转浮点数     |
-      | LET x = CAST([1,DATETIME("2024-01-01T12:00:00")] AS LIST<FLOAT64>) RETURN x; | unsupported type in TemporalType.CastTo         | DateTime类型转浮点数 |
-      | LET x = CAST([1,DURATION("P1DT2H")] AS LIST<FLOAT32>) RETURN x;              | unsupported type in TemporalType.CastTo         | Duration类型转浮点数 |
-      | LET x = CAST([1,POINT({x: 1, y: 2})] AS LIST<FLOAT64>) RETURN x;             | unsupported type in ConstructedValueType.CastTo | Point类型转浮点数    |
-      | LET x = CAST([true, false] AS LIST<FLOAT32>) RETURN x;                       | unsupported type in BoolType.CastTo             | boolean类型转浮点数  |
-      | RETURN CAST([1e400,-1e400] AS LIST<FLOAT64>) AS result;                      | floating point number is too large              | 超出范围的数值        |
-      | RETURN CAST([1e400,-1e400] AS LIST<FLOAT32>) AS result;                      | floating point number is too large              |                |
-
-
-
-
-
-
+      | GQL | error |
+      | LET x = CAST([1,DATE("2024-01-01")] AS LIST<FLOAT64>) RETURN x; | unsupported type in TemporalType.CastTo |
+      | LET x = CAST([1,TIME("12:00:00")] AS LIST<FLOAT32>) RETURN x; | unsupported type in TemporalType.CastTo |
+      | LET x = CAST([1,DATETIME("2024-01-01T12:00:00")] AS LIST<FLOAT64>) RETURN x; | unsupported type in TemporalType.CastTo |
+      | LET x = CAST([1,DURATION("P1DT2H")] AS LIST<FLOAT32>) RETURN x; | unsupported type in TemporalType.CastTo |
+      | LET x = CAST([1,POINT({x: 1, y: 2})] AS LIST<FLOAT64>) RETURN x; | unsupported type in ConstructedValueType.CastTo |
+      | LET x = CAST([true, false] AS LIST<FLOAT32>) RETURN x; | unsupported type in BoolType.CastTo |
+      | RETURN CAST([1e400,-1e400] AS LIST<FLOAT64>) AS result; | floating point number is too large |
+      | RETURN CAST([1e400,-1e400] AS LIST<FLOAT32>) AS result; | floating point number is too large |

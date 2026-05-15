@@ -8,7 +8,7 @@ Feature: ABS绝对值
 
   Scenario Outline: ABS-正常计算
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -27,16 +27,16 @@ Feature: ABS绝对值
 
   Scenario Outline: ABS-异常参数
     When executing queries:
-    """
+      """
     <GQL>
     """
     Then the error should be contain:
-    """
+      """
     <error>
     """
     Examples:
-      | GQL                               | error                                                   | 备注    |
-      | let x = ABS("-5") return x;       | Type mismatch: expected Float or Integer but was String |       |
-      | return ABS();                     | Insufficient parameters for function 'abs'              |       |
-      | return ABS(1e309)                 | floating point number is too large                      |       |
-      | let x = ABS(3.14, 2.71) return x; | Too many parameters for function 'abs'                  | 多参数输入 |
+      | GQL | error |
+      | let x = ABS("-5") return x; | Type mismatch: expected Float or Integer but was String |
+      | return ABS(); | Insufficient parameters for function 'abs' |
+      | return ABS(1e309) | floating point number is too large |
+      | let x = ABS(3.14, 2.71) return x; | Too many parameters for function 'abs' |

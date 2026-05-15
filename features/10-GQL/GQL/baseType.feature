@@ -4,7 +4,7 @@ Feature: BOOL/空间/时间/LIST所有数据类型的运算符和谓词校验
   Background: 初始化基础类型测试数据
     Given test data cleared: MATCH (n) DETACH DELETE n;
     Given test data exists:
-    """
+      """
     create graph type as {
       (person:Person{
         name STRING NOT NULL,
@@ -61,7 +61,7 @@ Feature: BOOL/空间/时间/LIST所有数据类型的运算符和谓词校验
 # ===================== 1. STRING类型测试 =====================
   Scenario Outline: string-type-operator-类型校验与运算
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -78,7 +78,7 @@ Feature: BOOL/空间/时间/LIST所有数据类型的运算符和谓词校验
 # ===================== 2. INT64/FLOAT64类型测试 =====================
   Scenario Outline: numeric-type-operator-数值运算与校验
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -96,7 +96,7 @@ Feature: BOOL/空间/时间/LIST所有数据类型的运算符和谓词校验
 # ===================== 3. BOOL类型测试 =====================
   Scenario Outline: bool-type-operator-布尔运算与校验
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -113,7 +113,7 @@ Feature: BOOL/空间/时间/LIST所有数据类型的运算符和谓词校验
 # ===================== 4. 空间类型（POINT2D/3D）测试 =====================
   Scenario Outline: spatial-type-operator-空间类型校验与操作
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -129,7 +129,7 @@ Feature: BOOL/空间/时间/LIST所有数据类型的运算符和谓词校验
 # ===================== 5. 时间类型测试 =====================
   Scenario Outline: temporal-type-operator-时间运算与校验
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -146,7 +146,7 @@ Feature: BOOL/空间/时间/LIST所有数据类型的运算符和谓词校验
 # ===================== 6. LIST类型测试 =====================
   Scenario Outline: list-type-operator-列表操作与校验
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -163,7 +163,7 @@ Feature: BOOL/空间/时间/LIST所有数据类型的运算符和谓词校验
 # ===================== 7. 边界场景测试 =====================
   Scenario Outline: boundary-type-operator-数据类型边界校验
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:

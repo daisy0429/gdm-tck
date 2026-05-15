@@ -105,9 +105,9 @@ Feature: cast类型转换函数-toStringList
        <error>
        """
     Examples:
-      | GQL                                                                 | error                                             | 备注                    |
-      | RETURN CAST(1 AS LIST<STRING>) AS result;                           | unsupported type in BinaryExactNumericType.CastTo | 单个数值转LIST<STRING>     |
-      | RETURN CAST("hello" AS LIST<STRING>) AS result;                     | unsupported type in StringType.CastTo             | 单个STRING转LIST<STRING> |
-      | RETURN CAST(true AS LIST<STRING>) AS result;                        | unsupported type in BoolType.CastTo               | 单个BOOL转LIST<STRING>   |
-      | RETURN CAST(DATE('2025-06-06') AS LIST<STRING>) AS result;          | unsupported type in TemporalType.CastTo           | 单个时间类型转LIST<STRING>   |
-      | RETURN CAST([POINT({x: 13.4, y: 52.5})] AS LIST<STRING>) AS result; | unsupported type in ConstructedValueType.CastTo   | 坐标类型转LIST<STRING>     |
+      | GQL | error |
+      | RETURN CAST(1 AS LIST<STRING>) AS result; | unsupported type in BinaryExactNumericType.CastTo |
+      | RETURN CAST("hello" AS LIST<STRING>) AS result; | unsupported type in StringType.CastTo |
+      | RETURN CAST(true AS LIST<STRING>) AS result; | unsupported type in BoolType.CastTo |
+      | RETURN CAST(DATE('2025-06-06') AS LIST<STRING>) AS result; | unsupported type in TemporalType.CastTo |
+      | RETURN CAST([POINT({x: 13.4, y: 52.5})] AS LIST<STRING>) AS result; | unsupported type in ConstructedValueType.CastTo |

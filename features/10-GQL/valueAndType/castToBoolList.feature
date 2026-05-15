@@ -105,15 +105,13 @@ Feature: cast类型转换函数-toBoolList
        <error>
        """
     Examples:
-      | GQL                                                                | error                                             | 备注       |
-      | LET x = CAST([DATE("2024-01-01")] AS LIST<BOOL>) RETURN x;              | unsupported type in TemporalType.CastTo           |          |
-      | LET x = CAST([DATETIME("2024-01-01T12:00:00")] AS LIST<BOOL>) RETURN x; | unsupported type in TemporalType.CastTo           |          |
-      | LET x = CAST([TIME("12:00:00")] AS LIST<BOOL>) RETURN x;                | unsupported type in TemporalType.CastTo           |          |
-      | LET x = CAST([LOCALTIME("12:00:00")] AS LIST<BOOL>) RETURN x;           | unsupported type in TemporalType.CastTo           |          |
-      | LET x = CAST([DURATION("P1DT2H")] AS LIST<BOOL>) RETURN x;              | unsupported type in TemporalType.CastTo           |          |
-      | LET x = CAST([POINT({x: 1.0, y: 2.0})] AS LIST<BOOL>) RETURN x;         | unsupported type in ConstructedValueType.CastTo   |          |
-      | LET x = CAST([-12.3] AS LIST<BOOL>) RETURN x;                           | unsupported type in ApproximateNumericType.CastTo | 非零浮点数转布尔 |
-      | LET x = CAST([123.45] AS LIST<BOOL>) RETURN x;                          | unsupported type in ApproximateNumericType.CastTo | 非零浮点数转布尔 |
-      | LET x = CAST([DATETIME("2024-01-01T12:00:00")] AS LIST<BOOL>) RETURN x; | unsupported type in TemporalType.CastTo           |          |
-
-
+      | GQL | error |
+      | LET x = CAST([DATE("2024-01-01")] AS LIST<BOOL>) RETURN x; | unsupported type in TemporalType.CastTo |
+      | LET x = CAST([DATETIME("2024-01-01T12:00:00")] AS LIST<BOOL>) RETURN x; | unsupported type in TemporalType.CastTo |
+      | LET x = CAST([TIME("12:00:00")] AS LIST<BOOL>) RETURN x; | unsupported type in TemporalType.CastTo |
+      | LET x = CAST([LOCALTIME("12:00:00")] AS LIST<BOOL>) RETURN x; | unsupported type in TemporalType.CastTo |
+      | LET x = CAST([DURATION("P1DT2H")] AS LIST<BOOL>) RETURN x; | unsupported type in TemporalType.CastTo |
+      | LET x = CAST([POINT({x: 1.0, y: 2.0})] AS LIST<BOOL>) RETURN x; | unsupported type in ConstructedValueType.CastTo |
+      | LET x = CAST([-12.3] AS LIST<BOOL>) RETURN x; | unsupported type in ApproximateNumericType.CastTo |
+      | LET x = CAST([123.45] AS LIST<BOOL>) RETURN x; | unsupported type in ApproximateNumericType.CastTo |
+      | LET x = CAST([DATETIME("2024-01-01T12:00:00")] AS LIST<BOOL>) RETURN x; | unsupported type in TemporalType.CastTo |

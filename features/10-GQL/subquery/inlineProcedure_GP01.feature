@@ -11,7 +11,7 @@ Feature: inline procedure
   Scenario: [1] basic example
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -32,7 +32,7 @@ Feature: inline procedure
   Scenario: [2] Incremental updates - set
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -57,7 +57,7 @@ Feature: inline procedure
   Scenario: [3] Performance - return collect(p)
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -80,7 +80,7 @@ Feature: inline procedure
   Scenario: [4] Import specific variables from the outer scope
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -110,7 +110,7 @@ Feature: inline procedure
   Scenario: [5] 不支持导入全部变量，来源于GQL标准的限制-call (*)-
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -134,7 +134,7 @@ Feature: inline procedure
   Scenario: [6] Import no variables - return count(p)
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -155,7 +155,7 @@ Feature: inline procedure
   Scenario: [8] Ordering results before CALL subquery
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -179,7 +179,7 @@ Feature: inline procedure
   Scenario: [9] Using UNION within a CALL subquery -Find the oldest and youngest players
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -209,7 +209,7 @@ Feature: inline procedure
   Scenario: [9-1] Using UNION within a CALL subquery -Find how much every team is owed-bug7736
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -237,7 +237,7 @@ Feature: inline procedure
   Scenario: [10] Aggregations-CALL subquery changing returned rows of outer query
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -262,7 +262,7 @@ Feature: inline procedure
   Scenario: [11] CALL subqueries and isolated aggregations
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]
@@ -285,7 +285,7 @@ Feature: inline procedure
   Scenario: [bug5372][12] Unit subqueries - Create cloned nodes
     Given drop all graph
     When  executing queries without error:
-    """
+      """
       create database graph1;
     """
     When login in user for USER["SYSDBA"]-PWD["SYSDBA"]-DB["graph1"]

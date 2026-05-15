@@ -22,19 +22,19 @@ Feature: string-trim
 
   Scenario Outline: string-TRIM
     When executing queries without error:
-  """
+      """
   <GQL>
   """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                                   | result    | 备注             |
-      | LET x = TRIM('   HELLO   ') RETURN x; | 'HELLO'   | 去除两侧空格         |
-      | LET x = TRIM('HELLO😊   ') RETURN x;  | 'HELLO😊' | 表情符号保留，只去除两侧空格 |
-      | LET x = TRIM('') RETURN x;            | ''        | 参数1为空字符串       |
-      | LET x = TRIM(NULL) RETURN x;          | null      | 参数1为 NULL      |
-      | LET x = TRIM('中文 字符') RETURN x;       | '中文 字符'   | 中间的空格保留，去除两侧空格 |
+      | GQL | result |
+      | LET x = TRIM('   HELLO   ') RETURN x; | 'HELLO' |
+      | LET x = TRIM('HELLO😊   ') RETURN x; | 'HELLO😊' |
+      | LET x = TRIM('') RETURN x; | '' |
+      | LET x = TRIM(NULL) RETURN x; | null |
+      | LET x = TRIM('中文 字符') RETURN x; | '中文 字符' |
 
   Scenario: TRIM('\tHELLO\n')
     Given an empty graph
@@ -48,15 +48,15 @@ Feature: string-trim
 
   Scenario Outline: string-TRIM 异常参数
     When executing queries:
-    """
+      """
     <GQL>
     """
     Then the error should be contain:
-    """
+      """
     <error>
     """
     Examples:
-      | GQL                           | error                                          | 备注         |
-      | LET x = TRIM(12345) RETURN x; | Type mismatch: expected String but was Integer | 参数1-非字符串参数 |
-      | LET x = TRIM(TRUE) RETURN x;  | Type mismatch: expected String but was Boolean | 参数1-布尔值参数  |
+      | GQL | error |
+      | LET x = TRIM(12345) RETURN x; | Type mismatch: expected String but was Integer |
+      | LET x = TRIM(TRUE) RETURN x; | Type mismatch: expected String but was Boolean |
 

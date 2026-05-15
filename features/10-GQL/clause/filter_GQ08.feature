@@ -1,5 +1,4 @@
 #encoding: utf-8
-#xzq
 #http://10.13.4.249:8090/display/GSQL/FILTER：FILTER (whereClause | searchCondition)
 #https://neo4j.com/docs/cypher-manual/current/appendix/gql-conformance/analogous-cypher/
 #Selects a subset of the records of the current working table. Cypher uses WITH instead.
@@ -23,7 +22,7 @@ Feature: filter
 
   Scenario Outline: []filter冒烟测试
     When executing query without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -52,23 +51,23 @@ Feature: filter
 
   Scenario Outline: []FILTER多条件逻辑操作验证（And/OR）-bug5353,bug5524
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                                                                                                                           | result             | 备注      |
-      | MATCH (n) FILTER (n.age = 18 OR n.age = 19) RETURN collect(n.name) as x;                                                      | ['Bob', 'Alice']   |         |
-      | MATCH (n) FILTER (n.age = 18 OR n.nonexistentField = 1) RETURN n.name as x;                                                   | 'Alice'            |         |
-      | MATCH (p:Person)-[r:FRIEND]->(p) filter r.since = 2020 OR r.since = 2021 RETURN collect(p.name) as x;                         | ['Alice', 'Alice'] |         |
-      | MATCH (n) FILTER (n.age = 18 AND n.name = 'Alice') RETURN n.name as x;                                                        | 'Alice'            |         |
-      | MATCH (p:Person)-[r:FRIEND]->(p) filter r.since = 2020 AND p.age = 18 RETURN p.name as x;                                     | 'Alice'            |         |
-      | MATCH (p:Person)-[r:FRIEND]->(p) WHERE (r.since = 2020 AND p.age = 18) OR (r.since = 2021 AND p.age > 18) RETURN p.name as x; | 'Alice'            |         |
-#      | MATCH (n:Person) filter WHERE n.age > 18 AND (n.name =~ 'A.*' OR n.name =~ 'T.*') RETURN n.name as x;                         | 'Tom               |         |
+      | GQL | result |
+      | MATCH (n) FILTER (n.age = 18 OR n.age = 19) RETURN collect(n.name) as x; | ['Bob', 'Alice'] |
+      | MATCH (n) FILTER (n.age = 18 OR n.nonexistentField = 1) RETURN n.name as x; | 'Alice' |
+      | MATCH (p:Person)-[r:FRIEND]->(p) filter r.since = 2020 OR r.since = 2021 RETURN collect(p.name) as x; | ['Alice', 'Alice'] |
+      | MATCH (n) FILTER (n.age = 18 AND n.name = 'Alice') RETURN n.name as x; | 'Alice' |
+      | MATCH (p:Person)-[r:FRIEND]->(p) filter r.since = 2020 AND p.age = 18 RETURN p.name as x; | 'Alice' |
+      | MATCH (p:Person)-[r:FRIEND]->(p) WHERE (r.since = 2020 AND p.age = 18) OR (r.since = 2021 AND p.age > 18) RETURN p.name as x; | 'Alice' |
+#      | MATCH (n:Person) filter WHERE n.age > 18 AND (n.name =~ 'A.*' OR n.name =~ 'T.*') RETURN n.name as x;                         | 'Tom               |
 #      | MATCH (n:Person) FIlTER WHERE n.age > 17 AND n.name =~ 'A.*' return n.name as x;                                              | 'Alice'            |  bug5524,neo4j也未支持       |
-      | MATCH (n) FILTER ((n.age = 18 OR n.age = 19) AND n.name = 'Alice') RETURN n.name as x;                                        | 'Alice'            | 复杂的嵌套条件 |
+      | MATCH (n) FILTER ((n.age = 18 OR n.age = 19) AND n.name = 'Alice') RETURN n.name as x;                                        | 'Alice' |
 
   Scenario: []多个MATCH和多个FILTER的验证
     When executing query without error:
@@ -92,15 +91,15 @@ Feature: filter
 
   Scenario Outline: filter-negative-cases
     When executing queries:
-  """
+      """
   <GQL>
   """
     Then the error should be contain:
-  """
+      """
   <error>
   """
     Examples:
-      | GQL                                | error               | 备注                   |
-      | MATCH (n) FILTER n.age > RETURN n; | [2700]Invalid input | FILTER错误条件验证-缺少右侧表达式 |
-      | MATCH (n) FILTER () RETURN n;      | [2700]Invalid input | FILTER空条件验证          |
+      | GQL | error |
+      | MATCH (n) FILTER n.age > RETURN n; | [2700]Invalid input |
+      | MATCH (n) FILTER () RETURN n; | [2700]Invalid input |
 

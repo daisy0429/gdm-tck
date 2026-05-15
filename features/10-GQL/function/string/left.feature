@@ -9,37 +9,37 @@ Feature: string-left
 
   Scenario Outline: string-left
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                                     | result      | 备注                   |
-      | let x = LEFT('HELLO GQL', 5) return x;  | 'HELLO'     |                      |
-      | let x = LEFT('HELLO GQL', 9) return x;  | 'HELLO GQL' |                      |
-      | let x = LEFT('Hello', 0) return x;      | ''          | 参数2 - 特殊值0           |
-      | let x = LEFT('Example', NULL) return x; | null        | 参数2 - 特殊值null-同neo4j |
-      | let x = LEFT('', 3) return x;           | ''          | 参数1 - 空串输入           |
-      | let x = LEFT(null,1) return x;          | null        | 参数1 - null -同neo4j   |
-      | let x = LEFT('abc', 5) return x;        | 'abc'       | 参数2长度参数 > 参数1字符串长度   |
+      | GQL | result |
+      | let x = LEFT('HELLO GQL', 5) return x; | 'HELLO' |
+      | let x = LEFT('HELLO GQL', 9) return x; | 'HELLO GQL' |
+      | let x = LEFT('Hello', 0) return x; | '' |
+      | let x = LEFT('Example', NULL) return x; | null |
+      | let x = LEFT('', 3) return x; | '' |
+      | let x = LEFT(null,1) return x; | null |
+      | let x = LEFT('abc', 5) return x; | 'abc' |
 
   Scenario Outline: string-left-异常参数
     When executing queries:
-    """
+      """
     <GQL>
     """
     Then the error should be contain:
-    """
+      """
     <error>
     """
     Examples:
-      | GQL                                    | error                                                  | 备注          |
-      | let x = LEFT(2, 3) return x;           | Type mismatch: expected String but was Integer         | 参数1-非字符串参数  |
-      | let x = LEFT('Hello', -2) return x;    | Cannot handle negative start index nor negative length | 参数2-负数      |
-      | let x = LEFT('Hello', 'two') return x; | Type mismatch: expected Integer but was String         | 参数2-非整数长度参数 |
-      | let x = LEFT('Test', 2.5) return x;    | Type mismatch: expected Integer but was Float          | 参数2-非整数长度参数 |
-      | let x = LEFT('Test', true) return x;   | Type mismatch: expected Integer but was Boolean        | 参数2-非整数长度参数 |
+      | GQL | error |
+      | let x = LEFT(2, 3) return x; | Type mismatch: expected String but was Integer |
+      | let x = LEFT('Hello', -2) return x; | Cannot handle negative start index nor negative length |
+      | let x = LEFT('Hello', 'two') return x; | Type mismatch: expected Integer but was String |
+      | let x = LEFT('Test', 2.5) return x; | Type mismatch: expected Integer but was Float |
+      | let x = LEFT('Test', true) return x; | Type mismatch: expected Integer but was Boolean |
 
 

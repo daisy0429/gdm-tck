@@ -7,14 +7,13 @@ Feature: all
 
   Scenario Outline: all-positive-cases
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                                                  | result | 备注 |
-      | UNWIND RANGE (1,3) AS m LET x = MAX(ALL m) RETURN x; | 3      |    |
-      | UNWIND RANGE (1,3) AS m LET x = MIN(ALL m) RETURN x; | 1      |    |
-
+      | GQL | result |
+      | UNWIND RANGE (1,3) AS m LET x = MAX(ALL m) RETURN x; | 3 |
+      | UNWIND RANGE (1,3) AS m LET x = MIN(ALL m) RETURN x; | 1 |

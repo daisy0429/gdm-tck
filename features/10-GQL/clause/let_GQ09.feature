@@ -1,5 +1,4 @@
 #encoding: utf-8
-#xzq
 #http://10.13.4.249:8090/pages/viewpage.action?pageId=70453576
 #https://neo4j.com/docs/cypher-manual/current/appendix/gql-conformance/analogous-cypher/
 #GQL let等价cypher with。但是不支持再附加 DISTINCT、ORDER、SKIP、LIMIT、WHERE 等子句
@@ -15,7 +14,7 @@ Feature: let
 
   Scenario Outline: [1]验证let用于定义变量并简单赋值
     When executing query without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
@@ -23,9 +22,8 @@ Feature: let
       | <result> |
     Examples:
       | GQL                                              | result              | desc |
-      | LET a = 5 RETURN a as x;                         | 5                   |      |
-      | LET list = ['apple', 'banana'] return list as x; | ['apple', 'banana'] |      |
-
+      | LET a = 5 RETURN a as x; | 5 |  |
+      | LET list = ['apple', 'banana'] return list as x; | ['apple', 'banana'] |  |
   Scenario: [2]验证let定义的变量在后续查询中的使用
     When executing query without error:
       """
@@ -126,19 +124,17 @@ Feature: let
 
   Scenario Outline: [10]let绑定map/嵌套map-bug5517
     When executing queries without error:
-  """
+      """
   <GQL>
   """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                                        | result                     | 备注          |
-      | LET x = {key:'value'} RETURN x;            | {key:'value'}              | 正常用例，日期记录对象 |
-      | LET x = {key:'value', number:42} RETURN x; | {key: 'value', number: 42} |             |
-      | LET x = {} RETURN x;                       | {}                         |             |
-
-
+      | GQL | result |
+      | LET x = {key:'value'} RETURN x; | {key:'value'} |
+      | LET x = {key:'value', number:42} RETURN x; | {key: 'value', number: 42} |
+      | LET x = {} RETURN x; | {} |
   Scenario: [21]let and for-for循环遍历列表并返回元素
     When executing query without error:
       """

@@ -10,34 +10,34 @@ Feature: recordType
 
   Scenario Outline: recordType-bug5518
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     Then the result should be, in any order:
       | x        |
       | <result> |
     Examples:
-      | GQL                                                         | result                       | 备注        |
-      | LET x = DATE(RECORD{year:2024, month:10, day:10}) RETURN x; | '2024-10-10'                 | 日期记录对象    |
-      | let x = RECORD{a:1, b:2} return x;                          | {a:1, b:2}                   | 数字        |
-      | let x = RECORD{key:'value', number:'42'} return x;          | {key: 'value', number: '42'} | 字符串       |
-      | let x = RECORD{} return x;                                  | {}                           | 空对象       |
-      | let x = RECORD{null_key:NULL} return x;                     | {null_key: null}             | 包含 NULL 值 |
+      | GQL | result |
+      | LET x = DATE(RECORD{year:2024, month:10, day:10}) RETURN x; | '2024-10-10' |
+      | let x = RECORD{a:1, b:2} return x; | {a:1, b:2} |
+      | let x = RECORD{key:'value', number:'42'} return x; | {key: 'value', number: '42'} |
+      | let x = RECORD{} return x; | {} |
+      | let x = RECORD{null_key:NULL} return x; | {null_key: null} |
 #      | let x = RECORD{a: 1, b: RECORD{c: 2, d: 3}} return x;       | {a: 1, b: {c: 2, d: 3}}      | 嵌套 Record |
-      | let x = RECORD{`special@key`:'value'} return x;             | {special@key: 'value'}       | 特殊字符作为键值  |
-      | let x = RECORD{emoji:'😊'} return x;                        | {emoji:'😊'}                 | 表情符号作为值   |
-      | let x = RECORD{中文键:'中文值'} return x;                         | {中文键: '中文值'}                 | 中文作为键值    |
+      | let x = RECORD{`special@key`:'value'} return x; | {special@key: 'value'} |
+      | let x = RECORD{emoji:'😊'} return x; | {emoji:'😊'} |
+      | let x = RECORD{中文键:'中文值'} return x; | {中文键: '中文值'} |
 #      | let x = RECORD{nested:RECORD{a:1, b:2}} return x;           | {nested: {a: 1, b: 2}}       | 嵌套 RECORD |
 
   Scenario Outline: recordType异常用例-用法错误时
     When executing queries:
-  """
+      """
   <GQL>
   """
     Then the error should be contain:
-  """
+      """
   <error>
   """
     Examples:
-      | GQL                            | error                               | 备注             |
-      | return RECORD{year:NULL} as x; | [2701]Variable `RECORD` not defined | 键值为 NULL 类型不明确 |
+      | GQL | error |
+      | return RECORD{year:NULL} as x; | [2701]Variable `RECORD` not defined |

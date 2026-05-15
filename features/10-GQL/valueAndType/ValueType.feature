@@ -1,5 +1,4 @@
 ##encoding: utf-8
-##xzq
 ##http://10.13.4.249:8090/pages/viewpage.action?pageId=70454147
 ##https://neo4j.com/docs/cypher-manual/current/appendix/gql-conformance/supported-mandatory/ ->4.16
 ##https://neo4j.com/docs/cypher-manual/current/values-and-types/property-structural-constructed/#types-synonyms

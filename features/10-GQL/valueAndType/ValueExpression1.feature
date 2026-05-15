@@ -1,5 +1,4 @@
 ##encoding: utf-8
-##xzq
 ##http://10.13.4.249:8090/pages/viewpage.action?pageId=70454152
 ##https://neo4j.com/docs/cypher-manual/current/appendix/gql-conformance/supported-mandatory/ ->20.2-Cypher expressions
 ##https://neo4j.com/docs/cypher-manual/current/expressions/

@@ -15,11 +15,11 @@ Feature: nodetach
       MATCH (p:Person {name: 'user1'}), (m:Movie {title: 'movie1'}) CREATE (p)-[:ACTED_IN]->(m);
       """
     When executing queries without error:
-    """
+      """
     <GQL>
     """
     When executing queries without error:
-    """
+      """
     call db.meta.count() yield type,count where type in ['vertices','edges'] return type,count;
     """
     Then the result should be, in any order:
@@ -27,8 +27,8 @@ Feature: nodetach
       | 'vertices' | 2     |
       | 'edges'    | 1     |
     Examples:
-      | GQL                                                 | 备注             |
-      | MATCH (m:Person {name: 'user2'}) NODETACH DELETE m; | 无关联关系的节点可以正常删除 |
+      | GQL |
+      | MATCH (m:Person {name: 'user2'}) NODETACH DELETE m; |
 
   Scenario Outline: 节点存在关联关系时nodetach delete节点,删除失败，抛出提示-本用例适用于事务模式下验证
     When executing queries:
@@ -49,7 +49,7 @@ Feature: nodetach
       """
     #事务模式下：操作回滚
     When executing queries:
-    """
+      """
     call db.meta.count() yield type,count where type in ['vertices','edges'] return type,count;
     """
     Then the result should be, in any order:
@@ -57,10 +57,9 @@ Feature: nodetach
       | 'vertices' | 3     |
       | 'edges'    | 1     |
     Examples:
-      | GQL                                                  | error                    | 备注            |
-      | match (n) where n.title= 'movie1' nodetach delete n; | [2750]Cannot delete node | 节点存在关联关系，无法删除 |
-      | match (n) nodetach delete n;                         | [2750]Cannot delete node |               |
-
+      | GQL | error |
+      | match (n) where n.title= 'movie1' nodetach delete n; | [2750]Cannot delete node |
+      | match (n) nodetach delete n; | [2750]Cannot delete node |
   Scenario Outline: 节点存在关联关系时nodetach delete节点,删除失败，抛出提示--本用例适用于非事务模式下验证
     When executing queries:
       """
@@ -79,7 +78,7 @@ Feature: nodetach
       <error>
       """
     When executing queries:
-    """
+      """
     call db.meta.count() yield type,count where type in ['vertices','edges'] return type,count;
     """
     #非事务模式下：部分成功
@@ -88,5 +87,5 @@ Feature: nodetach
       | 'vertices' | 2     |
       | 'edges'    | 1     |
     Examples:
-      | GQL                          | error                    | 备注 |
-      | match (n) nodetach delete n; | [2750]Cannot delete node |    |
+      | GQL | error |
+      | match (n) nodetach delete n; | [2750]Cannot delete node |
