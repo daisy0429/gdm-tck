@@ -50,6 +50,7 @@ markers = [
     "server_programming: UDF and stored procedure tests",
     "distributed: Distributed capability tests",
     "observability: Operations and observability tests",
+    "capacity: Database capacity and scale limit tests",
     "concurrent: Concurrency tests",
     "ignore: Tests to be skipped",
     "skipGrammarCheck: Skip grammar validation for this scenario",

@@ -18,6 +18,9 @@ uv run pytest tests/tck/ --alluredir=allure-results
 # Run specific suite
 ./scripts/run_suite.sh clauses
 
+# Run capacity suite (currently placeholder scenarios only)
+./scripts/run_suite.sh capacity
+
 # Collect tests without executing (verify framework)
 uv run pytest tests/ --co
 

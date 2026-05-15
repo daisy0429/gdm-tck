@@ -3,7 +3,7 @@
 # 用法:
 #   ./scripts/run_suite.sh <suite> [options]
 #   ./scripts/run_suite.sh --features <features_path> [options]
-# 套件: tck, clauses, expressions, ddl, dml, index, constraint, national_std, functional, performance, all
+# 套件: tck, clauses, expressions, ddl, dml, index, constraint, national_std, capacity, functional, performance, all
 # --features: 指定 features/ 下的子路径执行用例
 #   例如: --features 0-original/clauses/match
 #         --features 1-metadata/Concurrent
@@ -78,6 +78,9 @@ case "$SUITE" in
     national_std)
         run_pytest "national_standard" "tests/tck/test_national_std.py"
         ;;
+    capacity)
+        run_pytest "capacity" "tests/tck/test_capacity.py"
+        ;;
     functional)
         run_pytest "functional" "tests/functional/"
         ;;
@@ -89,7 +92,7 @@ case "$SUITE" in
         ;;
     *)
         echo "Unknown suite: $SUITE"
-        echo "Available: tck, clauses, expressions, ddl, dml, index, constraint, national_std, functional, performance, all"
+        echo "Available: tck, clauses, expressions, ddl, dml, index, constraint, national_std, capacity, functional, performance, all"
         echo "Or use: --features <path>  (e.g. --features 0-original/clauses/match)"
         exit 1
         ;;
