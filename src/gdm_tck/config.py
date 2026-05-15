@@ -249,7 +249,7 @@ def _validate_settings(settings: Settings) -> None:
         raise ConfigurationError("server.timeouts.connect_secs must be positive")
     if settings.server.timeouts.query_secs <= 0:
         raise ConfigurationError("server.timeouts.query_secs must be positive")
-    _KNOWN_BACKENDS = {"gdm", "neo4j", "memgraph"}
+    _KNOWN_BACKENDS = {"gdm", "neo4j", "gdmbase"}
     if settings.server.backend not in _KNOWN_BACKENDS:
         logger.warning(
             "Unknown backend '%s'; agent patch will be skipped. "

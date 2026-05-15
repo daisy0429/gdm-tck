@@ -1,7 +1,7 @@
 """Bolt 兼容图库 Agent 补丁模块。
 
 Neo4j Python 驱动默认仅接受 Neo4j server agent 标识。
-其他 Bolt 兼容图库（如 GDM、Memgraph）返回各自前缀的 agent，
+其他 Bolt 兼容图库（如 GDM、GdmBase）返回各自前缀的 agent，
 需要 monkey-patch 驱动以接受这些标识。
 
 通过 BACKEND_AGENT_PREFIXES 字典管理各 backend 的允许前缀。
@@ -20,7 +20,7 @@ _PATCHED_PREFIXES: list[str] = []
 
 BACKEND_AGENT_PREFIXES: dict[str, list[str]] = {
     "gdm": ["GDM/"],
-    "memgraph": ["Memgraph/"],
+    "gdmbase": ["GdmBase/"],
 }
 
 _TARGET_MODULES = [
@@ -40,7 +40,7 @@ def apply_agent_patch(backend: str) -> None:
     neo4j 等原生支持的 backend 不在字典中，自动跳过。
 
     Args:
-        backend: 后端类型标识，如 "gdm"、"neo4j"、"memgraph"。
+        backend: 后端类型标识，如 "gdm"、"neo4j"、"gdmbase"。
     """
     global _PATCHED, _PATCHED_PREFIXES
 

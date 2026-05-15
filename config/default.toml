@@ -3,7 +3,7 @@
 # 例: GDM_TCK_SERVER__BOLT_URI=bolt://host:port
 
 [server]
-backend = "gdm"                        # gdm | neo4j | 预留其他图库举例memgraph | 其他 Bolt 兼容图库
+backend = "gdm"                        # gdm | neo4j | gdmbase | 其他 Bolt 兼容图库
 mode = "standalone"                    # standalone | distributed
 bolt_uri = "bolt://10.86.11.245:7690"
 bolt_uris = []                         # 分布式模式下多节点URI列表

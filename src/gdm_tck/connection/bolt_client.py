@@ -51,7 +51,7 @@ class BoltClient:
             username: 认证用户名。
             password: 认证密码。
             database: 目标数据库名称。
-            backend: 后端类型，如 "gdm"、"neo4j"、"memgraph"。
+            backend: 后端类型，如 "gdm"、"neo4j"、"gdmbase"。
             pool_size: 连接池最大连接数。
             timeout_secs: 查询超时时间（秒）。
         """
