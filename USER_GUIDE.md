@@ -9,6 +9,7 @@
   - [运行所有测试](#运行所有测试)
   - [运行特定测试套件](#运行特定测试套件)
   - [按功能目录运行](#按功能目录运行)
+  - [运行指定图库后端的测试](#运行指定图库后端的测试)
   - [并行执行](#并行执行)
   - [生成测试报告](#生成测试报告)
 - [测试结果分析](#测试结果分析)
@@ -63,8 +64,11 @@ uv run pytest tests/ --co
 
 ### 4. 运行测试
 ```bash
-# 运行所有 TCK 测试
-uv run pytest tests/tck/ --alluredir=allure-results
+# 运行所有 TCK 测试并生成 Allure 报告
+uv run pytest tests/tck/ --alluredir=reports/allure-results
+
+# 运行指定测试用例目录下的测试
+uv run pytest tests/tck/ --features=0-original/expressions/aggregation --alluredir=reports/allure-results
 ```
 
 ## 配置说明
@@ -95,7 +99,7 @@ export GDM_TCK_CONFIG=config/ci.toml
 ### 运行所有测试
 ```bash
 # 运行所有 TCK 测试
-uv run pytest tests/tck/ --alluredir=allure-results
+uv run pytest tests/tck/ --alluredir=reports/allure-results
 
 # 使用脚本运行
 ./scripts/run_suite.sh tck
@@ -146,8 +150,9 @@ uv run pytest tests/tck/ --alluredir=allure-results
 # 运行 0-original 目录下的所有测试
 uv run pytest tests/tck/ --features=0-original
 
-# 运行 0-original/clauses/match 目录下的测试
-uv run pytest tests/tck/ --features=0-original/clauses/match
+# 运行 0-original/expressions/aggregation 目录下的测试
+uv run pytest tests/tck/ --features=0-original/expressions/aggregation
+
 
 # 运行 1-metadata/Concurrent 目录下的测试
 uv run pytest tests/tck/ --features=1-metadata/Concurrent
@@ -155,6 +160,93 @@ uv run pytest tests/tck/ --features=1-metadata/Concurrent
 # 使用脚本运行
 ./scripts/run_suite.sh --features 0-original/clauses/match
 ```
+
+### 运行指定图库后端的测试
+
+GDM TCK 支持对多种 Bolt 兼容图库运行测试，通过 `server.backend` 配置项切换后端。当前支持的后端：
+
+| Backend | 说明 | Agent 补丁 |
+|---------|------|-----------|
+| `gdm` | GDM 图数据库（默认） | 自动 patch，接受 `GDM/` 前缀 |
+| `neo4j` | Neo4j | 无需 patch，使用原生驱动 |
+| `gdmbase` | GdmBase | 自动 patch，接受 `GdmBase/` 前缀 |
+
+> **原理**：Neo4j Python 驱动默认仅接受 Neo4j 自身的 server agent 标识。GDM 等非 Neo4j 图库返回各自的 agent 前缀（如 `GDM/`），框架会自动 monkey-patch 驱动以兼容。`neo4j` 后端不会触发 patch，保持原生行为。
+
+
+以下三种方式优先级：环境变量 > 指定配置文件 > default.toml。
+
+#### 方式一：使用预置配置文件（推荐）
+
+项目内置了各后端的配置文件，通过 `GDM_TCK_CONFIG` 环境变量指定：
+
+```bash
+# 基于 GDM 运行（默认）
+uv run pytest tests/tck/ --alluredir=reports/allure-results
+
+# 基于 Neo4j 运行
+GDM_TCK_CONFIG=config/neo4j.toml uv run pytest tests/tck/ --alluredir=reports/allure-results
+```
+
+内置配置文件一览：
+
+| 文件 | 用途 |
+|------|------|
+| `config/default.toml` | GDM 默认配置 |
+| `config/neo4j.toml` | Neo4j 后端配置 |
+| `config/distributed.toml` | 分布式模式配置覆盖 |
+| `config/ci.toml` | CI 环境配置覆盖 |
+
+#### 方式二：通过环境变量覆盖
+
+无需修改配置文件，直接通过环境变量切换后端和连接信息：
+环境变量优先级高于配置文件。
+
+```bash
+# 基于 GDM 运行
+GDM_TCK_SERVER__BACKEND=gdm \
+GDM_TCK_SERVER__BOLT_URI=bolt://your-gdm-host:7690 \
+GDM_TCK_SERVER__USERNAME=admin \
+GDM_TCK_SERVER__PASSWORD=admin123 \
+uv run pytest tests/tck/ --alluredir=reports/allure-results
+
+# 基于 Neo4j 运行
+GDM_TCK_SERVER__BACKEND=neo4j \
+GDM_TCK_SERVER__BOLT_URI=bolt://your-neo4j-host:7687 \
+GDM_TCK_SERVER__USERNAME=neo4j \
+GDM_TCK_SERVER__PASSWORD=your-password \
+GDM_TCK_SERVER__DATABASE=neo4j \
+uv run pytest tests/tck/ --alluredir=reports/allure-results
+```
+
+#### 方式三：修改配置文件
+
+编辑 `config/default.toml`，修改 `server.backend` 及相关连接参数：
+
+```toml
+# 切换到 Neo4j
+[server]
+backend = "neo4j"
+bolt_uri = "bolt://localhost:7687"
+username = "neo4j"
+password = "your-password"
+database = "neo4j"
+
+# 切换回 GDM
+[server]
+backend = "gdm"
+bolt_uri = "bolt://localhost:7690"
+username = "admin"
+password = "admin123"
+database = "default"
+```
+
+#### 注意事项
+
+- 切换后端后，请确保目标图库服务正在运行且连接信息正确
+- 不同后端的默认端口不同：Neo4j 通常使用 `7687`
+- 不同后端的默认数据库名称不同：GDM 使用 `default`，Neo4j 使用 `neo4j`
+- 如果使用未注册的后端标识（非 `gdm`/`neo4j`/`gdmbase`），框架会发出警告且不应用 agent 补丁；若该图库使用非标准 agent 前缀，需在 `src/gdm_tck/connection/agent_patch.py` 的 `BACKEND_AGENT_PREFIXES` 中注册
 
 ### 并行执行
 使用 pytest-xdist 插件可以并行执行测试：
@@ -183,8 +275,39 @@ uv run pytest tests/tck/ -k "match"
 
 ### 生成测试报告
 ```bash
-# 生成 Allure 报告
-./scripts/generate_report.sh
+# 运行测试并收集allure数据，生成allure报告
+GDM_TCK_CONFIG=config/neo4j.toml uv run pytest tests/tck/ --features=0-original/expressions/aggregation --alluredir=reports/allure-results
+./scripts/generate_report.sh reports/allure-results reports/allure-report
+（generate_report.sh 默认读取 allure-results 目录）
+
+# 运行测试并收集 Allure 数据
+uv run pytest tests/tck/ --alluredir=reports/allure-results
+
+# 生成 HTML 报告
+allure generate reports/allure-results -o reports/allure-report --clean
+
+# 在浏览器中查看报告
+allure open reports/allure-report
+
+# 或使用一键脚本
+bash scripts/run_suite.sh
+bash scripts/generate_report.sh
+```
+### 其他常用命令参考 
+
+```
+# 设置超时（每个用例 30 秒）
+uv run pytest tests/tck/ --timeout=30
+
+# 跳过带 @ignore 标记的用例
+uv run pytest tests/tck/ -m "not ignore"
+
+# 失败后立即停止
+uv run pytest tests/tck/ -x
+
+# 仅重跑上次失败的用例
+uv run pytest tests/tck/ --lf
+
 ```
 
 ## 测试结果分析

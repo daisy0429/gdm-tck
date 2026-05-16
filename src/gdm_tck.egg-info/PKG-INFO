@@ -9,6 +9,9 @@ Requires-Dist: pytest-bdd<8,>=7.0
 Requires-Dist: allure-pytest<3,>=2.13
 Requires-Dist: pytest-xdist<4,>=3.5
 Requires-Dist: pytest-timeout<3,>=2.2
+Requires-Dist: grpcio>=1.80.0
+Requires-Dist: grpcio-tools>=1.80.0
+Requires-Dist: grpcio-reflection>=1.80.0
 Provides-Extra: grpc
 Requires-Dist: grpcio>=1.60; extra == "grpc"
 Requires-Dist: grpcio-tools>=1.60; extra == "grpc"

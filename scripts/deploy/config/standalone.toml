@@ -98,10 +98,10 @@ enable_cypher = true
 
 [rest]
 # 是否启用官方 HTTP JSON REST API。默认关闭，避免改变现有部署暴露面。
-enabled = false
+enabled = true
 
 # REST public API 监听地址；enabled = true 时必须非空。
-public_listen_addr = "127.0.0.1:8080"
+public_listen_addr = "10.86.11.245:8080"
 
 # 兼容保留字段：REST public/admin 路由已合并到 public_listen_addr，本字段不再创建独立 listener。
 # admin_listen_addr = "127.0.0.1:8081"
@@ -109,10 +109,16 @@ public_listen_addr = "127.0.0.1:8080"
 # 单个 REST 请求超时时间，单位：秒。
 request_timeout_secs = 120
 
-# 单个 REST JSON 请求体大小上限，单位：字节。
+# 单个 REST JSON 请求体大小上限，单位：字节。默认10MB
 max_body_bytes = 10485760
 
 # 可选 CORS origin 白名单；为空表示不注入 CORS 层。
+# by AI:cors_origins 是 REST Gateway 的 CORS（Cross-Origin Resource Sharing）origin 白名单配置项（第116行，位于 [rest] 下）。
+#含义： 控制哪些前端域名（origin）被允许跨域访问 GDM 的 REST API（public_listen_addr）。
+#功能： 浏览器执行跨域 HTTP 请求时，会先发 OPTIONS 预检请求。GDM REST 服务根据 cors_origins 列表在响应中注入 Access-Control-Allow-Origin 等 CORS 头。只有 origin 在白名单中的请求才被浏览器放行。
+#当前值 []： 为空表示不注入任何 CORS 头，即 REST API 不允许任何跨域访问（仅同源请求可用）。
+#示例： 若前端部署在 https://dashboard.example.com，需配置：
+#cors_origins = ["https://dashboard.example.com"]
 cors_origins = []
 
 
@@ -120,6 +126,13 @@ cors_origins = []
 
 [metadata]
 # 元数据校验策略。枚举值：strict、non_strict。
+# GDM 的 Schema 治理模式，决定写入数据时是否需要预先声明 Schema。
+# 严格模式：必须先定义 Schema，才能写入数据。 未声明的标签/边类型/属性会被拒绝。
+# 非严格模式：无需预先声明 Schema，直接写入数据，Schema 自动推导。
+# show graphs可查看该值
+# 该配置项是全局模式，影响所有图
+# 单图级别：gdm-admin catalog graph create --strict 可设置图级别的严格模式
+# 实测：本配置项设为严格模式。创图需要手动指定为严格模式，图才是严格模式。创图使用默认选项，则仍然是非严格模式。
 mode = "strict"
 
 # 是否在访问不存在的 graph routing 时自动创建。仅建议开发/演示环境使用；生产建议 false。

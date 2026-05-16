@@ -1,1 +1,0 @@
-INFO     gdm_tck.connection.bolt_client:bolt_client.py:98 Disconnected from bolt://10.86.11.245:7690

@@ -69,6 +69,7 @@ def pytest_collection_modifyitems(
     target_dir = _resolve_features_path(features_arg).resolve()
 
     kept: list[pytest.Item] = []
+    deselected: list[pytest.Item] = []
     for item in items:
         scenario = (
             getattr(item.function, "__scenario__", None) if hasattr(item, "function") else None
@@ -81,8 +82,10 @@ def pytest_collection_modifyitems(
             feat_path.relative_to(target_dir)
             kept.append(item)
         except ValueError:
-            pass
+            deselected.append(item)
 
+    if deselected:
+        config.hook.pytest_deselected(items=deselected)
     items[:] = kept
 
 

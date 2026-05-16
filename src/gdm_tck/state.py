@@ -1,6 +1,4 @@
 """BDD 场景状态容器模块。
-
-ScenarioContext 替代 cypher-tck 中的包级全局变量，
 为每个 BDD 场景提供独立的运行时状态，支持并行执行。
 """
 

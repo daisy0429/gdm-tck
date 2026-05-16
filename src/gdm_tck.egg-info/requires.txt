@@ -4,6 +4,9 @@ pytest-bdd<8,>=7.0
 allure-pytest<3,>=2.13
 pytest-xdist<4,>=3.5
 pytest-timeout<3,>=2.2
+grpcio>=1.80.0
+grpcio-tools>=1.80.0
+grpcio-reflection>=1.80.0
 
 [dev]
 ruff>=0.4

@@ -10,6 +10,9 @@ dependencies = [
     "allure-pytest>=2.13,<3",
     "pytest-xdist>=3.5,<4",
     "pytest-timeout>=2.2,<3",
+    "grpcio>=1.80.0",
+    "grpcio-tools>=1.80.0",
+    "grpcio-reflection>=1.80.0",
 ]
 
 [project.optional-dependencies]
