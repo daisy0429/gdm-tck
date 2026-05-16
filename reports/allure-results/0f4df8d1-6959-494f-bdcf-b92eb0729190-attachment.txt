@@ -1,0 +1,1 @@
+INFO     steps.step_graph_init:step_graph_init.py:60 TCK procedure declaration (not supported in GDM): test.my.proc(name

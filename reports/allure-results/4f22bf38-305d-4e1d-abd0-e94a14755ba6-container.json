@@ -1,0 +1,1 @@
+{"uuid": "7d2abae2-6c22-4deb-99c4-2a6475e23902", "befores": [{"name": "pytestbdd_stepdef_given_there exists a procedure (?P<proc_signature>.+)", "status": "passed", "start": 1778738160154, "stop": 1778738160154}], "start": 1778738160154, "stop": 1778738160180}

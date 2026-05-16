@@ -29,7 +29,8 @@ tests/tck/_dynamic_features_collector.py
 allure-results/
 allure-report/
 reports/
-docs/
+
+docs
 AGENTS.md
 
 # mypy
