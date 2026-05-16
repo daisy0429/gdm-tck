@@ -1,0 +1,530 @@
+# GDM 三节点最小生产集群 — 节点 3 配置
+# 服务器: 10.86.11.245 | 部署路径: /data/workspace/010/cluster/node3
+# 端口规划: gRPC内部=9820, gRPC公开=15003, Bolt=7689, Metrics=9092
+
+# todo for cluster: 节点 3 的 node_id
+node_id = 3
+
+mode = "distributed"
+
+# todo for cluster: 节点 3 内部 gRPC/Raft 端口 9820
+listen_addr = "10.86.11.245:9820"
+
+shutdown_grace_secs = 30
+
+# todo for cluster: 节点 3 独立数据目录
+#data_dir = "/data/workspace/010/cluster/node3/data"
+data_dir = "./data"
+
+engine = "rocksdb"
+
+deployment_id = "gdm-test"
+
+
+# ---- 集群拓扑 -------------------------------------------------------------
+
+[cluster]
+partitions = [0]
+initial_members = [1, 2, 3]
+
+[[cluster.peers]]
+id = 1
+addr = "10.86.11.245:9800"
+
+[[cluster.peers]]
+id = 2
+addr = "10.86.11.245:9810"
+
+[[cluster.peers]]
+id = 3
+addr = "10.86.11.245:9820"
+
+
+# ---- 节点角色 -------------------------------------------------------------
+
+[roles]
+enable_metadata = true
+enable_store = true
+enable_gateway = true
+
+
+# ---- 默认图空间 -----------------------------------------------------------
+
+[space]
+shard_count = 8
+# todo for cluster: 3 节点集群副本数为 3
+replication_factor = 3
+
+
+# ---- Gateway --------------------------------------------------------------
+
+[gateway]
+enable_cypher = true
+
+
+# ---- Metadata -------------------------------------------------------------
+
+[metadata]
+mode = "strict"
+auto_create_graph_routing = false
+
+[metadata.propose]
+compaction_threshold = 1000
+propose_max_wait_ms = 15000
+propose_retry_backoff_ms = 100
+local_apply_max_wait_ms = 5000
+local_apply_poll_ms = 20
+
+
+# ---- gRPC -----------------------------------------------------------------
+
+[grpc]
+# todo for cluster: 节点 3 公开 gRPC 端口 15003
+public_listen_addr = "10.86.11.245:15003"
+
+secure = false
+max_connections = 2048
+max_concurrent_streams = 256
+concurrency_limit_per_connection = 1024
+request_timeout_secs = 660
+tcp_keepalive_secs = 60
+http2_keepalive_interval_secs = 20
+http2_keepalive_timeout_secs = 5
+max_connection_age_secs = 0
+stream_buffer = 128
+
+
+# ---- Bolt -----------------------------------------------------------------
+
+[bolt]
+# todo for cluster: 节点 3 Bolt 端口 7689
+listen_addr = "0.0.0.0:7689"
+enabled = true
+secure = false
+advertise_address = "10.86.11.245:7689"
+
+max_sessions = 8192
+idle_timeout_secs = 0
+handshake_timeout_ms = 30000
+accept_backlog = 1024
+shutdown_drain_secs = 5
+tcp_keepalive_secs = 60
+tcp_nodelay = true
+
+
+# ---- Raft -----------------------------------------------------------------
+
+[raft]
+tick_interval_ms = 100
+
+# todo for cluster: 节点 3 独立 Raft 日志目录
+#log_dir = "/data/workspace/010/cluster/node3/data/raft-log"
+log_dir = "./log/raft-log"
+
+election_tick = 30
+heartbeat_tick = 3
+max_size_per_msg = 1048576
+max_inflight_msgs = 256
+snapshot_interval = 10000
+fold_meta_raft_log = true
+
+[raft.driver]
+leader_linearizable_fast_path = false
+linearizable_store_reads = true
+read_index_wait_ms = 10000
+read_index_apply_wait_ms = 10000
+read_index_poll_ms = 5
+propose_timeout_ms = 30000
+conf_change_timeout_ms = 30000
+startup_grpc_ready_timeout_ms = 30000
+startup_meta_leader_timeout_ms = 30000
+startup_poll_interval_ms = 100
+
+[raft.transport]
+compress_large_messages = false
+max_frame_bytes = 16777216
+max_message_bytes = 67108864
+max_inflight = 256
+connect_timeout_ms = 5000
+request_timeout_ms = 30000
+max_connect_retries = 20
+initial_backoff_ms = 50
+max_backoff_ms = 2000
+
+[raft.fast_ack]
+enabled = false
+async_sm_apply = false
+async_sm_apply_max_pending = 1024
+
+
+# ---- RaftEngine -----------------------------------------------------------
+
+[raft_engine]
+bytes_per_sync = 1048576
+
+
+# ---- 存储 -----------------------------------------------------------------
+
+[storage]
+cache_capacity_bytes = 67108864
+dedup_ttl_secs = 300
+max_props_per_element = 128
+
+[storage.gc]
+interval_secs = 300
+retention_ts = 10000
+max_versions_per_pass = 4096
+
+[storage.txn_recovery]
+interval_secs = 5
+commit_unknown_interval_secs = 1
+max_locks_per_pass = 1024
+backlog_threshold = 10000
+oldest_pending_age_not_ready_ms = 300000
+
+[storage.rocksdb]
+commit_durability = "sync_each_batch"
+enable_pipelined_write = true
+allow_concurrent_memtable_write = true
+enable_write_thread_adaptive_yield = true
+max_subcompactions = 4
+max_open_files = -1
+max_background_jobs = 4
+total_write_buffer_bytes = 4294967296
+total_block_cache_bytes = 4294967296
+sync_writes = false
+sm_disable_wal = false
+
+[storage.rocksdb.data]
+write_buffer_size = 67108864
+max_write_buffer_number = 3
+compression = "lz4"
+block_size = 16384
+bloom_bits_per_key = 10.0
+whole_key_filtering = true
+cache_index_and_filter_blocks = true
+pin_l0_filter_and_index_blocks = true
+partition_filters = true
+two_level_index = true
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.1
+disable_blob = false
+
+[storage.rocksdb.data.blob]
+min_blob_size = 1024
+file_size = 268435456
+compression = "lz4"
+enable_gc = true
+gc_age_cutoff = 0.25
+
+[storage.rocksdb.entity]
+write_buffer_size = 33554432
+max_write_buffer_number = 3
+compression = "lz4"
+block_size = 16384
+bloom_bits_per_key = 10.0
+whole_key_filtering = true
+cache_index_and_filter_blocks = true
+pin_l0_filter_and_index_blocks = true
+partition_filters = true
+two_level_index = true
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.0
+disable_blob = true
+
+[storage.rocksdb.prop]
+write_buffer_size = 67108864
+max_write_buffer_number = 3
+compression = "lz4"
+block_size = 16384
+bloom_bits_per_key = 10.0
+whole_key_filtering = true
+cache_index_and_filter_blocks = true
+pin_l0_filter_and_index_blocks = true
+partition_filters = true
+two_level_index = true
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.1
+disable_blob = false
+
+[storage.rocksdb.prop.blob]
+min_blob_size = 1024
+file_size = 268435456
+compression = "lz4"
+enable_gc = true
+gc_age_cutoff = 0.25
+
+[storage.rocksdb.adj]
+write_buffer_size = 33554432
+max_write_buffer_number = 3
+compression = "lz4"
+block_size = 8192
+bloom_bits_per_key = 10.0
+whole_key_filtering = false
+cache_index_and_filter_blocks = true
+pin_l0_filter_and_index_blocks = true
+partition_filters = true
+two_level_index = true
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.1
+disable_blob = true
+
+[storage.rocksdb.counter]
+write_buffer_size = 8388608
+max_write_buffer_number = 3
+compression = "none"
+block_size = 4096
+bloom_bits_per_key = 10.0
+whole_key_filtering = true
+cache_index_and_filter_blocks = true
+pin_l0_filter_and_index_blocks = true
+partition_filters = false
+two_level_index = false
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.0
+disable_blob = true
+
+[storage.rocksdb.index]
+write_buffer_size = 67108864
+max_write_buffer_number = 3
+compression = "lz4"
+block_size = 8192
+bloom_bits_per_key = 10.0
+whole_key_filtering = true
+cache_index_and_filter_blocks = true
+pin_l0_filter_and_index_blocks = true
+partition_filters = true
+two_level_index = true
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.1
+disable_blob = true
+
+[storage.rocksdb.lock]
+write_buffer_size = 1048576
+max_write_buffer_number = 2
+compression = "none"
+block_size = 4096
+bloom_bits_per_key = 0.0
+whole_key_filtering = false
+cache_index_and_filter_blocks = false
+pin_l0_filter_and_index_blocks = false
+partition_filters = false
+two_level_index = false
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.0
+disable_blob = true
+
+[storage.rocksdb.write]
+write_buffer_size = 1048576
+max_write_buffer_number = 2
+compression = "none"
+block_size = 4096
+bloom_bits_per_key = 0.0
+whole_key_filtering = false
+cache_index_and_filter_blocks = false
+pin_l0_filter_and_index_blocks = false
+partition_filters = false
+two_level_index = false
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.0
+disable_blob = true
+
+[storage.rocksdb.log]
+write_buffer_size = 8388608
+max_write_buffer_number = 4
+compression = "none"
+block_size = 4096
+bloom_bits_per_key = 0.0
+whole_key_filtering = false
+cache_index_and_filter_blocks = false
+pin_l0_filter_and_index_blocks = false
+partition_filters = false
+two_level_index = false
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.0
+disable_blob = true
+
+[storage.rocksdb.meta]
+write_buffer_size = 1048576
+max_write_buffer_number = 2
+compression = "none"
+block_size = 4096
+bloom_bits_per_key = 0.0
+whole_key_filtering = false
+cache_index_and_filter_blocks = false
+pin_l0_filter_and_index_blocks = false
+partition_filters = false
+two_level_index = false
+disable_prefix_extractor = false
+memtable_prefix_bloom_ratio = 0.0
+disable_blob = true
+
+
+# ---- Resource Pool --------------------------------------------------------
+
+[resource_pool.global]
+total_memory_bytes = 8589934592
+
+[resource_pool.query]
+max_concurrency = 128
+memory_bytes = 4294967296
+max_memory_per_task = 536870912
+default_timeout_ms = 600000
+rate_limit_rps = 2000
+max_waiters = 1024
+
+[resource_pool.system]
+max_concurrency = 8
+memory_bytes = 2147483648
+max_memory_per_task = 1073741824
+default_timeout_ms = 0
+rate_limit_rps = 0
+max_waiters = 128
+
+[resource_pool.maintenance]
+max_concurrency = 2
+memory_bytes = 536870912
+max_memory_per_task = 268435456
+default_timeout_ms = 0
+rate_limit_rps = 0
+max_waiters = 32
+
+[resource_pool.admin]
+max_concurrency = 16
+memory_bytes = 268435456
+max_memory_per_task = 67108864
+default_timeout_ms = 10000
+rate_limit_rps = 0
+max_waiters = 256
+
+
+# ---- Scheduler ------------------------------------------------------------
+
+[scheduler]
+scheduler_v1 = true
+tick_ms = 500
+
+
+# ---- Query ----------------------------------------------------------------
+
+[query]
+varlen_max_paths_per_start = 10000
+scan_page_size = 1024
+
+[query.shortest_path]
+max_visited = 50000
+max_fanout_per_vertex = 5000
+
+[query.plan_cache]
+enabled = true
+max_entries = 4096
+
+
+# ---- Observability --------------------------------------------------------
+
+[observability]
+log_format = "json"
+default_level = "info"
+# todo for cluster: 节点 3 metrics 端口 9092
+metrics_addr = "10.86.11.245:9092"
+
+tracing_enabled = false
+otlp_endpoint = "http://127.0.0.1:4317"
+service_name = "gdm-node3"
+service_namespace = "graphdb"
+trace_sample_ratio = 0.01
+trace_export_timeout_ms = 3000
+propagate_internal = true
+
+[observability.filters]
+raft = "warn"
+
+[observability.console]
+enabled = true
+
+[observability.file]
+enabled = true
+# todo for cluster: 节点 3 独立日志目录
+#dir = "/data/workspace/010/cluster/node3/logs"
+dir = "./logs"
+
+prefix = "gdm-node3"
+rotation = "daily"
+max_files = 14
+
+[observability.trace_resource_attrs]
+deployment = "prod"
+region = "cluster-node3"
+
+
+# ---- UDF ------------------------------------------------------------------
+
+[udf]
+enabled = false
+policy = "overwrite"
+on_error = "continue"
+exclude = []
+
+
+# ---- Security ---------------------------------------------------------
+
+[security.credentials]
+storage = "system_graph"
+
+[security.password]
+m_cost_kib = 19456
+t_cost = 2
+p_cost = 1
+output_len = 32
+
+[security.audit]
+enabled = true
+# todo for cluster: 节点 3 独立审计落盘路径
+#path = "/data/workspace/010/cluster/node3/data/audit.jsonl"
+path = "./audit/audit.jsonl"
+
+ring_cap = 256
+ring_enabled = true
+flush_every_entries = 64
+flush_interval_ms = 1000
+rotation = "daily"
+max_files = 30
+sample_allow = 1.0
+max_per_sec = 0
+flush_drain_secs = 2
+
+[security.providers]
+schemes = ["basic"]
+ldap_enabled = false
+oidc_enabled = false
+
+[security.bootstrap]
+password_change_required = false
+
+
+# ---- Node Liveness / Seed Backoff -----------------------------------------
+
+[node_liveness]
+heartbeat_interval_ms = 5000
+heartbeat_timeout_ms = 30000
+
+[seed_backoff]
+initial_backoff_ms = 200
+max_backoff_ms = 30000
+multiplier = 1.501
+grpc_ready_timeout_ms = 30000
+grpc_ready_poll_ms = 100
+meta_leader_wait_timeout_ms = 30000
+shard_reconcile_interval_ms = 10000
+
+
+# ---- Transaction / Index / TSO -------------------------------------------
+
+[txn]
+default_begin_timeout_ms = 60000
+
+[index.fulltext]
+writer_heap_bytes = 50000000
+
+[tso]
+batch_size = 50000

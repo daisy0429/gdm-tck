@@ -1,0 +1,41 @@
+# Neo4j 后端配置
+# 用法: GDM_TCK_CONFIG=config/neo4j.toml uv run pytest tests/tck/ -v
+# 或:   GDM_TCK_SERVER__BACKEND=neo4j GDM_TCK_SERVER__BOLT_URI=bolt://localhost:7687 ...
+
+[server]
+backend = "neo4j"
+mode = "standalone"
+bolt_uri = "bolt://10.86.11.219:7687"
+bolt_uris = []
+username = "neo4j"
+password = "12345678"
+database = "neo4j"
+
+[server.timeouts]
+connect_secs = 30.0
+query_secs = 60.0
+ready_secs = 60.0
+retry_interval_secs = 2.0
+max_retries = 5
+
+[server.pool]
+max_size = 50
+
+[server.metrics]
+url = "http://localhost:2004"
+
+[grpc]
+enabled = false
+address = "localhost:9830"
+
+[test]
+tags = "not ignore"
+parallel_workers = 1
+feature_base_path = "features"
+
+[report]
+allure_results_dir = "allure-results"
+
+[performance]
+default_workers = 4
+default_duration_secs = 30

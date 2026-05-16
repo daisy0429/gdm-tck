@@ -1,0 +1,71 @@
+[project]
+name = "gdm-tck"
+version = "0.1.0"
+description = "GDM Graph Database TCK (Technology Compatibility Kit) Test Framework"
+requires-python = ">=3.11"
+dependencies = [
+    "neo4j>=5.20,<6",
+    "pytest>=8.2,<9",
+    "pytest-bdd>=7.0,<8",
+    "allure-pytest>=2.13,<3",
+    "pytest-xdist>=3.5,<4",
+    "pytest-timeout>=2.2,<3",
+]
+
+[project.optional-dependencies]
+grpc = ["grpcio>=1.60", "grpcio-tools>=1.60"]
+dev = ["ruff>=0.4", "mypy>=1.10"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["gdm_tck*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --strict-markers --timeout=120"
+markers = [
+    "tck: openCypher TCK standard compliance tests",
+    "ddl: Data Definition Language tests",
+    "dml: Data Manipulation Language tests",
+    "index: Index creation and management tests",
+    "constraint: Constraint tests",
+    "national_standard: Chinese national standard compliance tests",
+    "functional: Non-BDD functional tests",
+    "performance: Performance and throughput tests",
+    "security: Authentication and RBAC tests",
+    "transaction: Transaction tests",
+    "charset: Character set compliance tests",
+    "import_export: Import and export tests",
+    "backup_restore: Backup and restore tests",
+    "gql: GQL language tests",
+    "graph_computing: Graph computing tests",
+    "cli: gdm-cli tool automation tests",
+    "admin: gdm-admin tool automation tests",
+    "job: Job management tests",
+    "server_programming: UDF and stored procedure tests",
+    "distributed: Distributed capability tests",
+    "observability: Operations and observability tests",
+    "capacity: Database capacity and scale limit tests",
+    "concurrent: Concurrency tests",
+    "ignore: Tests to be skipped",
+    "skipGrammarCheck: Skip grammar validation for this scenario",
+    "skipStyleCheck: Skip style validation for this scenario",
+    "allowCustomErrors: Allow custom error messages in this scenario",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true

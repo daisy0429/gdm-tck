@@ -1,0 +1,41 @@
+# GDM TCK 测试框架默认配置
+# 环境变量覆盖: 前缀 GDM_TCK_, 双下划线表示嵌套层级
+# 例: GDM_TCK_SERVER__BOLT_URI=bolt://host:port
+
+[server]
+backend = "gdm"                        # gdm | neo4j | gdmbase | 其他 Bolt 兼容图库
+mode = "standalone"                    # standalone | distributed
+bolt_uri = "bolt://10.86.11.245:7690"
+bolt_uris = []                         # 分布式模式下多节点URI列表
+username = "admin"
+password = "admin123"
+database = "default"
+
+[server.timeouts]
+connect_secs = 30.0
+query_secs = 60.0
+ready_secs = 300.0
+retry_interval_secs = 5.0
+max_retries = 10
+
+[server.pool]
+max_size = 100
+
+[server.metrics]
+url = "http://10.86.11.245:9095"
+
+[grpc]
+enabled = false
+address = "10.86.11.245:9830"
+
+[test]
+tags = "not ignore"
+parallel_workers = 1
+feature_base_path = "features"
+
+[report]
+allure_results_dir = "allure-results"
+
+[performance]
+default_workers = 4
+default_duration_secs = 30
