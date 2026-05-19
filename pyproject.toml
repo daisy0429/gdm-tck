@@ -59,6 +59,7 @@ markers = [
     "skipGrammarCheck: Skip grammar validation for this scenario",
     "skipStyleCheck: Skip style validation for this scenario",
     "allowCustomErrors: Allow custom error messages in this scenario",
+    "todo-ldbc: Scenarios pending LDBC standard clarification",
 ]
 
 [tool.ruff]

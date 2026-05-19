@@ -7,14 +7,18 @@ import logging
 
 import pytest
 
-# 注册所有 step definitions（必须在顶层 conftest 中定义）
+# 注册所有 step definitions 和 reporting 钩子（必须在顶层 conftest 中定义）
 pytest_plugins = [
     "steps.step_graph_init",
     "steps.step_query_exec",
     "steps.step_result_assert",
+    "steps.step_plan_assert",
     "steps.step_error_assert",
     "steps.step_side_effects",
     "steps.step_parameters",
+    "steps.step_schema_assert",
+    "gdm_tck.reporting.allure_hooks",
+    "gdm_tck.reporting.step_reporter",
 ]
 
 from gdm_tck.config import load_settings, Settings

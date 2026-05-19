@@ -18,6 +18,7 @@ src/gdm_tck/connection/bolt_pool.py
 src/gdm_tck/connection/grpc_client.py
 src/gdm_tck/reporting/__init__.py
 src/gdm_tck/reporting/allure_hooks.py
+src/gdm_tck/reporting/step_reporter.py
 src/gdm_tck/reporting/summary.py
 src/gdm_tck/result/__init__.py
 src/gdm_tck/result/comparator.py
