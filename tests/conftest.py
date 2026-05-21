@@ -36,6 +36,26 @@ def pytest_configure(config):
     )
 
 
+_SKIP_MARKERS = {
+    "skip_bug": "Skipped due to known product bug",
+    "skip_script": "Skipped due to test script issue",
+    "ignore": "Skipped",
+}
+
+
+def pytest_collection_modifyitems(config, items):
+    """根据 marker 自动跳过标记了 skip_bug / skip_script / ignore 的用例。"""
+    for item in items:
+        for marker_name, default_reason in _SKIP_MARKERS.items():
+            marker = item.get_closest_marker(marker_name)
+            if marker is not None:
+                reason = marker.kwargs.get(
+                    "reason", marker.args[0] if marker.args else default_reason
+                )
+                item.add_marker(pytest.mark.skip(reason=reason))
+                break
+
+
 @pytest.fixture(scope="session")
 def settings() -> Settings:
     """加载全局配置（会话级）。"""

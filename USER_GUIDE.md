@@ -157,6 +157,9 @@ uv run pytest tests/tck/ --features=0-original/expressions/aggregation
 # 运行 1-metadata/Concurrent 目录下的测试
 uv run pytest tests/tck/ --features=1-metadata/Concurrent
 
+# 运行指定feature文件
+GDM_TCK_CONFIG=config/neo4j.toml uv run pytest tests/tck/ --features=3-Index/SecondaryIndex/01_index_node_create.feature
+
 # 使用脚本运行
 ./scripts/run_suite.sh --features 0-original/clauses/match
 ```
