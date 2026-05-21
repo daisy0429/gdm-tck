@@ -21,13 +21,18 @@ logger = logging.getLogger(__name__)
 
 @given("an empty graph")
 def an_empty_graph(bolt_pool: BoltConnectionPool, scenario_ctx: ScenarioContext):
-    """清空图数据，确保测试从空图开始。
+    """清空图数据、约束和索引，确保测试从完全空图开始。
 
-    执行 MATCH (n) DETACH DELETE n 清除所有节点和关系。
+    依次执行：
+    1. 删除所有约束（约束删除后从属索引自动清除）
+    2. 删除所有非从属索引（排除 LOOKUP 等系统索引）
+    3. 清除所有节点和关系
     """
     client = bolt_pool.primary
+    _drop_all_constraints(client, scenario_ctx.current_database)
+    _drop_all_indexes(client, scenario_ctx.current_database)
     client.execute("MATCH (n) DETACH DELETE n", database=scenario_ctx.current_database)
-    logger.debug("Graph cleared for empty graph scenario")
+    logger.debug("Graph fully cleared (data + constraints + indexes)")
 
 
 @given("any graph")
@@ -172,3 +177,49 @@ def init_graph_by_user(
     """初始化图关系/GQL（noop 标记步骤，实际操作在前置步骤中完成）。"""
     scenario_ctx.current_database = db
     logger.debug("Init graph for user '%s', DB '%s' (noop)", user, db)
+
+
+def _drop_all_constraints(client, database: str) -> None:
+    """删除当前数据库中的所有约束。"""
+    try:
+        result = client.execute("SHOW CONSTRAINTS", database=database)
+    except Exception as e:
+        logger.debug("SHOW CONSTRAINTS not supported or failed: %s", e)
+        return
+    if not result:
+        return
+    for record in result.records:
+        name = record.get("name", "")
+        if not name:
+            continue
+        try:
+            client.execute(f"DROP CONSTRAINT {name} IF EXISTS", database=database)
+            logger.debug("Dropped constraint: %s", name)
+        except Exception as e:
+            logger.warning("Failed to drop constraint %s: %s", name, e)
+
+
+def _drop_all_indexes(client, database: str) -> None:
+    """删除当前数据库中的所有非从属、非 LOOKUP 索引。"""
+    try:
+        result = client.execute("SHOW INDEXES", database=database)
+    except Exception as e:
+        logger.debug("SHOW INDEXES not supported or failed: %s", e)
+        return
+    if not result:
+        return
+    for record in result.records:
+        owning = record.get("owningConstraint")
+        if owning:
+            continue
+        idx_type = (record.get("type") or "").upper()
+        if idx_type == "LOOKUP":
+            continue
+        name = record.get("name", "")
+        if not name:
+            continue
+        try:
+            client.execute(f"DROP INDEX {name} IF EXISTS", database=database)
+            logger.debug("Dropped index: %s", name)
+        except Exception as e:
+            logger.warning("Failed to drop index %s: %s", name, e)

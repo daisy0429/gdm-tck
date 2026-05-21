@@ -97,7 +97,9 @@ Feature: Constraint unique - create
       """
       <insertCompliant>
       """
-    Then no side effects
+    Then the side effects should be:
+      | +nodes | <compliantNodes> |
+      | +relationships | <compliantRels> |
     When executing query:
       """
       <insertViolating>
@@ -105,9 +107,9 @@ Feature: Constraint unique - create
     Then a ConstraintValidationFailed should be raised at any time
 
     Examples:
-      | entityType | createCypher                                                                     | insertCompliant                                                             | insertViolating                                                            |
-      | node       | CREATE CONSTRAINT enforceNode FOR (n:EnforcedNode) REQUIRE n.code IS UNIQUE      | CREATE (:EnforcedNode {code: 'VALID1'})                                     | CREATE (:EnforcedNode {code: 'VALID1'})                                    |
-      | rel        | CREATE CONSTRAINT enforceRel FOR ()-[r:ENFORCED_REL]-() REQUIRE r.code IS UNIQUE | CREATE (a:EnfSrc1), (b:EnfDst1) , (a)-[:ENFORCED_REL {code: 'VALID1'}]->(b) | CREATE (a:EnfSrc2), (b:EnfDst2), (a)-[:ENFORCED_REL {code: 'VALID1'}]->(b) |
+      | entityType | createCypher                                                                     | insertCompliant                                                             | insertViolating                                                            | compliantNodes | compliantRels |
+      | node       | CREATE CONSTRAINT enforceNode FOR (n:EnforcedNode) REQUIRE n.code IS UNIQUE      | CREATE (:EnforcedNode {code: 'VALID1'})                                     | CREATE (:EnforcedNode {code: 'VALID1'})                                    | 1              | 0             |
+      | rel        | CREATE CONSTRAINT enforceRel FOR ()-[r:ENFORCED_REL]-() REQUIRE r.code IS UNIQUE | CREATE (a:EnfSrc1), (b:EnfDst1) , (a)-[:ENFORCED_REL {code: 'VALID1'}]->(b) | CREATE (a:EnfSrc2), (b:EnfDst2), (a)-[:ENFORCED_REL {code: 'VALID1'}]->(b) | 2              | 1             |
 
 
   # todo 04和05有啥区别
@@ -219,12 +221,14 @@ Feature: Constraint unique - create
       """
       <insertDistinctCombo>
       """
-    Then no side effects
+    Then the side effects should be:
+      | +nodes | <compliantNodes> |
+      | +relationships | <compliantRels> |
 
     Examples:
-      | entityType | createCypher1                                                                         | createCypher2                                                                       | insertDistinctCombo                                                                         |
-      | node       | CREATE CONSTRAINT uniqFirstName FOR (n:CompositePerson) REQUIRE n.firstName IS UNIQUE | CREATE CONSTRAINT uniqLastName FOR (n:CompositePerson) REQUIRE n.lastName IS UNIQUE | CREATE (:CompositePerson {firstName: 'Alice', lastName: 'Smith'})                           |
-      | rel        | CREATE CONSTRAINT uniqSrc FOR ()-[r:COMPOSITE_REL]-() REQUIRE r.src IS UNIQUE         | CREATE CONSTRAINT uniqDst FOR ()-[r:COMPOSITE_REL]-() REQUIRE r.dst IS UNIQUE       | CREATE (a:CompRelSrc), (b:CompRelDst), (a)-[:COMPOSITE_REL {src: 'A', dst: 'X'}]->(b) |
+      | entityType | createCypher1                                                                         | createCypher2                                                                       | insertDistinctCombo                                                                         | compliantNodes | compliantRels |
+      | node       | CREATE CONSTRAINT uniqFirstName FOR (n:CompositePerson) REQUIRE n.firstName IS UNIQUE | CREATE CONSTRAINT uniqLastName FOR (n:CompositePerson) REQUIRE n.lastName IS UNIQUE | CREATE (:CompositePerson {firstName: 'Alice', lastName: 'Smith'})                           | 1              | 0             |
+      | rel        | CREATE CONSTRAINT uniqSrc FOR ()-[r:COMPOSITE_REL]-() REQUIRE r.src IS UNIQUE         | CREATE CONSTRAINT uniqDst FOR ()-[r:COMPOSITE_REL]-() REQUIRE r.dst IS UNIQUE       | CREATE (a:CompRelSrc), (b:CompRelDst), (a)-[:COMPOSITE_REL {src: 'A', dst: 'X'}]->(b) | 2              | 1             |
 
   # ---------------------------------------------------------------------------
   # 6. 重复创建同名约束应报错（不带 IF NOT EXISTS）
@@ -293,9 +297,9 @@ Feature: Constraint unique - create
     # Then the result count should be [1]
 
     Examples:
-      | entityType | createCypher                                                                          | createCypherIdempotent                                                                              |
-      | node       | CREATE CONSTRAINT idempotentUniq FOR (n:IdempotentNode) REQUIRE n.key IS UNIQUE       | CREATE CONSTRAINT idempotentUniq FOR (n:IdempotentNode) REQUIRE n.key IS UNIQUE IF NOT EXISTS       |
-      | rel        | CREATE CONSTRAINT idempotentUniq FOR ()-[r:IDEMPOTENT_REL]-() REQUIRE r.key IS UNIQUE | CREATE CONSTRAINT idempotentUniq FOR ()-[r:IDEMPOTENT_REL]-() REQUIRE r.key IS UNIQUE IF NOT EXISTS |
+      | entityType | createCypher                                                                          | createCypherIdempotent                                                                                     |
+      | node       | CREATE CONSTRAINT idempotentUniq FOR (n:IdempotentNode) REQUIRE n.key IS UNIQUE       | CREATE CONSTRAINT idempotentUniq IF NOT EXISTS FOR (n:IdempotentNode) REQUIRE n.key IS UNIQUE              |
+      | rel        | CREATE CONSTRAINT idempotentUniq FOR ()-[r:IDEMPOTENT_REL]-() REQUIRE r.key IS UNIQUE | CREATE CONSTRAINT idempotentUniq IF NOT EXISTS FOR ()-[r:IDEMPOTENT_REL]-() REQUIRE r.key IS UNIQUE        |
 
   # ---------------------------------------------------------------------------
   # 9. 在已有满足唯一性数据上创建 Unique 约束 — 应成功
@@ -385,14 +389,14 @@ Feature: Constraint unique - create
       """
     When executing query:
       """
-      SHOW INDEXES YIELD name, type, entityType, labelsOrTypes, properties
+      SHOW INDEXES YIELD name, type
       """
-    Then the result should be empty
+    Then the result count should be [<expectedIndexCountAfterDrop>]
 
     Examples:
-      | entityType | createCypher                                                                      | backingIndexName   | dropConstraintCypher                                    |
-      | node       | CREATE CONSTRAINT backingIdxNode FOR (n:BackingNode) REQUIRE n.uid IS UNIQUE      | backingIdxNode     | DROP CONSTRAINT backingIdxNode IF EXISTS                |
-      | rel        | CREATE CONSTRAINT backingIdxRel FOR ()-[r:BACKING_REL]-() REQUIRE r.uid IS UNIQUE | backingIdxRel      | DROP CONSTRAINT backingIdxRel IF EXISTS                 |
+      | entityType | createCypher                                                                      | backingIndexName   | dropConstraintCypher                                    | expectedIndexCountAfterDrop |
+      | node       | CREATE CONSTRAINT backingIdxNode FOR (n:BackingNode) REQUIRE n.uid IS UNIQUE      | backingIdxNode     | DROP CONSTRAINT backingIdxNode IF EXISTS                | 2                           |
+      | rel        | CREATE CONSTRAINT backingIdxRel FOR ()-[r:BACKING_REL]-() REQUIRE r.uid IS UNIQUE | backingIdxRel      | DROP CONSTRAINT backingIdxRel IF EXISTS                 | 2                           |
 
   # ---------------------------------------------------------------------------
   # 12. 基本数据类型属性的 Unique 约束 — string/int/float/bool
@@ -468,7 +472,7 @@ Feature: Constraint unique - create
 
   # ---------------------------------------------------------------------------
   # 15. 列表类型属性的 Unique 约束
-  # todo 现状：不支持list数据类型上创建索引。所以无法创建Unique约束（index-backed）。
+  # todo gdm现状：不支持list数据类型上创建索引。所以无法创建Unique约束（index-backed）。
   # ---------------------------------------------------------------------------
 
   Scenario Outline: [Create-Unique-15] unique constraint on list <datatype> property
