@@ -60,3 +60,4 @@ config/local.toml
 .env.*
 
 .worktrees/
+features/*.md
