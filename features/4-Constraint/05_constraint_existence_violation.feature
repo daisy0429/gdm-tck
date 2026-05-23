@@ -11,6 +11,7 @@
 # Neo4j 参考:
 #   Existence 约束要求属性值不为 NULL。
 #   CREATE 时缺少属性、SET 为 NULL、REMOVE 属性均违反约束。
+  # todo 测例2和测例4测试场景重复、检查点重复
 #
 @constraint @ddl
 Feature: Constraint existence - violation

@@ -83,6 +83,7 @@ Feature: Constraint node key / relationship key - create
 
   # ---------------------------------------------------------------------------
   # 3. 命名 Node Key / Relationship Key 约束
+  # todo 修改用例：不自定义约束名，验证系统支持内部自动分配约束名。 （不改用例的话：这个用例和用例1重复）
   # ---------------------------------------------------------------------------
 
   Scenario Outline: [Create-Key-03] named node key / relationship key on <entityType>

@@ -293,3 +293,159 @@ Feature: Constraint property type - create
       | entityType | setupData                                                                                                                              | createCypher                                                                      |
       | node       | CREATE (:WrongTypeNode {code: 'OK'}), (:WrongTypeNode {code: 42})                                                                      | CREATE CONSTRAINT FOR (n:WrongTypeNode) REQUIRE n.code IS :: STRING               |
       | rel        | CREATE (a:WTSrc1),(b:WTDst1),(c:WTSrc2),(d:WTDst2), (a)-[:WRONG_TYPE {code: 'OK'}]->(b),(c)-[:WRONG_TYPE {code: 42}]->(d)              | CREATE CONSTRAINT FOR ()-[r:WRONG_TYPE]-() REQUIRE r.code IS :: STRING            |
+
+  # ---------------------------------------------------------------------------
+  # 12. LOCAL_TIME 类型约束创建
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Create-Type-12] create LOCAL_TIME type constraint on <entityType>
+    Given an empty graph
+    And having executed:
+      """
+      <setupData>
+      """
+    When executing query:
+      """
+      <createCypher>
+      """
+    Then the side effects should be:
+      | +constraints | 1 |
+
+    Examples:
+      | entityType | setupData                                                                                     | createCypher                                                                                    |
+      | node       | CREATE (:TypeLocalTimeNode {val: localtime('12:30:00')})                                      | CREATE CONSTRAINT typeLocalTime FOR (n:TypeLocalTimeNode) REQUIRE n.val IS :: LOCAL_TIME        |
+      | rel        | CREATE (a:LocalTimeSrc), (b:LocalTimeDst), (a)-[:TYPED_LOCALTIME {val: localtime('08:00:00')}]->(b) | CREATE CONSTRAINT typeLocalTimeRel FOR ()-[r:TYPED_LOCALTIME]-() REQUIRE r.val IS :: LOCAL_TIME |
+
+  # ---------------------------------------------------------------------------
+  # 13. ZONED_TIME 类型约束创建
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Create-Type-13] create ZONED_TIME type constraint on <entityType>
+    Given an empty graph
+    And having executed:
+      """
+      <setupData>
+      """
+    When executing query:
+      """
+      <createCypher>
+      """
+    Then the side effects should be:
+      | +constraints | 1 |
+
+    Examples:
+      | entityType | setupData                                                                                                  | createCypher                                                                                  |
+      | node       | CREATE (:TypeZonedTimeNode {val: time('12:30:00+08:00')})                                                  | CREATE CONSTRAINT typeZonedTime FOR (n:TypeZonedTimeNode) REQUIRE n.val IS :: ZONED_TIME      |
+      | rel        | CREATE (a:ZonedTimeSrc), (b:ZonedTimeDst), (a)-[:TYPED_ZONEDTIME {val: time('08:00:00+08:00')}]->(b)       | CREATE CONSTRAINT typeZonedTimeRel FOR ()-[r:TYPED_ZONEDTIME]-() REQUIRE r.val IS :: ZONED_TIME |
+
+  # ---------------------------------------------------------------------------
+  # 14. LOCAL_DATETIME 类型约束创建
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Create-Type-14] create LOCAL_DATETIME type constraint on <entityType>
+    Given an empty graph
+    And having executed:
+      """
+      <setupData>
+      """
+    When executing query:
+      """
+      <createCypher>
+      """
+    Then the side effects should be:
+      | +constraints | 1 |
+
+    Examples:
+      | entityType | setupData                                                                                                  | createCypher                                                                                        |
+      | node       | CREATE (:TypeLocalDateTimeNode {val: localdatetime('2024-01-15T12:30:00')})                                | CREATE CONSTRAINT typeLocalDateTime FOR (n:TypeLocalDateTimeNode) REQUIRE n.val IS :: LOCAL_DATETIME |
+      | rel        | CREATE (a:LocalDateTimeSrc), (b:LocalDateTimeDst), (a)-[:TYPED_LOCALDT {val: localdatetime('2024-06-01T08:00:00')}]->(b) | CREATE CONSTRAINT typeLocalDateTimeRel FOR ()-[r:TYPED_LOCALDT]-() REQUIRE r.val IS :: LOCAL_DATETIME |
+
+  # ---------------------------------------------------------------------------
+  # 15. ZONED_DATETIME 类型约束创建
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Create-Type-15] create ZONED_DATETIME type constraint on <entityType>
+    Given an empty graph
+    And having executed:
+      """
+      <setupData>
+      """
+    When executing query:
+      """
+      <createCypher>
+      """
+    Then the side effects should be:
+      | +constraints | 1 |
+
+    Examples:
+      | entityType | setupData                                                                                                  | createCypher                                                                                        |
+      | node       | CREATE (:TypeZonedDateTimeNode {val: datetime('2024-01-15T12:30:00Z')})                                    | CREATE CONSTRAINT typeZonedDateTime FOR (n:TypeZonedDateTimeNode) REQUIRE n.val IS :: ZONED_DATETIME |
+      | rel        | CREATE (a:ZonedDateTimeSrc), (b:ZonedDateTimeDst), (a)-[:TYPED_ZONEDDT {val: datetime('2024-06-01T08:00:00Z')}]->(b) | CREATE CONSTRAINT typeZonedDateTimeRel FOR ()-[r:TYPED_ZONEDDT]-() REQUIRE r.val IS :: ZONED_DATETIME |
+
+  # ---------------------------------------------------------------------------
+  # 16. DURATION 类型约束创建
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Create-Type-16] create DURATION type constraint on <entityType>
+    Given an empty graph
+    And having executed:
+      """
+      <setupData>
+      """
+    When executing query:
+      """
+      <createCypher>
+      """
+    Then the side effects should be:
+      | +constraints | 1 |
+
+    Examples:
+      | entityType | setupData                                                                               | createCypher                                                                                 |
+      | node       | CREATE (:TypeDurationNode {val: duration('P1DT2H')})                                    | CREATE CONSTRAINT typeDuration FOR (n:TypeDurationNode) REQUIRE n.val IS :: DURATION         |
+      | rel        | CREATE (a:DurationSrc), (b:DurationDst), (a)-[:TYPED_DURATION {val: duration('P3DT4H')}]->(b) | CREATE CONSTRAINT typeDurationRel FOR ()-[r:TYPED_DURATION]-() REQUIRE r.val IS :: DURATION |
+
+  # ---------------------------------------------------------------------------
+  # 17. POINT 类型约束创建
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Create-Type-17] create POINT type constraint on <entityType>
+    Given an empty graph
+    And having executed:
+      """
+      <setupData>
+      """
+    When executing query:
+      """
+      <createCypher>
+      """
+    Then the side effects should be:
+      | +constraints | 1 |
+
+    Examples:
+      | entityType | setupData                                                                             | createCypher                                                                           |
+      | node       | CREATE (:TypePointNode {val: point({x: 1.0, y: 2.0})})                                | CREATE CONSTRAINT typePoint FOR (n:TypePointNode) REQUIRE n.val IS :: POINT            |
+      | rel        | CREATE (a:PointSrc), (b:PointDst), (a)-[:TYPED_POINT {val: point({x: 3.0, y: 4.0})}]->(b) | CREATE CONSTRAINT typePointRel FOR ()-[r:TYPED_POINT]-() REQUIRE r.val IS :: POINT |
+
+  # ---------------------------------------------------------------------------
+  # 18. Property Type 约束不创建底层索引
+  #     与 Unique/Key/Composite 不同，Property Type 约束不产生关联索引
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Create-Type-18] property type constraint does NOT create backing index on <entityType>
+    Given an empty graph
+    When executing query:
+      """
+      <createCypher>
+      """
+    Then the side effects should be:
+      | +constraints | 1 |
+    When executing query:
+      """
+      SHOW INDEXES YIELD name
+      """
+    Then the result count should be [0]
+
+    Examples:
+      | entityType | createCypher                                                                                |
+      | node       | CREATE CONSTRAINT noIdxType FOR (n:NoIdxTypeNode) REQUIRE n.code IS :: STRING              |
+      | rel        | CREATE CONSTRAINT noIdxTypeRel FOR ()-[r:NO_IDX_TYPE]-() REQUIRE r.code IS :: STRING       |

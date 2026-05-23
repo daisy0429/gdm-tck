@@ -54,9 +54,10 @@ Feature: Show constraints
 
   # ---------------------------------------------------------------------------
   # 3. SHOW CONSTRAINTS YIELD name, type (指定列)
-  #    TODO: GDM 暂不支持 SHOW CONSTRAINTS YIELD 语法，待产品支持后取消注释
+  #    TODO(@skip_gdm): GDM 暂不支持 SHOW CONSTRAINTS YIELD 语法，待产品支持后取消注释并启用
   # ---------------------------------------------------------------------------
 
+  # @skip_gdm
   # Scenario: [Show-03] SHOW CONSTRAINTS YIELD specific columns
   #   Given an empty graph
   #   And having executed:
@@ -73,9 +74,10 @@ Feature: Show constraints
 
   # ---------------------------------------------------------------------------
   # 4. SHOW CONSTRAINTS WHERE type = 'UNIQUENESS'
-  #    TODO: GDM 暂不支持 SHOW CONSTRAINTS YIELD 语法，待产品支持后取消注释
+  #    TODO(@skip_gdm): GDM 暂不支持 SHOW CONSTRAINTS YIELD 语法，待产品支持后取消注释并启用
   # ---------------------------------------------------------------------------
 
+  # @skip_gdm
   # Scenario: [Show-04] SHOW CONSTRAINTS WHERE filter by type
   #   Given an empty graph
   #   And having executed:
@@ -92,9 +94,10 @@ Feature: Show constraints
 
   # ---------------------------------------------------------------------------
   # 5. SHOW CONSTRAINTS RETURN name, type (alternate syntax)
-  #    TODO: GDM 暂不支持 SHOW CONSTRAINTS YIELD 语法，待产品支持后取消注释
+  #    TODO(@skip_gdm): GDM 暂不支持 SHOW CONSTRAINTS YIELD 语法，待产品支持后取消注释并启用
   # ---------------------------------------------------------------------------
 
+  # @skip_gdm
   # Scenario: [Show-05] SHOW CONSTRAINTS RETURN alternate syntax
   #   Given an empty graph
   #   And having executed:
@@ -111,9 +114,10 @@ Feature: Show constraints
 
   # ---------------------------------------------------------------------------
   # 6. 多种约束类型共存时按类型过滤
-  #    TODO: GDM 暂不支持 SHOW CONSTRAINTS YIELD 语法，待产品支持后取消注释
+  #    TODO(@skip_gdm): GDM 暂不支持 SHOW CONSTRAINTS YIELD 语法，待产品支持后取消注释并启用
   # ---------------------------------------------------------------------------
 
+  # @skip_gdm
   # Scenario: [Show-06] multiple constraint types filter by type
   #   Given an empty graph
   #   And having executed:
@@ -135,3 +139,45 @@ Feature: Show constraints
   #   Then the result should contain:
   #     | name | type |
   #     | 'showNotNull' | 'NODE_PROPERTY_EXISTENCE' |
+
+  # ---------------------------------------------------------------------------
+  # 7. SHOW CONSTRAINTS 创建多种约束后验证总数（无 YIELD，使用基础语法）
+  # ---------------------------------------------------------------------------
+
+  Scenario: [Show-07] SHOW CONSTRAINTS after creating multiple types verify count
+    Given an empty graph
+    And having executed:
+      """
+      CREATE CONSTRAINT showCountUnique FOR (n:ShowCountNode) REQUIRE n.code IS UNIQUE;
+      CREATE CONSTRAINT showCountNotNull FOR (n:ShowCountNode) REQUIRE n.name IS NOT NULL
+      """
+    When executing query:
+      """
+      SHOW CONSTRAINTS
+      """
+    Then the result count should be [2]
+
+  # ---------------------------------------------------------------------------
+  # 8. SHOW CONSTRAINTS 创建 UNIQUE 后删除，验证数量减少（无 YIELD，使用基础语法）
+  # ---------------------------------------------------------------------------
+
+  Scenario: [Show-08] SHOW CONSTRAINTS after drop verify count decreases
+    Given an empty graph
+    And having executed:
+      """
+      CREATE CONSTRAINT showDropTest FOR (n:ShowDropNode) REQUIRE n.code IS UNIQUE
+      """
+    When executing query:
+      """
+      SHOW CONSTRAINTS
+      """
+    Then the result count should be [1]
+    When executing query without error:
+      """
+      DROP CONSTRAINT showDropTest
+      """
+    When executing query:
+      """
+      SHOW CONSTRAINTS
+      """
+    Then the result count should be [0]

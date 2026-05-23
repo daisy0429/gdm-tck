@@ -127,3 +127,41 @@ Feature: Constraint error and edge cases
       | entityType | createConstraint                                                                                                                                                                         | longName                                                                                                                                                                                 |
       | node       | CREATE CONSTRAINT a_very_long_constraint_name_that_tests_the_boundary_of_the_system_naming_limits_2024 FOR (n:LongNameNode) REQUIRE n.code IS UNIQUE                                     | a_very_long_constraint_name_that_tests_the_boundary_of_the_system_naming_limits_2024                                                                                                     |
       | rel        | CREATE CONSTRAINT a_very_long_constraint_name_that_tests_the_boundary_of_the_system_naming_limits_rel_2024 FOR ()-[r:LONG_NAME_REL]-() REQUIRE r.code IS UNIQUE                         | a_very_long_constraint_name_that_tests_the_boundary_of_the_system_naming_limits_rel_2024                                                                                                 |
+
+  # ---------------------------------------------------------------------------
+  # 7. 事务内先违反再修复：在同一事务中先产生重复数据再删除重复，提交时应成功
+  #    Neo4j 文档：约束在事务提交时验证，写入过程中可暂时违反
+  # ---------------------------------------------------------------------------
+
+  Scenario: [Error-07] constraint validated at commit - violation then fix in same transaction
+    Given an empty graph
+    And having executed:
+      """
+      CREATE CONSTRAINT commitCheck FOR (n:CommitCheckNode) REQUIRE n.code IS UNIQUE;
+      CREATE (:CommitCheckNode {code: 'A'})
+      """
+    When executing query without error:
+      """
+      CREATE (:CommitCheckNode {code: 'A'});
+      MATCH (n:CommitCheckNode {code: 'A'}) WITH n SKIP 0 LIMIT 1 DELETE n
+      """
+    Then no side effects
+    When executing query:
+      """
+      MATCH (n:CommitCheckNode) RETURN count(n) AS cnt
+      """
+    Then the result should be:
+      1
+
+  # ---------------------------------------------------------------------------
+  # 8. Neo4j 旧语法 CREATE CONSTRAINT ON ... ASSERT ... 兼容性
+  #    Neo4j 5 仍支持旧语法，GDM 可能不支持，测试其行为
+  # ---------------------------------------------------------------------------
+
+  Scenario: [Error-08] legacy syntax CREATE CONSTRAINT ON ... ASSERT
+    Given an empty graph
+    When executing query:
+      """
+      CREATE CONSTRAINT legacySyntax ON (n:LegacyNode) ASSERT n.code IS UNIQUE
+      """
+    Then an error should be raised

@@ -126,3 +126,48 @@ Feature: Constraint property type - violation
       | entityType | createCypher                                                                                      | insertCorrect                                                                      | insertNull                                                                           | compliantNodes | compliantRels |
       | node       | CREATE CONSTRAINT vtNull FOR (n:VTNullNode) REQUIRE n.code IS :: STRING                          | CREATE (:VTNullNode {code: 'OK'})                                                  | CREATE (:VTNullNode {code: null})                                                    | 1              | 0             |
       | rel        | CREATE CONSTRAINT vtNullRel FOR ()-[r:VT_NULL_REL]-() REQUIRE r.code IS :: STRING                | CREATE (a:VTNSrc1), (b:VTNDst1), (a)-[:VT_NULL_REL {code: 'OK'}]->(b)              | CREATE (c:VTNSrc2), (d:VTNDst2), (c)-[:VT_NULL_REL {code: null}]->(d)               | 2              | 1             |
+
+  # ---------------------------------------------------------------------------
+  # 6. INTEGER 值写入 FLOAT 约束列 -> 验证隐式转换行为
+  #    Neo4j 中 INTEGER 可隐式转换为 FLOAT，应通过约束
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Violate-Type-06] INTEGER to FLOAT implicit conversion on <entityType>
+    Given an empty graph
+    And having executed:
+      """
+      <createCypher>
+      """
+    When executing query without error:
+      """
+      <insertIntToFloat>
+      """
+    Then the side effects should be:
+      | +nodes | <compliantNodes> |
+      | +relationships | <compliantRels> |
+
+    Examples:
+      | entityType | createCypher                                                                                      | insertIntToFloat                                                                        | compliantNodes | compliantRels |
+      | node       | CREATE CONSTRAINT vtIntToFloat FOR (n:VTIntFloatNode) REQUIRE n.score IS :: FLOAT                | CREATE (:VTIntFloatNode {score: 42})                                                    | 1              | 0             |
+      | rel        | CREATE CONSTRAINT vtIntToFloatRel FOR ()-[r:VT_INT_FLOAT]-() REQUIRE r.score IS :: FLOAT         | CREATE (a:VIFSrc), (b:VIFDst), (a)-[:VT_INT_FLOAT {score: 42}]->(b)                     | 2              | 1             |
+
+  # ---------------------------------------------------------------------------
+  # 7. FLOAT 值写入 INTEGER 约束列 -> 应报错（不能隐式转换）
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Violate-Type-07] FLOAT to INTEGER should fail on <entityType>
+    Given an empty graph
+    And having executed:
+      """
+      <createCypher>
+      """
+    When executing query:
+      """
+      <insertFloatToInt>
+      """
+    Then a ConstraintValidationFailed should be raised at any time
+
+    Examples:
+      | entityType | createCypher                                                                                      | insertFloatToInt                                                                        |
+      | node       | CREATE CONSTRAINT vtFloatToInt FOR (n:VTFloatIntNode) REQUIRE n.age IS :: INTEGER                | CREATE (:VTFloatIntNode {age: 3.14})                                                    |
+      | rel        | CREATE CONSTRAINT vtFloatToIntRel FOR ()-[r:VT_FLOAT_INT]-() REQUIRE r.age IS :: INTEGER         | CREATE (a:VFISrc), (b:VFIDst), (a)-[:VT_FLOAT_INT {age: 3.14}]->(b)                     |

@@ -414,13 +414,26 @@ Feature: Constraint unique - create
       """
     Then the side effects should be:
       | +constraints | 1 |
+    # ---- 验证约束生效：写入不重复值成功 ----
+    When executing query without error:
+      """
+      CREATE (:TypedUnique {prop: <sampleValue2>})
+      """
+    Then the side effects should be:
+      | +nodes | 1 |
+    # ---- 验证约束生效：写入重复值失败 ----
+    When executing query:
+      """
+      CREATE (:TypedUnique {prop: <sampleValue>})
+      """
+    Then a ConstraintValidationFailed should be raised at any time
 
     Examples:
-      | datatype | sampleValue |
-      | string   | 'hello'     |
-      | int      | 42          |
-      | float    | 3.14        |
-      | bool     | true        |
+      | datatype | sampleValue | sampleValue2 |
+      | string   | 'hello'     | 'world'      |
+      | int      | 42          | 99           |
+      | float    | 3.14        | 2.71         |
+      | bool     | true        | false        |
 
   # ---------------------------------------------------------------------------
   # 13. 时间类型属性的 Unique 约束 — date/time/datetime/localtime/localdatetime/duration
@@ -437,19 +450,31 @@ Feature: Constraint unique - create
       """
     Then the side effects should be:
       | +constraints | 1 |
+    # ---- 验证约束生效：写入不重复值成功 ----
+    When executing query without error:
+      """
+      CREATE (:TimeUnique {prop: <sampleValue2>})
+      """
+    Then the side effects should be:
+      | +nodes | 1 |
+    # ---- 验证约束生效：写入重复值失败 ----
+    When executing query:
+      """
+      CREATE (:TimeUnique {prop: <sampleValue>})
+      """
+    Then a ConstraintValidationFailed should be raised at any time
 
     Examples:
-      | datatype      | sampleValue                          |
-      | date          | date('2024-01-15')                   |
-      | time          | time('12:30:00')                     |
-      | datetime      | datetime('2024-01-15T12:30:00Z')     |
-      | localtime     | localtime('12:30:00')                |
-      | localdatetime | localdatetime('2024-01-15T12:30:00') |
-      | duration      | duration('P1DT2H')                   |
+      | datatype      | sampleValue                          | sampleValue2                         |
+      | date          | date('2024-01-15')                   | date('2025-02-20')                   |
+      | time          | time('12:30:00')                     | time('18:45:00')                     |
+      | datetime      | datetime('2024-01-15T12:30:00Z')     | datetime('2025-06-01T08:00:00Z')     |
+      | localtime     | localtime('12:30:00')                | localtime('23:59:59')                |
+      | localdatetime | localdatetime('2024-01-15T12:30:00') | localdatetime('2025-06-01T08:00:00') |
+      | duration      | duration('P1DT2H')                   | duration('P3DT4H')                   |
 
   # ---------------------------------------------------------------------------
   # 14. 空间类型(Point)属性的 Unique 约束
-  # todo 增加验证步骤。创建约束后尝试写入合法数据成功，非法数据失败
   # ---------------------------------------------------------------------------
 
   Scenario Outline: [Create-Unique-14] unique constraint on point <datatype> property
@@ -464,15 +489,27 @@ Feature: Constraint unique - create
       """
     Then the side effects should be:
       | +constraints | 1 |
+    # ---- 验证约束生效：写入不重复值成功 ----
+    When executing query without error:
+      """
+      CREATE (:PointUnique {prop: <sampleValue2>})
+      """
+    Then the side effects should be:
+      | +nodes | 1 |
+    # ---- 验证约束生效：写入重复值失败 ----
+    When executing query:
+      """
+      CREATE (:PointUnique {prop: <sampleValue>})
+      """
+    Then a ConstraintValidationFailed should be raised at any time
 
     Examples:
-      | datatype | sampleValue                     |
-      | point-2d | point({x: 1.0, y: 2.0})         |
-      | point-3d | point({x: 1.0, y: 2.0, z: 3.0}) |
+      | datatype | sampleValue                     | sampleValue2                      |
+      | point-2d | point({x: 1.0, y: 2.0})         | point({x: 5.0, y: 6.0})          |
+      | point-3d | point({x: 1.0, y: 2.0, z: 3.0}) | point({x: 7.0, y: 8.0, z: 9.0})  |
 
   # ---------------------------------------------------------------------------
   # 15. 列表类型属性的 Unique 约束
-  # todo gdm现状：不支持list数据类型上创建索引。所以无法创建Unique约束（index-backed）。
   # ---------------------------------------------------------------------------
 
   Scenario Outline: [Create-Unique-15] unique constraint on list <datatype> property
@@ -487,11 +524,24 @@ Feature: Constraint unique - create
       """
     Then the side effects should be:
       | +constraints | 1 |
+    # ---- 验证约束生效：写入不重复值成功 ----
+    When executing query without error:
+      """
+      CREATE (:ListUnique {prop: <sampleValue2>})
+      """
+    Then the side effects should be:
+      | +nodes | 1 |
+    # ---- 验证约束生效：写入重复值失败 ----
+    When executing query:
+      """
+      CREATE (:ListUnique {prop: <sampleValue>})
+      """
+    Then a ConstraintValidationFailed should be raised at any time
 
     Examples:
-      | datatype    | sampleValue     |
-      | list-int    | [1, 2, 3]       |
-      | list-string | ['a', 'b', 'c'] |
+      | datatype    | sampleValue     | sampleValue2   |
+      | list-int    | [1, 2, 3]       | [4, 5, 6]      |
+      | list-string | ['a', 'b', 'c'] | ['x', 'y', 'z'] |
 
   # ---------------------------------------------------------------------------
   # 16. 向量类型属性的 Unique 约束 （也就是列表类型）
@@ -509,8 +559,21 @@ Feature: Constraint unique - create
       """
     Then the side effects should be:
       | +constraints | 1 |
+    # ---- 验证约束生效：写入不重复值成功 ----
+    When executing query without error:
+      """
+      CREATE (:VectorUnique {prop: <sampleValue2>})
+      """
+    Then the side effects should be:
+      | +nodes | 1 |
+    # ---- 验证约束生效：写入重复值失败 ----
+    When executing query:
+      """
+      CREATE (:VectorUnique {prop: <sampleValue>})
+      """
+    Then a ConstraintValidationFailed should be raised at any time
 
     Examples:
-      | datatype      | sampleValue          |
-      | vector-float  | [0.1, 0.2, 0.3]      |
-      | vector-single | [1.0, 0.0, 0.0, 0.0] |
+      | datatype      | sampleValue          | sampleValue2           |
+      | vector-float  | [0.1, 0.2, 0.3]      | [0.4, 0.5, 0.6]        |
+      | vector-single | [1.0, 0.0, 0.0, 0.0] | [0.0, 1.0, 0.0, 0.0]  |

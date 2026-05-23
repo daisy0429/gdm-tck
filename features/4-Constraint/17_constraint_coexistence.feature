@@ -158,3 +158,35 @@ Feature: Constraint coexistence
       """
     Then the side effects should be:
       | +nodes | 2 |
+
+  # ---------------------------------------------------------------------------
+  # 5. 关系上的约束共存：同一关系属性同时具有 UNIQUE 和 NOT NULL
+  # ---------------------------------------------------------------------------
+
+  Scenario: [Coexist-05] same rel property with UNIQUE and NOT NULL
+    Given an empty graph
+    And having executed:
+      """
+      CREATE CONSTRAINT coexistRelUniq FOR ()-[r:COEXIST_BOTH_REL]-() REQUIRE r.code IS UNIQUE;
+      CREATE CONSTRAINT coexistRelNN FOR ()-[r:COEXIST_BOTH_REL]-() REQUIRE r.code IS NOT NULL
+      """
+    # ---- 合规数据：非 NULL 且唯一 -> 成功 ----
+    When executing query without error:
+      """
+      CREATE (a:CBR1), (b:CBR2), (a)-[:COEXIST_BOTH_REL {code: 'REL_OK'}]->(b)
+      """
+    Then the side effects should be:
+      | +nodes | 2 |
+      | +relationships | 1 |
+    # ---- 违反唯一性 -> 报错 ----
+    When executing query:
+      """
+      CREATE (c:CBR3), (d:CBR4), (c)-[:COEXIST_BOTH_REL {code: 'REL_OK'}]->(d)
+      """
+    Then a ConstraintValidationFailed should be raised at any time
+    # ---- 违反 NOT NULL -> 报错 ----
+    When executing query:
+      """
+      CREATE (e:CBR5), (f:CBR6), (e)-[:COEXIST_BOTH_REL {code: NULL}]->(f)
+      """
+    Then a ConstraintValidationFailed should be raised at any time

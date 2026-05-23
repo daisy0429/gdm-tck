@@ -33,6 +33,12 @@ Feature: Constraint on existing data
       <createConstraint>
       """
     Then a ConstraintValidationFailed should be raised at any time
+    # ---- 验证约束未被创建 ----
+    When executing query:
+      """
+      SHOW CONSTRAINTS YIELD name
+      """
+    Then the result count should be [0]
 
     Examples:
       | entityType | setupData                                                                                                                | createConstraint                                                                   |
@@ -76,6 +82,12 @@ Feature: Constraint on existing data
       <createConstraint>
       """
     Then a ConstraintValidationFailed should be raised at any time
+    # ---- 验证约束未被创建 ----
+    When executing query:
+      """
+      SHOW CONSTRAINTS YIELD name
+      """
+    Then the result count should be [0]
 
     Examples:
       | entityType | setupData                                                                                                   | createConstraint                                                                      |
@@ -119,6 +131,12 @@ Feature: Constraint on existing data
       <createConstraint>
       """
     Then a ConstraintValidationFailed should be raised at any time
+    # ---- 验证约束未被创建 ----
+    When executing query:
+      """
+      SHOW CONSTRAINTS YIELD name
+      """
+    Then the result count should be [0]
 
     Examples:
       | entityType | setupData                                                                                                              | createConstraint                                                                                    |
@@ -140,6 +158,12 @@ Feature: Constraint on existing data
       <createConstraint>
       """
     Then a ConstraintValidationFailed should be raised at any time
+    # ---- 验证约束未被创建 ----
+    When executing query:
+      """
+      SHOW CONSTRAINTS YIELD name
+      """
+    Then the result count should be [0]
 
     Examples:
       | entityType | setupData                                                                                                                                        | createConstraint                                                                                      |
@@ -161,6 +185,12 @@ Feature: Constraint on existing data
       <createConstraint>
       """
     Then a ConstraintValidationFailed should be raised at any time
+    # ---- 验证约束未被创建 ----
+    When executing query:
+      """
+      SHOW CONSTRAINTS YIELD name
+      """
+    Then the result count should be [0]
 
     Examples:
       | entityType | setupData                                                                                              | createConstraint                                                                          |

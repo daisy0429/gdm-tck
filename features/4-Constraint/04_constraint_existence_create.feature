@@ -150,6 +150,7 @@ Feature: Constraint existence - create
 
   # ---------------------------------------------------------------------------
   # 5. 重复创建同名约束应报错
+  # error: GDM-METADATA-INVALID: metadata apply fatal: state_machine_diverged: metadata: constraint 'dupExistName' already exists in graph 'type01'
   # ---------------------------------------------------------------------------
 
   Scenario Outline: [Create-Exist-05] duplicate named constraint raises error - <entityType>
@@ -211,3 +212,27 @@ Feature: Constraint existence - create
       | entityType | createCypher                                                                                      | createCypherIdempotent                                                                                                   |
       | node       | CREATE CONSTRAINT idempotentExist FOR (n:IdempotentExistNode) REQUIRE n.key IS NOT NULL           | CREATE CONSTRAINT idempotentExist IF NOT EXISTS FOR (n:IdempotentExistNode) REQUIRE n.key IS NOT NULL                    |
       | rel        | CREATE CONSTRAINT idempotentExist FOR ()-[r:IDEMPOTENT_EXIST]-() REQUIRE r.key IS NOT NULL        | CREATE CONSTRAINT idempotentExist IF NOT EXISTS FOR ()-[r:IDEMPOTENT_EXIST]-() REQUIRE r.key IS NOT NULL                 |
+
+  # ---------------------------------------------------------------------------
+  # 8. Existence 约束不创建底层索引
+  #    与 Unique/Key/Composite 不同，Existence 约束不产生关联索引
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Create-Exist-08] existence constraint does NOT create backing index on <entityType>
+    Given an empty graph
+    When executing query:
+      """
+      <createCypher>
+      """
+    Then the side effects should be:
+      | +constraints | 1 |
+    When executing query:
+      """
+      SHOW INDEXES YIELD name
+      """
+    Then the result count should be [0]
+
+    Examples:
+      | entityType | createCypher                                                                        |
+      | node       | CREATE CONSTRAINT noIdxExist FOR (n:NoIdxExistNode) REQUIRE n.code IS NOT NULL      |
+      | rel        | CREATE CONSTRAINT noIdxExistRel FOR ()-[r:NO_IDX_EXIST]-() REQUIRE r.code IS NOT NULL |

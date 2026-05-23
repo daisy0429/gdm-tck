@@ -12,6 +12,8 @@
 # Neo4j 参考:
 #   Unique 约束允许多个 NULL 值存在（NULL != NULL）。
 #   空字符串 '' 是合法属性值，重复空字符串违反唯一约束。
+  # todo neo4j手动测试通过。测试脚本未通过需要调整/调试测试脚本
+  # todo 事务测试考虑：批量操作中部分语句违反约束，
 #
 @constraint @ddl
 Feature: Constraint unique - violation

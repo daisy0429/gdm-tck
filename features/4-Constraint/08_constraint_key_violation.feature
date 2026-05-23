@@ -61,6 +61,29 @@ Feature: Constraint node key / relationship key - violation
       | rel        | CREATE CONSTRAINT vkNullRel FOR ()-[r:VK_NULL_REL]-() REQUIRE (r.src, r.dst) IS RELATIONSHIP KEY  | CREATE (a:VKNSrc1), (b:VKNDst1), (a)-[:VK_NULL_REL {src: 'A', dst: 'X'}]->(b)         | CREATE (c:VKNSrc2), (d:VKNDst2), (c)-[:VK_NULL_REL {src: 'B', dst: null}]->(d)                |
 
   # ---------------------------------------------------------------------------
+  # 2b. INSERT 只有部分 key 属性为 NULL -> 报错
+  #     Node Key 的每个 key 属性都不允许 NULL
+  # ---------------------------------------------------------------------------
+
+  Scenario Outline: [Violate-Key-02b] partial NULL in key property on <entityType>
+    Given an empty graph
+    And having executed:
+      """
+      <createCypher>;
+      <insertFirst>
+      """
+    When executing query:
+      """
+      <insertPartialNull>
+      """
+    Then a ConstraintValidationFailed should be raised at any time
+
+    Examples:
+      | entityType | createCypher                                                                                           | insertFirst                                                                         | insertPartialNull                                                                              |
+      | node       | CREATE CONSTRAINT vkPartNull FOR (n:VKPartNullNode) REQUIRE (n.a, n.b) IS NODE KEY                   | CREATE (:VKPartNullNode {a: 'X', b: 'Y'})                                          | CREATE (:VKPartNullNode {a: 'Z', b: null})                                                    |
+      | rel        | CREATE CONSTRAINT vkPartNullRel FOR ()-[r:VK_PARTNULL_REL]-() REQUIRE (r.a, r.b) IS RELATIONSHIP KEY | CREATE (a:VKPNSrc1), (b:VKPNDst1), (a)-[:VK_PARTNULL_REL {a: 'X', b: 'Y'}]->(b)    | CREATE (c:VKPNSrc2), (d:VKPNDst2), (c)-[:VK_PARTNULL_REL {a: 'Z', b: null}]->(d)              |
+
+  # ---------------------------------------------------------------------------
   # 3. UPDATE (SET) key 属性为重复值 -> 报错
   # ---------------------------------------------------------------------------
 

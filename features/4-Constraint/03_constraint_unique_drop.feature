@@ -14,6 +14,7 @@
 #   DROP CONSTRAINT name
 #   DROP CONSTRAINT name IF EXISTS
 #   删除 Unique 约束后，底层唯一索引同步被删除。
+  # todo: 测试场景和验证点已验证无问题。待调试测试脚本。
 #
 @constraint @ddl
 Feature: Constraint unique - drop
@@ -21,7 +22,7 @@ Feature: Constraint unique - drop
   # ---------------------------------------------------------------------------
   # 1. DROP CONSTRAINT by name -> success, constraint removed
   # ---------------------------------------------------------------------------
-
+ # todo需要增加校验点。确实删成功了：show constraint where ..返回0
   Scenario Outline: [Drop-Unique-01] drop constraint by name on <entityType>
     Given an empty graph
     And having executed:

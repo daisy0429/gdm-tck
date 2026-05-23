@@ -61,3 +61,4 @@ config/local.toml
 
 .worktrees/
 features/*.md
+features/**/*.md
