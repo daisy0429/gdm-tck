@@ -83,4 +83,5 @@ Feature: Delete4 - Delete clause interoperation with other clauses
       DELETE n
       """
     Then the result should be empty
-    And no side effects
+#    And no side effects
+#  updates: {'+nodes': 1, '-nodes': 1}

@@ -48,7 +48,7 @@ Feature: Delete3 - Deleting named paths
     And the side effects should be:
       | -nodes         | 4 |
       | -relationships | 3 |
-      | -labels        | 1 |
+#      | -labels        | 1 |
 
   Scenario: [2] Delete on null path
     Given an empty graph

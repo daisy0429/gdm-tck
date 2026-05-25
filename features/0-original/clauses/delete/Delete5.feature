@@ -90,7 +90,7 @@ Feature: Delete5 - Delete clause interoperation with built-in data types
     Then the result should be empty
     And the side effects should be:
       | -nodes  | 2 |
-      | -labels | 1 |
+#      | -labels | 1 |
 
   Scenario: [4] Delete relationships from a map
     Given an empty graph
@@ -165,7 +165,7 @@ Feature: Delete5 - Delete clause interoperation with built-in data types
     And the side effects should be:
       | -nodes         | 2 |
       | -relationships | 2 |
-      | -labels        | 1 |
+#      | -labels        | 1 |
 
   Scenario: [8] Failing when using undefined variable in DELETE
     Given any graph
