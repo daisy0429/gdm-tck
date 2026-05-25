@@ -61,6 +61,7 @@ def the_result_should_be_scalar(value: str, scenario_ctx: ScenarioContext):
 
 
 @then(parsers.parse("the result should be, in any order:\n{table}"))
+@then(parsers.parse("the result should be (ignoring element order for lists):\n{table}"))
 def the_result_should_be_in_any_order(table: str, scenario_ctx: ScenarioContext):
     """断言结果集与期望匹配（忽略行顺序）。"""
     if scenario_ctx.has_error:

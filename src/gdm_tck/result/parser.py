@@ -69,7 +69,7 @@ def parse_tck_value(text: str) -> Any:
         return _parse_node(text)
     # Path 表示: <(a)-[r]->(b)>
     if text.startswith("<") and text.endswith(">"):
-        return {"_type": "path", "_repr": text}
+        return _parse_path(text)
     # 无法解析的值原样返回
     return text
 
@@ -151,7 +151,7 @@ def _parse_node(text: str) -> dict:
     prop_match = re.search(r"\{(.+)\}", inner)
     if prop_match:
         properties = _parse_map("{" + prop_match.group(1) + "}")
-    return {"_type": "node", "labels": labels, "properties": properties}
+    return {"_type": "node", "labels": sorted(labels), "properties": properties}
 
 
 def _parse_relationship(text: str) -> dict:
@@ -203,3 +203,15 @@ def _split_top_level(text: str, delimiter: str) -> list[str]:
     if current:
         parts.append("".join(current))
     return parts
+
+
+def _parse_path(text: str) -> dict:
+    """解析 Path 表示 <(:A)-[:R]->(:B)>。
+
+    从路径文本中提取所有节点和关系，返回与 converter.py 一致的结构化格式。
+    """
+    find_nodes = re.findall(r"\([^)]*\)", text)
+    find_rels = re.findall(r"\[[^\]]+\]", text)
+    nodes = [_parse_node(n) for n in find_nodes]
+    relationships = [_parse_relationship(r) for r in find_rels]
+    return {"_type": "path", "nodes": nodes, "relationships": relationships}
