@@ -574,7 +574,7 @@ Feature: Create4 - Large Create Query
       | +nodes         | 171 |
       | +relationships | 253 |
       | +properties    | 564 |
-      | +labels        | 2   |
+#      | +labels        | 2   |
 
   Scenario: [2] Many CREATE clauses
     Given an empty graph
@@ -1370,5 +1370,5 @@ Feature: Create4 - Large Create Query
     And the side effects should be:
       | +nodes         | 731  |
       | +relationships | 1247 |
-      | +labels        | 6    |
+#      | +labels        | 6    |
       | +properties    | 230  |

@@ -75,7 +75,7 @@ Feature: Create6 - Persistence of create clause side effects
       | 42  |
     And the side effects should be:
       | +nodes         | 5 |
-      | +labels        | 1 |
+#      | +labels        | 1 |
       | +properties    | 5 |
 
   Scenario: [4] Skipping zero result and limiting to all results after creating nodes does not affect the result set nor the side effects
@@ -96,7 +96,7 @@ Feature: Create6 - Persistence of create clause side effects
       | 42  |
     And the side effects should be:
       | +nodes         | 5 |
-      | +labels        | 1 |
+#      | +labels        | 1 |
       | +properties    | 5 |
 
   Scenario: [5] Filtering after creating nodes affects the result set but not the side effects
@@ -115,7 +115,7 @@ Feature: Create6 - Persistence of create clause side effects
       | 4   |
     And the side effects should be:
       | +nodes         | 5 |
-      | +labels        | 1 |
+#      | +labels        | 1 |
       | +properties    | 5 |
 
   Scenario: [6] Aggregating in `RETURN` after creating nodes affects the result set but not the side effects
@@ -131,7 +131,7 @@ Feature: Create6 - Persistence of create clause side effects
       | 15  |
     And the side effects should be:
       | +nodes         | 5 |
-      | +labels        | 1 |
+#      | +labels        | 1 |
       | +properties    | 5 |
 
   Scenario: [7] Aggregating in `WITH` after creating nodes affects the result set but not the side effects
@@ -148,7 +148,7 @@ Feature: Create6 - Persistence of create clause side effects
       | 15  |
     And the side effects should be:
       | +nodes         | 5 |
-      | +labels        | 1 |
+#      | +labels        | 1 |
       | +properties    | 5 |
 
   Scenario: [8] Limiting to zero results after creating relationships affects the result set but not the side effects

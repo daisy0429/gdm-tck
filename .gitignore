@@ -62,3 +62,4 @@ config/local.toml
 .worktrees/
 features/*.md
 features/**/*.md
+features/0-debug
