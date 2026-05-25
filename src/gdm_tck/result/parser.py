@@ -55,6 +55,9 @@ def parse_tck_value(text: str) -> Any:
     # 字符串（双引号包围）
     if text.startswith('"') and text.endswith('"'):
         return text[1:-1]
+    # Relationship 表示: [:TYPE {prop: value}] (必须在列表判断之前)
+    if text.startswith("[:") and text.endswith("]"):
+        return _parse_relationship(text)
     # 列表
     if text.startswith("[") and text.endswith("]"):
         return _parse_list(text)
@@ -64,9 +67,6 @@ def parse_tck_value(text: str) -> Any:
     # Node 表示: (:Label {prop: value})
     if text.startswith("(") and text.endswith(")"):
         return _parse_node(text)
-    # Relationship 表示: [:TYPE {prop: value}]
-    if text.startswith("[") and text.endswith("]"):
-        return _parse_relationship(text)
     # Path 表示: <(a)-[r]->(b)>
     if text.startswith("<") and text.endswith(">"):
         return {"_type": "path", "_repr": text}

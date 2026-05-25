@@ -133,7 +133,7 @@ class BoltClient:
             ) as session:
                 result = session.run(cypher, parameters or {})
                 records = [dict(record) for record in result]
-                keys = list(result.keys()) if records else []
+                keys = list(result.keys())
                 summary = result.consume()
                 return QueryResult(records=records, keys=keys, summary=summary)
         except neo4j.exceptions.Neo4jError as e:

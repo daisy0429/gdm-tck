@@ -1370,5 +1370,5 @@ Feature: Create4 - Large Create Query
     And the side effects should be:
       | +nodes         | 731  |
       | +relationships | 1247 |
-#      | +labels        | 6    |
       | +properties    | 230  |
+    #      | +labels        | 6    |
