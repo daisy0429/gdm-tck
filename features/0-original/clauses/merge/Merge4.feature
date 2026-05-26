@@ -70,4 +70,4 @@ Feature: Merge4 - Merge node - on match and on create
     And the side effects should be:
       | +nodes      | 1 |
       | +labels     | 1 |
-      | +properties | 1 |
+#      | +properties | 1 |

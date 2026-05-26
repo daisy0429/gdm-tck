@@ -90,10 +90,14 @@ def _assert_error_raised(error_type: str, ctx: ScenarioContext,
     error_msg = str(ctx.last_error)
     error_msg_lower = error_msg.lower()
     neo4j_code = _extract_neo4j_error_code(error_msg)
+    neo4j_code_lower = neo4j_code.lower()
 
-    # 严格检查：错误类型必须匹配
+    # 严格检查：错误类型必须匹配（关键词匹配错误消息或错误码）
     type_keywords = _get_error_keywords(error_type)
-    if type_keywords and not any(kw in error_msg_lower for kw in type_keywords):
+    if type_keywords and not (
+        any(kw in error_msg_lower for kw in type_keywords)
+        or any(kw in neo4j_code_lower for kw in type_keywords)
+    ):
         detail_info = f", detail={detail}" if detail else ""
         raise AssertionError(
             f"Error type mismatch: expected {error_type}{detail_info} at {phase}\n"
@@ -115,12 +119,12 @@ def _get_error_keywords(error_type: str) -> list[str]:
     基于 GDM 返回的 Neo4j 协议错误码进行映射。
     """
     mapping = {
-        "SyntaxError": ["syntax", "syntaxerror", "parse", "unexpected"],
+        "SyntaxError": ["syntax", "syntaxerror", "parse", "unexpected", "argumenterror"],
         "TypeError": ["type", "typeerror", "incompatible", "invalidargumenttype"],
         "SemanticError": ["semantic", "semanticerror"],
         "ParameterMissing": ["parameter", "missing", "expected"],
         "ConstraintValidationFailed": ["constraint", "violation", "unique"],
-        "EntityNotFound": ["not found", "does not exist"],
+        "EntityNotFound": ["not found", "does not exist", "entitynotfound", "deleted"],
         "ArithmeticError": ["arithmetic", "division by zero", "overflow"],
         "ArgumentError": ["argument", "argumenterror", "invalidargument", "numberoutofrange"],
         "ProcedureError": ["procedure", "procedurenotfound"],

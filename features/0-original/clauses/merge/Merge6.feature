@@ -116,6 +116,12 @@ Feature: Merge6 - Merge relationships - on create
       | keyValue |
       | []       |
 
+    # gdmbase支持以下用法neo4j不支持该用法： r = [:TYPE {name: "A"}]
+    # MATCH (a {name: 'A'}), (b {name: 'B'}) MERGE (a)-[r:TYPE]->(b) ON CREATE SET r = a;
+    # neo4j可用这个语句：
+    # MATCH (a {name: 'A'}), (b {name: 'B'}) MERGE (a)-[r:TYPE]->(b) ON CREATE SET r.name = a.name;
+    # MATCH (a {name: 'A'}), (b {name: 'B'}) MERGE (a)-[r:TYPE]->(b) ON CREATE SET r = properties(a);
+    # MATCH (a {name: 'A'}), (b {name: 'B'}) MERGE (a)-[r:TYPE]->(b);
   Scenario: [6] Copying properties from node with ON CREATE
     Given an empty graph
     And having executed:
@@ -126,7 +132,7 @@ Feature: Merge6 - Merge relationships - on create
       """
       MATCH (a {name: 'A'}), (b {name: 'B'})
       MERGE (a)-[r:TYPE]->(b)
-        ON CREATE SET r = a
+        ON CREATE SET r = properties(a);
       """
     Then the result should be empty
     And the side effects should be:

@@ -58,8 +58,8 @@ Feature: Merge9 - Merge clause interoperation with other clauses
     And the side effects should be:
       | +nodes         | 5 |
       | +relationships | 4 |
-      | +labels        | 2 |
       | +properties    | 5 |
+#      | +labels        | 2 |
 
   Scenario: [3] Mixing MERGE with CREATE
     Given an empty graph

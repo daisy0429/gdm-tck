@@ -139,34 +139,38 @@ def _parse_map(text: str) -> dict:
 
 
 def _parse_node(text: str) -> dict:
-    """解析 Node 表示 (:Label {prop: value})。"""
+    """解析 Node 表示 (:Label {prop: value})。
+
+    先分离属性部分，再在剩余文本中提取标签，避免属性值中的冒号被误识别。
+    """
     inner = text[1:-1].strip()
-    labels = []
     properties = {}
-    # 提取标签
-    label_match = re.findall(r":(\w+)", inner)
-    if label_match:
-        labels = label_match
-    # 提取属性
-    prop_match = re.search(r"\{(.+)\}", inner)
+    prop_match = re.search(r"\{.+\}", inner)
     if prop_match:
-        properties = _parse_map("{" + prop_match.group(1) + "}")
-    return {"_type": "node", "labels": sorted(labels), "properties": properties}
+        properties = _parse_map("{" + prop_match.group(0)[1:-1] + "}")
+        label_part = inner[: prop_match.start()]
+    else:
+        label_part = inner
+    label_match = re.findall(r":(\w+)", label_part)
+    labels = sorted(label_match) if label_match else []
+    return {"_type": "node", "labels": labels, "properties": properties}
 
 
 def _parse_relationship(text: str) -> dict:
-    """解析 Relationship 表示 [:TYPE {prop: value}]。"""
+    """解析 Relationship 表示 [:TYPE {prop: value}]。
+
+    先分离属性部分，再在剩余文本中提取类型，避免属性值中的冒号被误识别。
+    """
     inner = text[1:-1].strip()
-    rel_type = ""
     properties = {}
-    # 提取类型
-    type_match = re.search(r":(\w+)", inner)
-    if type_match:
-        rel_type = type_match.group(1)
-    # 提取属性
-    prop_match = re.search(r"\{(.+)\}", inner)
+    prop_match = re.search(r"\{.+\}", inner)
     if prop_match:
-        properties = _parse_map("{" + prop_match.group(1) + "}")
+        properties = _parse_map("{" + prop_match.group(0)[1:-1] + "}")
+        type_part = inner[: prop_match.start()]
+    else:
+        type_part = inner
+    type_match = re.search(r":(\w+)", type_part)
+    rel_type = type_match.group(1) if type_match else ""
     return {"_type": "relationship", "rel_type": rel_type, "properties": properties}
 
 

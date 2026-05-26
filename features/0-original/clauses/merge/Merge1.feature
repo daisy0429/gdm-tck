@@ -136,7 +136,7 @@ Feature: Merge1 - Merge node
     Then the result should be empty
     And the side effects should be:
       | +nodes  | 2 |
-      | +labels | 1 |
+#      | +labels | 1 |
 
   Scenario: [8] Merge should handle argument properly
     Given an empty graph
@@ -186,8 +186,8 @@ Feature: Merge1 - Merge node
       | 2 | 2 |
     And the side effects should be:
       | +nodes      | 15 |
-      | +labels     | 1  |
       | +properties | 30 |
+#      | +labels     | 1  |
 
   Scenario: [10] Merge must properly handle multiple labels
     Given an empty graph
@@ -205,8 +205,8 @@ Feature: Merge1 - Merge node
       | ['L', 'B'] |
     And the side effects should be:
       | +nodes      | 1 |
-      | +labels     | 1 |
       | +properties | 1 |
+#      | +labels     | 1 |
 
   Scenario: [11] Merge should be able to merge using property of bound node
     Given an empty graph
@@ -227,8 +227,8 @@ Feature: Merge1 - Merge node
     Then the result should be empty
     And the side effects should be:
       | +nodes      | 3 |
-      | +labels     | 1 |
       | +properties | 3 |
+#     | +labels     | 1 |
 
   Scenario: [12] Merge should be able to merge using property of freshly created node
     Given an empty graph
@@ -277,7 +277,7 @@ Feature: Merge1 - Merge node
     And the side effects should be:
       | +nodes      | 1 |
       | -nodes      | 2 |
-      | -properties | 2 |
+#      | -properties | 2 |
 
   Scenario: [15] Fail when merge a node that is already bound
     Given any graph

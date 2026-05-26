@@ -31,12 +31,14 @@
 
 Feature: WithSkipLimit1 - Skip
 
+  # neo4j 5 不支持：CREATE (a:End...), (:Begin {num: a.id}) 同一CREATE引用变量
+  # gdmbase支持
   Scenario: [1] Handle dependencies across WITH with SKIP
     Given an empty graph
     And having executed:
       """
       CREATE (a {name: 'A', num: 0, id: 0}),
-             ({name: 'B', num: a.id, id: 1}),
+             ({name: 'B', num: 0, id: 1}),
              ({name: 'C', num: 0, id: 2})
       """
     When executing query:

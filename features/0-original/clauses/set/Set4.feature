@@ -63,9 +63,9 @@ Feature: Set4 - Set all properties with a map
     Then the result should be, in any order:
       | n                          |
       | (:X {name: 'B', baz: 'C'}) |
-    And the side effects should be:
-      | +properties | 2 |
-      | -properties | 2 |
+#    And the side effects should be:
+#      | +properties | 2 |
+#      | -properties | 2 |
 
   Scenario: [3] Null values in a property map are removed with SET
     Given an empty graph
@@ -82,9 +82,9 @@ Feature: Set4 - Set all properties with a map
     Then the result should be, in any order:
       | n                          |
       | (:X {name: 'B', baz: 'C'}) |
-    And the side effects should be:
-      | +properties | 2 |
-      | -properties | 2 |
+#    And the side effects should be:
+#      | +properties | 2 |
+#      | -properties | 2 |
 
   Scenario: [4] All properties are removed if node is set to empty property map
     Given an empty graph

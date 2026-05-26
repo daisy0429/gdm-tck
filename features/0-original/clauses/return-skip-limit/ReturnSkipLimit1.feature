@@ -119,6 +119,7 @@ Feature: ReturnSkipLimit1 - Skip
       """
     Then a SyntaxError should be raised at compile time: NonConstantExpression
 
+    # fixme code gdm: 内部服务异常
   Scenario: [6] Negative parameter for SKIP should fail
     Given any graph
     And having executed:
@@ -151,6 +152,7 @@ Feature: ReturnSkipLimit1 - Skip
       """
     Then a SyntaxError should be raised at compile time: NegativeIntegerArgument
 
+    # fixme code gdm内部服务异常
   Scenario: [8] Floating point parameter for SKIP should fail
     Given any graph
     And having executed:

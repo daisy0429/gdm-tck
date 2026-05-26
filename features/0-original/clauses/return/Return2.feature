@@ -249,6 +249,7 @@ Feature: Return2 - Return single expression (correctly projecting an expression)
     And the side effects should be:
       | -relationships | 1 |
 
+    # fixme code gdm 内部服务异常
   Scenario: [15] Fail when returning properties of deleted nodes
     Given an empty graph
     And having executed:
@@ -263,6 +264,7 @@ Feature: Return2 - Return single expression (correctly projecting an expression)
       """
     Then a EntityNotFound should be raised at runtime: DeletedEntityAccess
 
+    # fixme code gdm 内部服务异常
   Scenario: [16] Fail when returning labels of deleted nodes
     Given an empty graph
     And having executed:
@@ -277,6 +279,8 @@ Feature: Return2 - Return single expression (correctly projecting an expression)
       """
     Then a EntityNotFound should be raised at runtime: DeletedEntityAccess
 
+    # fixme code gdm内部服务异常。预期事务操作失败，数据删除失败。
+    # neo4j :invalid transaction state - cannot access entity after removal. A relationship was accessed after being deleted in this transaction. Verify the transaction statements.
   Scenario: [17] Fail when returning properties of deleted relationships
     Given an empty graph
     And having executed:

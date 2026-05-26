@@ -5,7 +5,7 @@
 [server]
 backend = "neo4j"
 mode = "standalone"
-bolt_uri = "bolt://10.86.11.219:7687"
+bolt_uri = "bolt://10.86.11.245:7687"
 bolt_uris = []
 username = "neo4j"
 password = "12345678"

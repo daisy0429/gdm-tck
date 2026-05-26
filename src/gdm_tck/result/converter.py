@@ -49,7 +49,7 @@ def simplify_value(value: Any) -> Any:
         return {k: simplify_value(v) for k, v in value.items()}
     # 时间类型
     if _is_temporal(value):
-        return str(value)
+        return _format_temporal(value)
     # 空间类型
     if _is_spatial(value):
         return _simplify_spatial(value)
@@ -95,6 +95,65 @@ def _is_temporal(value: Any) -> bool:
         neo4j.time.Duration,
     )
     return isinstance(value, temporal_types)
+
+
+def _format_temporal(value: Any) -> str:
+    """格式化 neo4j 时间类型为 TCK 兼容的紧凑格式。
+
+    neo4j str() 总是输出纳秒精度（如 '10:35:00.000000000'），
+    但 TCK 期望简洁格式（如 '10:35'）。当纳秒和秒都为 0 时省略。
+    """
+    if isinstance(value, neo4j.time.Date):
+        return str(value)
+    if isinstance(value, neo4j.time.DateTime):
+        return _format_datetime(value)
+    if isinstance(value, neo4j.time.Time):
+        return _format_time(value)
+    return str(value)
+
+
+def _format_time(value: neo4j.time.Time) -> str:
+    """格式化 Time 为紧凑格式。"""
+    ns = value.nanosecond
+    sec = value.second
+    if ns == 0 and sec == 0:
+        time_str = f"{value.hour:02d}:{value.minute:02d}"
+    elif ns == 0:
+        time_str = f"{value.hour:02d}:{value.minute:02d}:{sec:02d}"
+    else:
+        time_str = f"{value.hour:02d}:{value.minute:02d}:{sec:02d}.{ns:09d}"
+    if value.tzinfo is not None:
+        offset_secs = int(value.tzinfo.utcoffset(None).total_seconds())
+        sign = "+" if offset_secs >= 0 else "-"
+        abs_secs = abs(offset_secs)
+        offset_h, offset_m = divmod(abs_secs // 60, 60)
+        time_str += f"{sign}{offset_h:02d}:{offset_m:02d}"
+    return time_str
+
+
+def _format_datetime(value: neo4j.time.DateTime) -> str:
+    """格式化 DateTime 为紧凑格式。"""
+    ns = value.nanosecond
+    sec = value.second
+    if ns == 0 and sec == 0:
+        dt_str = f"{value.year:04d}-{value.month:02d}-{value.day:02d}T{value.hour:02d}:{value.minute:02d}"
+    elif ns == 0:
+        dt_str = (
+            f"{value.year:04d}-{value.month:02d}-{value.day:02d}"
+            f"T{value.hour:02d}:{value.minute:02d}:{sec:02d}"
+        )
+    else:
+        dt_str = (
+            f"{value.year:04d}-{value.month:02d}-{value.day:02d}"
+            f"T{value.hour:02d}:{value.minute:02d}:{sec:02d}.{ns:09d}"
+        )
+    if value.tzinfo is not None:
+        offset_secs = int(value.tzinfo.utcoffset(None).total_seconds())
+        sign = "+" if offset_secs >= 0 else "-"
+        abs_secs = abs(offset_secs)
+        offset_h, offset_m = divmod(abs_secs // 60, 60)
+        dt_str += f"{sign}{offset_h:02d}:{offset_m:02d}"
+    return dt_str
 
 
 def _is_spatial(value: Any) -> bool:

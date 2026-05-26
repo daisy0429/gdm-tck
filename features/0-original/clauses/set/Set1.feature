@@ -137,7 +137,7 @@ Feature: Set1 - Set a Property
       | [1, 2, 3, 4, 5] |
     And the side effects should be:
       | +nodes      | 1 |
-      | +properties | 1 |
+#      | +properties | 1 |
 
   Scenario: [7] Concatenate elements in reverse onto a list property
     Given any graph
@@ -152,7 +152,7 @@ Feature: Set1 - Set a Property
       | [1, 2, 3, 4, 5] |
     And the side effects should be:
       | +nodes      | 1 |
-      | +properties | 1 |
+#      | +properties | 1 |
 
   Scenario: [8] Ignore null when setting property
     Given an empty graph

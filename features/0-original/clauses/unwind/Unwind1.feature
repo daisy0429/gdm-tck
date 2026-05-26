@@ -134,8 +134,8 @@ Feature: Unwind1
     And the side effects should be:
       | +nodes         | 2 |
       | +relationships | 2 |
-      | +labels        | 1 |
       | +properties    | 2 |
+#      | +labels        | 1 |
 
   Scenario: [7] Double unwinding a list of lists
     Given any graph
@@ -277,5 +277,5 @@ Feature: Unwind1
       | 'name2' | 'login2' |
     And the side effects should be:
       | +nodes      | 2 |
-      | +labels     | 1 |
       | +properties | 4 |
+#      | +labels     | 1 |

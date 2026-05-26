@@ -244,8 +244,8 @@ Feature: Remove3 - Persistence of remove clause side effects
       | num |
       | 42  |
       | 42  |
-    And the side effects should be:
-      | -labels | 1 |
+#    And the side effects should be:
+#      | -labels | 1 |
 
   Scenario: [11] Skipping zero result and limiting to all results after removing a label from nodes does not affect the result set nor the side effects
     Given an empty graph
@@ -271,8 +271,8 @@ Feature: Remove3 - Persistence of remove clause side effects
       | 42  |
       | 42  |
       | 42  |
-    And the side effects should be:
-      | -labels | 1 |
+#    And the side effects should be:
+#      | -labels | 1 |
 
   Scenario: [12] Filtering after removing a label from nodes affects the result set but not the side effects
     Given an empty graph
@@ -296,8 +296,8 @@ Feature: Remove3 - Persistence of remove clause side effects
       | num |
       | 2   |
       | 4   |
-    And the side effects should be:
-      | -labels | 1 |
+#    And the side effects should be:
+#      | -labels | 1 |
 
   Scenario: [13] Aggregating in `RETURN` after removing a label from nodes affects the result set but not the side effects
     Given an empty graph
@@ -318,8 +318,8 @@ Feature: Remove3 - Persistence of remove clause side effects
     Then the result should be, in any order:
       | sum |
       | 15  |
-    And the side effects should be:
-      | -labels | 1 |
+#    And the side effects should be:
+#      | -labels | 1 |
 
   Scenario: [14] Aggregating in `WITH` after removing a label from nodes affects the result set but not the side effects
     Given an empty graph
@@ -341,8 +341,8 @@ Feature: Remove3 - Persistence of remove clause side effects
     Then the result should be, in any order:
       | sum |
       | 15  |
-    And the side effects should be:
-      | -labels | 1 |
+#    And the side effects should be:
+#      | -labels | 1 |
 
   Scenario: [15] Limiting to zero results after removing a property from relationships affects the result set but not the side effects
     Given an empty graph

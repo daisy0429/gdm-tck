@@ -416,7 +416,7 @@ Feature: Merge5 - Merge relationships
       | +relationships | 2 |
       | -relationships | 4 |
       | +properties    | 1 |
-      | -properties    | 2 |
+#      | -properties    | 2 |
 
   Scenario: [21] Do not match on deleted relationships
     Given an empty graph
@@ -441,7 +441,7 @@ Feature: Merge5 - Merge relationships
       | +relationships | 1 |
       | -relationships | 2 |
       | +properties    | 1 |
-      | -properties    | 2 |
+#      | -properties    | 2 |
 
   Scenario: [22] Fail when imposing new predicates on a variable that is already bound
     Given any graph

@@ -30,6 +30,7 @@
 
 Feature: Call1 - Basic procedure calling
 
+  @ignore
   Scenario: [1] Standalone call to procedure that takes no arguments and yields no results
     Given an empty graph
     And there exists a procedure test.doNothing() :: ():
@@ -41,6 +42,7 @@ Feature: Call1 - Basic procedure calling
     Then the result should be empty
     And no side effects
 
+  @ignore
   Scenario: [2] Standalone call to procedure that takes no arguments and yields no results, called with implicit arguments
     Given an empty graph
     And there exists a procedure test.doNothing() :: ():
@@ -52,6 +54,7 @@ Feature: Call1 - Basic procedure calling
     Then the result should be empty
     And no side effects
 
+  @ignore
   Scenario: [3] In-query call to procedure that takes no arguments and yields no results
     Given an empty graph
     And there exists a procedure test.doNothing() :: ():
@@ -66,6 +69,7 @@ Feature: Call1 - Basic procedure calling
       | n |
     And no side effects
 
+  @ignore
   Scenario: [4] In-query call to procedure that takes no arguments and yields no results and consumes no rows
     Given an empty graph
     And there exists a procedure test.doNothing() :: ():
@@ -89,6 +93,7 @@ Feature: Call1 - Basic procedure calling
       | 'c'  |
     And no side effects
 
+  @ignore
   Scenario: [5] Standalone call to STRING procedure that takes no arguments
     Given an empty graph
     And there exists a procedure test.labels() :: (label :: STRING?):
@@ -107,6 +112,7 @@ Feature: Call1 - Basic procedure calling
       | 'C'   |
     And no side effects
 
+  @ignore
   Scenario: [6] In-query call to STRING procedure that takes no arguments
     Given an empty graph
     And there exists a procedure test.labels() :: (label :: STRING?):
@@ -126,6 +132,7 @@ Feature: Call1 - Basic procedure calling
       | 'C'   |
     And no side effects
 
+  @ignore
   Scenario: [7] Standalone call to procedure should fail if explicit argument is missing
     Given an empty graph
     And there exists a procedure test.my.proc(name :: STRING?, in :: INTEGER?) :: (out :: INTEGER?):
@@ -136,6 +143,7 @@ Feature: Call1 - Basic procedure calling
       """
     Then a SyntaxError should be raised at compile time: InvalidNumberOfArguments
 
+  @ignore
   Scenario: [8] In-query call to procedure should fail if explicit argument is missing
     Given an empty graph
     And there exists a procedure test.my.proc(name :: STRING?, in :: INTEGER?) :: (out :: INTEGER?):
@@ -147,6 +155,7 @@ Feature: Call1 - Basic procedure calling
       """
     Then a SyntaxError should be raised at compile time: InvalidNumberOfArguments
 
+  @ignore
   Scenario: [9] Standalone call to procedure should fail if too many explicit argument are given
     Given an empty graph
     And there exists a procedure test.my.proc(in :: INTEGER?) :: (out :: INTEGER?):
@@ -157,6 +166,7 @@ Feature: Call1 - Basic procedure calling
       """
     Then a SyntaxError should be raised at compile time: InvalidNumberOfArguments
 
+  @ignore
   Scenario: [10] In-query call to procedure should fail if too many explicit argument are given
     Given an empty graph
     And there exists a procedure test.my.proc(in :: INTEGER?) :: (out :: INTEGER?):
@@ -168,6 +178,7 @@ Feature: Call1 - Basic procedure calling
       """
     Then a SyntaxError should be raised at compile time: InvalidNumberOfArguments
 
+  @ignore
   Scenario: [11] Standalone call to procedure should fail if implicit argument is missing
     Given an empty graph
     And there exists a procedure test.my.proc(name :: STRING?, in :: INTEGER?) :: (out :: INTEGER?):

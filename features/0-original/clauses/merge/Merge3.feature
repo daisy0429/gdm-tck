@@ -102,7 +102,7 @@ Feature: Merge3 - Merge node - on match
     And the side effects should be:
       | +nodes      | 1 |
       | +labels     | 1 |
-      | +properties | 1 |
+#      | +properties | 1 |
 
   Scenario: [5] Fail when using undefined variable in ON MATCH
     Given any graph

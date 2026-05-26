@@ -53,13 +53,15 @@ Feature: WithSkipLimit2 - Limit
     And no side effects
 
   # Does this scenario realy testing LIMIT?
+  # neo4j 5 不支持：CREATE (a:End...), (:Begin {num: a.id}) 同一CREATE引用变量
+  # gdmbase支持
   Scenario: [2] Handle dependencies across WITH with LIMIT
     Given an empty graph
     And having executed:
       """
       CREATE (a:End {num: 42, id: 0}),
              (:End {num: 3}),
-             (:Begin {num: a.id})
+             (:Begin {num: 0})
       """
     When executing query:
       """

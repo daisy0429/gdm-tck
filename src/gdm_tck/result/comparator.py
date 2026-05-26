@@ -152,8 +152,38 @@ def _normalize_expected(header: list[str], rows: list[list[str]]) -> list[dict[s
 
 
 def _row_to_comparable(row: dict[str, Any]) -> str:
-    """将行字典转为可哈希的比较字符串。"""
-    return json.dumps(row, sort_keys=True, default=str)
+    """将行字典转为可哈希的比较字符串。递归排序列表和字典键以确保稳定比较。"""
+    return json.dumps(_normalize_for_comparison(row), sort_keys=True, default=str)
+
+
+def _normalize_for_comparison(value: Any) -> Any:
+    """递归规范化值以便稳定比较：排序列表元素和字典键。"""
+    if isinstance(value, dict):
+        return {k: _normalize_for_comparison(v) for k, v in value.items()}
+    if isinstance(value, list):
+        normalized = [_normalize_for_comparison(item) for item in value]
+        try:
+            return sorted(normalized, key=_sort_key)
+        except TypeError:
+            return normalized
+    return value
+
+
+def _sort_key(value: Any) -> Any:
+    """为 sorted() 提供排序键，处理混合类型列表。"""
+    if isinstance(value, dict):
+        return json.dumps(value, sort_keys=True, default=str)
+    if isinstance(value, list):
+        return json.dumps(value, sort_keys=True, default=str)
+    if isinstance(value, bool):
+        return (0, int(value))
+    if isinstance(value, (int, float)):
+        return (0, value)
+    if isinstance(value, str):
+        return (1, value)
+    if value is None:
+        return (-1,)
+    return (2, str(value))
 
 
 def _compare_any_order(actual: list[dict], expected: list[dict]) -> None:

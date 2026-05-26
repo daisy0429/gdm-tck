@@ -113,6 +113,9 @@ Feature: Return6 - Implicit grouping with aggregates
       | 11               |
     And no side effects
 
+    # neo4j 5 失败。报错信息：
+  #  42I18: syntax error or access rule violation - invalid reference to implicitly grouped expressions. The aggregation column contains implicit grouping expressions referenced by the variables `a`. Implicit grouping expressions are variables not explicitly declared as grouping keys.
+  # gdmbase 支持。
   Scenario: [6] Handle aggregates inside non-aggregate expressions
     Given an empty graph
     When executing query:

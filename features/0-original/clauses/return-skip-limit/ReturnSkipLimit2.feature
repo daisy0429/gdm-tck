@@ -185,6 +185,7 @@ Feature: ReturnSkipLimit2 - Limit
       """
     Then a SyntaxError should be raised at compile time: NonConstantExpression
 
+    # fixme code gdm 内部服务异常
   Scenario: [10] Negative parameter for LIMIT should fail
     Given any graph
     And having executed:
@@ -202,6 +203,7 @@ Feature: ReturnSkipLimit2 - Limit
       """
     Then a SyntaxError should be raised at runtime: NegativeIntegerArgument
 
+    # fixme code gdm 内部服务异常
   Scenario: [11] Negative parameter for LIMIT with ORDER BY should fail
     Given any graph
     And having executed:
@@ -244,6 +246,7 @@ Feature: ReturnSkipLimit2 - Limit
       """
     Then a SyntaxError should be raised at compile time: NegativeIntegerArgument
 
+     # fixme code gdm内部服务异常
   Scenario: [14] Floating point parameter for LIMIT should fail
     Given any graph
     And having executed:
@@ -261,6 +264,7 @@ Feature: ReturnSkipLimit2 - Limit
       """
     Then a SyntaxError should be raised at runtime: InvalidArgumentType
 
+     # fixme code gdm内部服务异常
   Scenario: [15] Floating point parameter for LIMIT with ORDER BY should fail
     Given any graph
     And having executed:
