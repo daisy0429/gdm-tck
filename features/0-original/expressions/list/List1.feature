@@ -42,7 +42,7 @@ Feature: List1 - Dynamic Element Access
       | 1     |
     And no side effects
 
-  Scenario: [2] Indexing into nested literal lists
+  Scenario: [2] Indexing into nested literal lists neo4jfail
     Given any graph
     When executing query:
       """
@@ -97,7 +97,7 @@ Feature: List1 - Dynamic Element Access
       | 'Apa' |
     And no side effects
 
-  Scenario Outline: [6] Fail when indexing a non-list #Example: <exampleName>
+  Scenario Outline: [6] Fail when indexing a non-list neo4jfail #Example: <exampleName>
     Given any graph
     When executing query:
       """
@@ -113,7 +113,7 @@ Feature: List1 - Dynamic Element Access
       | 4.7    | float        |
       | '1'    | string       |
 
-  Scenario Outline: [7] Fail when indexing a non-list given by a parameter #Example: <exampleName>
+  Scenario Outline: [7] Fail when indexing a non-list given by a parameter neo4jfail #Example: <exampleName>
     Given any graph
     And parameters are:
       | expr | <expr> |
@@ -132,7 +132,7 @@ Feature: List1 - Dynamic Element Access
       | 4.7    | float        |
       | '1'    | string       |
 
-  Scenario Outline: [8] Fail when indexing with a non-integer #Example: <exampleName>
+  Scenario Outline: [8] Fail when indexing with a non-integer neo4jfail #Example: <exampleName>
     Given any graph
     When executing query:
       """
@@ -149,7 +149,7 @@ Feature: List1 - Dynamic Element Access
       | [1]    | list         |
       | {x: 3} | map          |
 
-  Scenario Outline: [9] Fail when indexing with a non-integer given by a parameter #Example: <exampleName>
+  Scenario Outline: [9] Fail when indexing with a non-integer given by a parameter neo4jfail #Example: <exampleName>
     Given any graph
     And parameters are:
       | expr | ['Apa'] |

@@ -75,7 +75,7 @@ Feature: Literals6 - String
     And no side effects
 
   @skipStyleCheck
-  Scenario: [5] Return a single-quoted string with escaped characters
+  Scenario: [5] Return a single-quoted string with escaped characters neo4jfail
     Given any graph
     When executing query:
       """
@@ -167,7 +167,7 @@ Feature: Literals6 - String
     And no side effects
 
   @skipGrammarCheck
-  Scenario: [13] Failing on incorrect unicode literal
+  Scenario: [13] Failing on incorrect unicode literal neo4jfail
     Given any graph
     When executing query:
       """

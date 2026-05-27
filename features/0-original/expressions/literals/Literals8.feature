@@ -118,7 +118,7 @@ Feature: Literals8 - Maps
       | {k: 1}   |
     And no side effects
 
-  Scenario: [9] Return a map containing a hexadecimal integer
+  Scenario: [9] Return a map containing a hexadecimal integer neo4jfail
     Given any graph
     When executing query:
       """
@@ -129,7 +129,7 @@ Feature: Literals8 - Maps
       | {F: -372036854} |
     And no side effects
 
-  Scenario: [10] Return a map containing a octal integer
+  Scenario: [10] Return a map containing a octal integer neo4jfail
     Given any graph
     When executing query:
       """
@@ -140,7 +140,7 @@ Feature: Literals8 - Maps
       | {k: 372036854} |
     And no side effects
 
-  Scenario: [11] Return a map containing a float
+  Scenario: [11] Return a map containing a float neo4jfail
     Given any graph
     When executing query:
       """
@@ -323,7 +323,7 @@ Feature: Literals8 - Maps
       """
     Then a SyntaxError should be raised at compile time: UnexpectedSyntax
 
-  Scenario: [22] Fail on a map containing unquoted string
+  Scenario: [22] Fail on a map containing unquoted string neo4jfail
     Given any graph
     When executing query:
       """

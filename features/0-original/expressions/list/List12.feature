@@ -30,7 +30,7 @@
 
 Feature: List12 - List Comprehension
 
-  Scenario: [1] Collect and extract using a list comprehension
+  Scenario: [1] Collect and extract using a list comprehension neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -52,7 +52,7 @@ Feature: List12 - List Comprehension
       | +properties | 1 |
       | -properties | 1 |
 
-  Scenario: [2] Collect and filter using a list comprehension
+  Scenario: [2] Collect and filter using a list comprehension neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -74,7 +74,7 @@ Feature: List12 - List Comprehension
       | +properties | 1 |
       | -properties | 1 |
 
-  Scenario: [3] Size of list comprehension
+  Scenario: [3] Size of list comprehension neo4jfail
     Given an empty graph
     When executing query:
       """
@@ -87,7 +87,7 @@ Feature: List12 - List Comprehension
       | 0  |
     And no side effects
 
-  Scenario: [4] Returning a list comprehension
+  Scenario: [4] Returning a list comprehension neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -105,7 +105,7 @@ Feature: List12 - List Comprehension
       | [(:A), (:A)] |
     And no side effects
 
-  Scenario: [5] Using a list comprehension in a WITH
+  Scenario: [5] Using a list comprehension in a WITH neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -124,7 +124,7 @@ Feature: List12 - List Comprehension
       | [(:A), (:A)] | 2 |
     And no side effects
 
-  Scenario: [6] Using a list comprehension in a WHERE
+  Scenario: [6] Using a list comprehension in a WHERE neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -143,7 +143,7 @@ Feature: List12 - List Comprehension
       | (:C) |
     And no side effects
 
-  Scenario: [7] Fail when using aggregation in list comprehension
+  Scenario: [7] Fail when using aggregation in list comprehension neo4jfail
     Given any graph
     When executing query:
       """

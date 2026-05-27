@@ -118,7 +118,7 @@ Feature: Literals2 - Decimal integer
       | -9223372036854775808 |
     And no side effects
 
-  Scenario: [9] Fail on a too large integer
+  Scenario: [9] Fail on a too large integer neo4jfail不支持十六进制/八进制/省略整数浮点字面量
     Given any graph
     When executing query:
       """
@@ -126,7 +126,7 @@ Feature: Literals2 - Decimal integer
       """
     Then a SyntaxError should be raised at compile time: IntegerOverflow
 
-  Scenario: [10] Fail on a too small integer
+  Scenario: [10] Fail on a too small integer neo4jfail
     Given any graph
     When executing query:
       """

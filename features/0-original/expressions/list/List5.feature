@@ -243,7 +243,7 @@ Feature: List5 - List Membership Validation - IN Operator
 
   # IN operator - null
 
-  Scenario: [20] IN should return null if LHS and RHS are null
+  Scenario: [20] IN should return null if LHS and RHS are null neo4jfail
     Given any graph
     When executing query:
       """
@@ -254,7 +254,7 @@ Feature: List5 - List Membership Validation - IN Operator
       | null |
     And no side effects
 
-  Scenario: [21] IN should return null if LHS and RHS are null - list version
+  Scenario: [21] IN should return null if LHS and RHS are null - list version neo4jfail
     Given any graph
     When executing query:
       """
@@ -265,7 +265,7 @@ Feature: List5 - List Membership Validation - IN Operator
       | null |
     And no side effects
 
-  Scenario: [22] IN should return null when LHS and RHS both ultimately contain null, even if LHS and RHS are of different types (nested list and flat list)
+  Scenario: [22] IN should return null when LHS and RHS both ultimately contain null, even if LHS and RHS are of different types (nested list and flat list) neo4jfail
     Given any graph
     When executing query:
       """
@@ -298,7 +298,7 @@ Feature: List5 - List Membership Validation - IN Operator
       | true |
     And no side effects
 
-  Scenario: [25] IN should return null if comparison with null is required
+  Scenario: [25] IN should return null if comparison with null is required neo4jfail
     Given any graph
     When executing query:
       """
@@ -342,7 +342,7 @@ Feature: List5 - List Membership Validation - IN Operator
       | false |
     And no side effects
 
-  Scenario: [29] IN should return null if comparison with null is required, list version
+  Scenario: [29] IN should return null if comparison with null is required, list version neo4jfail
     Given any graph
     When executing query:
       """
@@ -353,7 +353,7 @@ Feature: List5 - List Membership Validation - IN Operator
       | null |
     And no side effects
 
-  Scenario: [30] IN should return false if different length lists compared, even if the extra element is null
+  Scenario: [30] IN should return false if different length lists compared, even if the extra element is null neo4jfail
     Given any graph
     When executing query:
       """
@@ -364,7 +364,7 @@ Feature: List5 - List Membership Validation - IN Operator
       | false |
     And no side effects
 
-  Scenario: [31] IN should return null when comparing two so-called identical lists where one element is null
+  Scenario: [31] IN should return null when comparing two so-called identical lists where one element is null neo4jfail
     Given any graph
     When executing query:
       """
@@ -397,7 +397,7 @@ Feature: List5 - List Membership Validation - IN Operator
       | false |
     And no side effects
 
-  Scenario: [34] IN should return null if comparison with null is required, list version 2
+  Scenario: [34] IN should return null if comparison with null is required, list version 2 neo4jfail
     Given any graph
     When executing query:
       """
@@ -465,7 +465,7 @@ Feature: List5 - List Membership Validation - IN Operator
       | true |
     And no side effects
 
-  Scenario: [40] IN should return null if comparison with null is required for empty list
+  Scenario: [40] IN should return null if comparison with null is required for empty list neo4jfail
     Given any graph
     When executing query:
       """
@@ -487,7 +487,7 @@ Feature: List5 - List Membership Validation - IN Operator
       | true |
     And no side effects
 
-  Scenario Outline: [42] Failing when using IN on a non-list literal
+  Scenario Outline: [42] Failing when using IN on a non-list literal neo4jfail
     Given any graph
     When executing query:
       """

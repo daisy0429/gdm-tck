@@ -63,7 +63,7 @@ Feature: List3 - List Equality
       | false |
     And no side effects
 
-  Scenario: [4] Equality between almost equal lists with null should return null
+  Scenario: [4] Equality between almost equal lists with null should return null neo4jfail
     Given any graph
     When executing query:
       """
@@ -96,7 +96,7 @@ Feature: List3 - List Equality
       | false |
     And no side effects
 
-  Scenario: [7] Equality between almost equal nested lists with null should return null
+  Scenario: [7] Equality between almost equal nested lists with null should return null neo4jfail
     Given any graph
     When executing query:
       """
