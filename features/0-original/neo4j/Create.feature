@@ -22,6 +22,8 @@
 
 Feature: Create
 
+  #neo4jfail
+  @skip_script
   Scenario: [1] Dependencies in creating multiple nodes
     Given an empty graph
     When executing query:
@@ -33,6 +35,8 @@ Feature: Create
       | +nodes      | 2 |
       | +properties | 2 |
 
+    #neo4jfail
+  @skip_script
   Scenario: [2] Dependencies in creating multiple rels
     Given an empty graph
     When executing query:

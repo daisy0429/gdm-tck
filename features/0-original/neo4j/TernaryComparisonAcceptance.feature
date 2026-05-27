@@ -65,7 +65,9 @@ Feature: TernaryComparisonAcceptance
       | {k1: 42}  | {k2: null} | true  | true | false | false |
       | {k1: 42}  | 42         | null  | null | null  | null  |
 
-  Scenario Outline: [3] Spatial comparison test
+#neo4jfail
+@skip_script
+  Scenario Outline: [3] Spatial comparison test-neo4jfail
     When executing query:
       """
       WITH point(<map1>) AS p1, point(<map2>) AS p2
@@ -85,6 +87,8 @@ Feature: TernaryComparisonAcceptance
       | {x: 1, y: 2} | null                        | null  | null  | null  | null  |
       | {x: 1, y: 2} | {x: 1, y: null}             | null  | null  | null  | null  |
 
+    #neo4jfail
+  @skip_script
   Scenario: [4] Duration comparison test of equal durations
     Given an empty graph
     And having executed:

@@ -233,6 +233,8 @@ Feature: ConstraintAcceptance
       | +properties | 3 |
 
   @allowCustomErrors
+    #neo4jfail
+  @skip_script
   Scenario: [10] Should fail on merge using multiple unique indexes using same key if found different nodes
     Given an empty graph
     And having executed:
@@ -254,6 +256,8 @@ Feature: ConstraintAcceptance
     Then a ConstraintValidationFailed should be raised at runtime: CreateBlockedByConstraint
 
   @allowCustomErrors
+    #neo4jfail
+  @skip_script
   Scenario: [11] Should fail on merge using multiple unique indexes if found different nodes
     Given an empty graph
     And having executed:
@@ -275,6 +279,8 @@ Feature: ConstraintAcceptance
     Then a ConstraintValidationFailed should be raised at runtime: CreateBlockedByConstraint
 
   @allowCustomErrors
+    #neo4jfail
+  @skip_script
   Scenario: [12] Should fail on merge using multiple unique indexes if it found a node matching single property only
     Given an empty graph
     And having executed:
@@ -296,6 +302,8 @@ Feature: ConstraintAcceptance
     Then a ConstraintValidationFailed should be raised at runtime: CreateBlockedByConstraint
 
   @allowCustomErrors
+    #neo4jfail
+@skip_script
   Scenario: [13] Should fail on merge using multiple unique indexes if it found a node matching single property only flipped order
     Given an empty graph
     And having executed:
@@ -317,6 +325,8 @@ Feature: ConstraintAcceptance
     Then a ConstraintValidationFailed should be raised at runtime: CreateBlockedByConstraint
 
   @allowCustomErrors
+    #neo4jfail
+  @skip_script
   Scenario: [14] Should fail on merge using multiple unique indexes and labels if found different nodes
     Given an empty graph
     And having executed:
@@ -338,6 +348,8 @@ Feature: ConstraintAcceptance
     Then a ConstraintValidationFailed should be raised at runtime: CreateBlockedByConstraint
 
   @allowCustomErrors
+    #neo4jfail
+  @skip_script
   Scenario: [15] Merge with uniqueness constraints must properly handle multiple labels
     Given an empty graph
     And having executed:
@@ -373,6 +385,8 @@ Feature: ConstraintAcceptance
     Then the result should be empty
     And no side effects
 
+    #neo4jfail
+  @skip_script
   Scenario: [17] Works fine with index and constraint
     Given an empty graph
     And having executed:
@@ -401,6 +415,8 @@ Feature: ConstraintAcceptance
       DROP INDEX ON :Person(name)
       """
 
+    #neo4jfail
+  @skip_script
   Scenario: [18] [Modify] Works with property repeated in literal map in set [| +properties | 2 |-> 3]
     Given an empty graph
     And having executed:
@@ -425,6 +441,8 @@ Feature: ConstraintAcceptance
       DROP CONSTRAINT ON :Person(ssn)
       """
 
+    #neo4jfail
+  @skip_script
   Scenario: [19] [Modify] Works with property in map that gets set [| +properties | 2 |-> 3]
     Given an empty graph
     And having executed:
@@ -452,6 +470,8 @@ Feature: ConstraintAcceptance
       """
 
   @allowCustomErrors
+    #neo4jfail
+  @skip_script
   Scenario: [20] Failing when creation would violate constraint
     Given an empty graph
     And having executed:

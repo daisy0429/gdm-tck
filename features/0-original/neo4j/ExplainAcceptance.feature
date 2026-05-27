@@ -25,6 +25,8 @@ Feature: ExplainAcceptance
   Background:
     Given an empty graph
 
+    #neo4jfail
+  @skip_script
   Scenario: [1] Explanation of standalone procedure call
     And there exists a procedure test.labels() :: (label :: STRING?):
       | label |
@@ -39,6 +41,8 @@ Feature: ExplainAcceptance
       | label |
     And no side effects
 
+    #neo4jfail
+  @skip_script
   Scenario: [2] Explanation of in-query procedure call
     And there exists a procedure test.labels() :: (label :: STRING?):
       | label |

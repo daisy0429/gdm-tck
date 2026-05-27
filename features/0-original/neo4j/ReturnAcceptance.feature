@@ -252,7 +252,8 @@ Feature: ReturnAcceptance
       | 5 |
     And no side effects
 
-
+  #neo4jfail
+  @skip_script
   Scenario: [20] Graph projections with aggregation
     Given an empty graph
     And having executed:

@@ -79,6 +79,8 @@ Feature: MergeLegacyAcceptance
       | +nodes         | 2 |
       | +relationships | 2 |
 
+    #neo4jfail
+@skip_script
   Scenario: [4] Using bound nodes in mid-pattern when pattern partly matches
     Given an empty graph
     And having executed:

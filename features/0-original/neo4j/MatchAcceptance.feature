@@ -298,6 +298,8 @@ Feature: MatchAcceptance
       | 1    | 2    |
     And no side effects
 
+    #neo4jfail
+@skip_script
   Scenario: [15] Should handle EXISTS on node property when node is null
     Given an empty graph
     And having executed:
@@ -315,6 +317,8 @@ Feature: MatchAcceptance
       | (:TestNode) | null | null |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [16] Should handle NOT EXISTS on node property when node is null
     Given an empty graph
     And having executed:

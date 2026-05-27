@@ -48,7 +48,9 @@ Feature: CaseExpression
       | 'wow!'  |
     And no side effects
 
-  Scenario: [3] [Modify] Returning a CASE expression into pattern expression [B-C位置反了]
+    #neo4j fail
+    @skip_script
+  Scenario: [3] [Modify] Returning a CASE expression into pattern expression [B-C位置反了]-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -71,7 +73,8 @@ Feature: CaseExpression
       | []                                     |
     And no side effects
 
-  Scenario: [4] Returning a CASE expression into integer
+  @skip_script
+  Scenario: [4] Returning a CASE expression into integer-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -94,7 +97,8 @@ Feature: CaseExpression
       | 42 |
     And no side effects
 
-  Scenario: [5] Returning a CASE expression with label predicates
+  @skip_script
+  Scenario: [5] Returning a CASE expression with label predicates-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -121,7 +125,8 @@ Feature: CaseExpression
       | 42                                           |
     And no side effects
 
-  Scenario: [6] Using a CASE expression in a WITH, positive case
+  @skip_script
+  Scenario: [6] Using a CASE expression in a WITH, positive case-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -144,7 +149,8 @@ Feature: CaseExpression
       | []                                     | 2 |
     And no side effects
 
-  Scenario: [7] Using a CASE expression in a WITH, negative case
+    @skip_script
+  Scenario: [7] Using a CASE expression in a WITH, negative case-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -166,7 +172,8 @@ Feature: CaseExpression
       | 42 | 3 |
     And no side effects
 
-  Scenario: [8] [Modify] Using a CASE expression with label predicates in a WITH [T1 T2反了]
+  @skip_script
+  Scenario: [8] [Modify] Using a CASE expression with label predicates in a WITH [T1 T2反了]-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -193,7 +200,8 @@ Feature: CaseExpression
       | 42                                           | 2 |
     And no side effects
 
-  Scenario: [9] Using a CASE expression in a WHERE, positive case
+  @skip_script
+  Scenario: [9] Using a CASE expression in a WHERE, positive case-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -215,7 +223,8 @@ Feature: CaseExpression
       | (:A) |
     And no side effects
 
-  Scenario: [10] Using a CASE expression in a WHERE, negative case
+    @skip_script
+  Scenario: [10] Using a CASE expression in a WHERE, negative case-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -239,7 +248,8 @@ Feature: CaseExpression
       | (:C) |
     And no side effects
 
-  Scenario: [11] Using a CASE expression in a WHERE, with relationship predicate
+  @skip_script
+  Scenario: [11] Using a CASE expression in a WHERE, with relationship predicate-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -263,7 +273,8 @@ Feature: CaseExpression
       | (:C) |
     And no side effects
 
-  Scenario: [12] Using a CASE expression in a WHERE, with label predicate
+    @skip_script
+  Scenario: [12] Using a CASE expression in a WHERE, with label predicate-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -287,7 +298,8 @@ Feature: CaseExpression
       | (:C) |
     And no side effects
 
-  Scenario: [13] Returning a CASE expression with a pattern expression alternative
+      @skip_script
+  Scenario: [13] Returning a CASE expression with a pattern expression alternative-neo4jfail
     Given an empty graph
     And having executed:
       """

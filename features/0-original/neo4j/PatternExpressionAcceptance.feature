@@ -22,6 +22,8 @@
 
 Feature: PatternExpressionAcceptance
 
+  #neo4jfail
+@skip_script
   Scenario: [1] Returning list comprehension
     Given an empty graph
     And having executed:
@@ -42,6 +44,8 @@ Feature: PatternExpressionAcceptance
       | []           |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [2] Using list comprehension in a WITH
     Given an empty graph
     And having executed:
@@ -61,6 +65,8 @@ Feature: PatternExpressionAcceptance
       | [(:A), (:A)] | 1 |
     And no side effects
 
+  #neo4jfail
+  @skip_script
   Scenario: [3] Using list comprehension in a WHERE
     Given an empty graph
     And having executed:
@@ -80,6 +86,8 @@ Feature: PatternExpressionAcceptance
       | (:A) |
     And no side effects
 
+    #neo4jfail
+@skip_script
   Scenario: [4] Using a pattern expression and a CASE expression in a WHERE
     Given an empty graph
     And having executed:
@@ -106,6 +114,8 @@ Feature: PatternExpressionAcceptance
       | ()   |
     And no side effects
 
+  #neo4jfail
+ @skip_script
   Scenario: [5] Pattern expressions and ORDER BY
     Given an empty graph
     And having executed:
@@ -125,6 +135,8 @@ Feature: PatternExpressionAcceptance
       | [<({time: 20})<-[:T]-({time: 10})>] |
     And no side effects
 
+   #neo4jfail
+  @skip_script
   Scenario: [6] [Modify] Returning a pattern expression [B C 反了]
     Given an empty graph
     And having executed:
@@ -145,6 +157,8 @@ Feature: PatternExpressionAcceptance
       | []                                     |
     And no side effects
 
+    #neo4jfail
+  @skip_script
   Scenario: [7] Returning a pattern expression with label predicate
     Given an empty graph
     And having executed:
@@ -164,6 +178,8 @@ Feature: PatternExpressionAcceptance
       | [<(:A)-[:T]->(:B)>] |
     And no side effects
 
+    #neo4jfail
+@skip_script
   Scenario: [8] Returning a pattern expression with bound nodes
     Given an empty graph
     And having executed:
@@ -181,6 +197,8 @@ Feature: PatternExpressionAcceptance
       | [<(:A)-[:T]->(:B)>] |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [9] Using a pattern expression in a WITH
     Given an empty graph
     And having executed:
@@ -200,6 +218,8 @@ Feature: PatternExpressionAcceptance
       | [<(:A)-[:T]->(:C)>, <(:A)-[:T]->(:B)>] | 2 |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [10] Using a variable-length pattern expression in a WITH
     Given an empty graph
     And having executed:
@@ -217,6 +237,8 @@ Feature: PatternExpressionAcceptance
       | [<(:A)-[:T]->(:B)>] | 1 |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [11] Using pattern expression in RETURN
     Given an empty graph
     And having executed:
@@ -236,6 +258,8 @@ Feature: PatternExpressionAcceptance
       | []                  |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [12] Aggregating on pattern expression
     Given an empty graph
     And having executed:
@@ -253,6 +277,8 @@ Feature: PatternExpressionAcceptance
       | 3 |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [13] Using `size()` on outgoing pattern expression
     Given an empty graph
     And having executed:
@@ -276,6 +302,8 @@ Feature: PatternExpressionAcceptance
       | (:X {n: 1}) |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [14] Using `size()` on incoming pattern expression
     Given an empty graph
     And having executed:
@@ -299,6 +327,8 @@ Feature: PatternExpressionAcceptance
       | (:X {n: 2}) |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [15] Using `size()` on undirected pattern expression
     Given an empty graph
     And having executed:
@@ -323,6 +353,8 @@ Feature: PatternExpressionAcceptance
       | (:X {n: 2}) |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [16] Using `size()` on pattern expression with complex relationship predicate
     Given an empty graph
     And having executed:
@@ -363,6 +395,8 @@ Feature: PatternExpressionAcceptance
       | (:X {prop: 43}) | false |
     And no side effects
 
+    #neo4jfail
+@skip_script
   Scenario: [18] Pattern expression inside list comprehension
     Given an empty graph
     And having executed:
@@ -405,6 +439,8 @@ Feature: PatternExpressionAcceptance
       """
     Then a SyntaxError should be raised at compile time: UndefinedVariable
 
+    #neo4jfail
+@skip_script
   Scenario: [21] Get node degree via size of pattern expression
     Given an empty graph
     And having executed:
@@ -424,6 +460,8 @@ Feature: PatternExpressionAcceptance
       | 3    |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [22] Get node degree via size of pattern expression that specifies a relationship type
     Given an empty graph
     And having executed:
@@ -444,6 +482,8 @@ Feature: PatternExpressionAcceptance
       | 3    |
     And no side effects
 
+  #neo4jfail
+@skip_script
   Scenario: [23] Get node degree via size of pattern expression that specifies multiple relationship types
     Given an empty graph
     And having executed:

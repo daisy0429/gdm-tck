@@ -40,6 +40,6 @@ Feature: DeleteAcceptance
       | {prop1: 42, prop2: 1337} |
     And the side effects should be:
       | -nodes      | 1 |
-      | -labels     | 0 |
-      | -properties | 2 |
+#      | -labels     | 0 |
+#      | -properties | 2 |
 

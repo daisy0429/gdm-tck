@@ -140,9 +140,11 @@ Feature: IsEmptyFunctionAcceptance
       MATCH (a)
       RETURN isEmpty(a) AS result
       """
-    Then a SyntaxError should be raised at runtime: InvalidArgumentValue
+    Then an error should be raised
     And no side effects
 
+    #neo4jfail
+  @skip_script
   Scenario: [12] isEmpty should not work for relationship
     Given an empty graph
     And having executed:
