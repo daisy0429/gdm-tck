@@ -1,22 +1,24 @@
 """pytest-bdd 解析器补丁模块。
 
-修复 pytest_bdd.parser.parse_feature 中的一个 bug：
-当 Scenario 的第一个步骤使用 ``And`` 作为前缀时（如 ``And having executed:``），
-``get_step_type("And having executed:")`` 返回 ``None``，
-导致 ``mode = None or prev_mode`` 将 mode 错误地继承为 ``SCENARIO``，
-进而在场景内部创建出同名的幽灵 Scenario。
+修补两个 pytest-bdd 上游 bug：
 
-5 个受影响的场景（[25]-[29]）各自创建一个幽灵，但由于 feature.scenarios
-是 OrderedDict 且所有幽灵 key 相同（``"having executed:"``），
-4 个被覆盖，仅剩最后一个幽灵偷走场景 [29] 的断言步骤。
+1. **And/But mode 继承 bug**（parse_feature）：
+   当 Scenario 的第一个步骤使用 ``And`` 作为前缀时（如 ``And having executed:``），
+   ``get_step_type("And having executed:")`` 返回 ``None``，
+   导致 ``mode = None or prev_mode`` 将 mode 错误地继承为 ``SCENARIO``，
+   进而在场景内部创建出同名的幽灵 Scenario。
 
-此补丁的修复：当 ``get_step_type`` 返回 ``None``（And/But 前缀），
-且当前 mode 不是步骤类型时，仅在行以 ``And `` 或 ``But `` 开头时才强制
-设为 ``GIVEN``。这样能精准拦截幽灵 Scenario 的创建，同时不影响：
+   修复：当 ``get_step_type`` 返回 ``None``（And/But 前缀），
+   且当前 mode 不是步骤类型时，仅在行以 ``And `` 或 ``But `` 开头时才强制
+   设为 ``GIVEN``。
 
-- Scenario Outline 的 Examples 表行（``| col |`` 等不以 And/But 开头）
-- Feature/Scenario 的描述文本（普通文本不以 And/But 开头）
-- 其他非步骤类型上下文中的正常内容行
+2. **STEP_PARAM_RE 模板变量解析 bug**：
+   ``STEP_PARAM_RE = re.compile(r"<(.+?)>")`` 使用非贪婪 ``.+?`` 匹配，
+   在 Cypher 查询中出现比较运算符相邻模板变量时（如 ``RETURN <lhs> < <rhs> AS result``），
+   会将 ``< <rhs>`` 误匹配为单个模板变量 `` <rhs``（带前导空格），
+   导致 Scenario Outline 渲染时 KeyError。
+
+   修复：将正则收紧为 ``r"<([^<>\\s]+)>"``，禁止模板变量名包含空格和角括号。
 """
 
 from __future__ import annotations
@@ -189,5 +191,8 @@ def apply_patch() -> None:
     _feature.parse_feature = _patched_parse_feature
     _feature.features.clear()
 
+    import re
+    _parser.STEP_PARAM_RE = re.compile(r"<([^<>\s]+)>")
+
     _PATCHED = True
-    logger.info("pytest-bdd parser patched: And/But after Scenario now defaults to GIVEN")
+    logger.info("pytest-bdd parser patched: And/But + STEP_PARAM_RE fixes applied")
