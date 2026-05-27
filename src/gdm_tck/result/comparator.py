@@ -166,6 +166,9 @@ def _normalize_for_comparison(value: Any) -> Any:
             return sorted(normalized, key=_sort_key)
         except TypeError:
             return normalized
+    # 规范化 -0.0 为 0.0（IEEE 754 中它们数学上相等）
+    if isinstance(value, float) and value == 0.0:
+        return 0.0
     return value
 
 

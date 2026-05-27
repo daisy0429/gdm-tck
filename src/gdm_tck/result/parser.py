@@ -51,10 +51,10 @@ def parse_tck_value(text: str) -> Any:
         return _parse_float(text)
     # 字符串（单引号包围）
     if text.startswith("'") and text.endswith("'"):
-        return text[1:-1]
+        return _unescape_tck_string(text[1:-1])
     # 字符串（双引号包围）
     if text.startswith('"') and text.endswith('"'):
-        return text[1:-1]
+        return _unescape_tck_string(text[1:-1])
     # Relationship 表示: [:TYPE {prop: value}] (必须在列表判断之前)
     if text.startswith("[:") and text.endswith("]"):
         return _parse_relationship(text)
@@ -72,6 +72,41 @@ def parse_tck_value(text: str) -> Any:
         return _parse_path(text)
     # 无法解析的值原样返回
     return text
+
+
+def _unescape_tck_string(text: str) -> str:
+    """处理 TCK 字符串中的 Cypher 标准转义序列。"""
+    result = []
+    i = 0
+    while i < len(text):
+        if text[i] == '\\' and i + 1 < len(text):
+            next_char = text[i + 1]
+            if next_char in ("'", '"', '\\'):
+                result.append(next_char)
+                i += 2
+            elif next_char == 'n':
+                result.append('\n')
+                i += 2
+            elif next_char == 't':
+                result.append('\t')
+                i += 2
+            elif next_char == 'r':
+                result.append('\r')
+                i += 2
+            elif next_char == 'b':
+                result.append('\b')
+                i += 2
+            elif next_char == 'f':
+                result.append('\f')
+                i += 2
+            else:
+                # 未识别的转义序列保持原样
+                result.append(text[i])
+                i += 1
+        else:
+            result.append(text[i])
+            i += 1
+    return ''.join(result)
 
 
 def _is_float(text: str) -> bool:
