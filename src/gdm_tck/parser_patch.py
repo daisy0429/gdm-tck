@@ -11,8 +11,12 @@
 4 个被覆盖，仅剩最后一个幽灵偷走场景 [29] 的断言步骤。
 
 此补丁的修复：当 ``get_step_type`` 返回 ``None``（And/But 前缀），
-仅在前一个 mode 是步骤类型（given/when/then）时才继承该 mode，
-否则默认视为 ``GIVEN`` 类型。
+且当前 mode 不是步骤类型时，仅在行以 ``And `` 或 ``But `` 开头时才强制
+设为 ``GIVEN``。这样能精准拦截幽灵 Scenario 的创建，同时不影响：
+
+- Scenario Outline 的 Examples 表行（``| col |`` 等不以 And/But 开头）
+- Feature/Scenario 的描述文本（普通文本不以 And/But 开头）
+- 其他非步骤类型上下文中的正常内容行
 """
 
 from __future__ import annotations
@@ -91,12 +95,14 @@ def apply_patch() -> None:
             # 原始：mode = get_step_type(clean_line) or mode
             # 当 And/But 后 mode 是 SCENARIO/FEATURE/BACKGROUND/TAG 等非步骤类型时，
             # 会错误地创建幽灵 Scenario。
-            # 修复：仅在前一个 mode 是步骤类型 or clean_line 为空时才继承 mode，
-            # 否则默认 GIVEN。（clean_line 为空时保持原 mode，供 description 收集）
+            # 修复：仅当行以 And/But 开头（即 raw_mode 为 None 的 And/But 行）
+            # 且 mode 不是步骤类型时，才强制为 GIVEN。
+            # 注意：不使用 `and clean_line` 作为条件，因为这会误触发
+            # Examples 表行（`| col |`），导致 Scenario Outline 参数化失效。
             raw_mode = _parser.get_step_type(clean_line)
             if raw_mode is not None:
                 mode = raw_mode
-            elif mode not in _types.STEP_TYPES and clean_line:
+            elif mode not in _types.STEP_TYPES and clean_line.startswith(('And ', 'But ')):
                 mode = _types.GIVEN
 
             allowed_prev_mode = (_types.BACKGROUND, _types.GIVEN, _types.WHEN)
