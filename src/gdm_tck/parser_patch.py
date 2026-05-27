@@ -1,6 +1,6 @@
 """pytest-bdd 解析器补丁模块。
 
-修补两个 pytest-bdd 上游 bug：
+修补三个 pytest-bdd 上游 bug：
 
 1. **And/But mode 继承 bug**（parse_feature）：
    当 Scenario 的第一个步骤使用 ``And`` 作为前缀时（如 ``And having executed:``），
@@ -19,6 +19,15 @@
    导致 Scenario Outline 渲染时 KeyError。
 
    修复：将正则收紧为 ``r"<([^<>\\s]+)>"``，禁止模板变量名包含空格和角括号。
+
+3. **Docstring 同级缩进无法识别 bug**（parse_feature multiline 检测）：
+   原始逻辑仅在 ``step.indent < line_indent`` 时才将后续行视为 step 的
+   多行内容。当 feature 文件中三引号定界符与 step 关键字处于相同缩进时，
+   docstring 无法被识别为 step 的一部分，导致 StepDefinitionNotFoundError。
+
+   修复：新增 ``in_docstring`` 状态标记，当检测到三引号定界符且存在活跃 step 时
+   进入 docstring 模式，在此模式内所有行（无论缩进）都归入当前 step，
+   直到遇到闭合的三引号定界符。
 """
 
 from __future__ import annotations
@@ -74,9 +83,39 @@ def apply_patch() -> None:
         with open(abs_filename, encoding=encoding) as f:
             content = f.read()
 
+        in_docstring = False
+
         for line_number, line in enumerate(content.splitlines(), start=1):
             unindented_line = line.lstrip()
             line_indent = len(line) - len(unindented_line)
+
+            # --- docstring 同级缩进修复 ---
+            # 当已在 docstring 内部时，无论缩进都归入当前 step
+            if step and in_docstring:
+                if unindented_line.rstrip() == '"""':
+                    # 闭合三引号，结束 docstring 模式，不将闭合行加入 step
+                    in_docstring = False
+                else:
+                    step.add_line(line)
+                continue
+
+            # 跳过注释行：不破坏当前 step 引用（支持 step 和 docstring 之间有注释）
+            if step and unindented_line.startswith('#'):
+                continue
+
+            # 检测 docstring 开始：step 存在且当前行为 """ 且缩进 >= step 缩进
+            if step and unindented_line.rstrip() == '"""' and line_indent >= step.indent:
+                multiline_step = True
+                in_docstring = True
+                # 不将开启三引号加入 step lines，仅进入 docstring 模式
+                continue
+
+            # 表格行同级缩进修复：| 开头的行在 indent >= step.indent 时视为多行内容
+            if step and unindented_line.startswith('|') and line_indent >= step.indent:
+                multiline_step = True
+                step.add_line(line)
+                continue
+
             if step and (
                 step.indent < line_indent or ((not unindented_line) and multiline_step)
             ):
