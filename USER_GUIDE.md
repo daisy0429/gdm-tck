@@ -68,7 +68,7 @@ uv run pytest tests/ --co
 uv run pytest tests/tck/ --alluredir=reports/allure-results
 
 # 运行指定测试用例目录下的测试
-uv run pytest tests/tck/ --features=0-original/expressions/aggregation --alluredir=reports/allure-results
+uv run pytest tests/tck/ --features=0-opencypher/expressions/aggregation --alluredir=reports/allure-results
 ```
 
 ## 配置说明
@@ -147,21 +147,24 @@ uv run pytest tests/tck/ --alluredir=reports/allure-results
 您可以使用 `--features` 选项指定 `features/` 目录下的子路径来运行特定测试：
 
 ```bash
-# 运行 0-original 目录下的所有测试
-uv run pytest tests/tck/ --features=0-original
+# 运行 0-opencypher 目录下的所有测试
+uv run pytest tests/tck/ --features=0-opencypher
 
-# 运行 0-original/expressions/aggregation 目录下的测试
-uv run pytest tests/tck/ --features=0-original/expressions/aggregation
+# 运行 0-opencypher/expressions/aggregation 目录下的测试
+uv run pytest tests/tck/ --features=0-opencypher/expressions/aggregation
 
 
 # 运行 1-metadata/Concurrent 目录下的测试
 uv run pytest tests/tck/ --features=1-metadata/Concurrent
 
 # 运行指定feature文件
-GDM_TCK_CONFIG=config/neo4j.toml uv run pytest tests/tck/ --features=3-Index/SecondaryIndex/01_index_node_create.feature
+GDM_TCK_CONFIG=config/neo4j.toml uv run pytest tests/tck/ --features=3-Index/SecondaryIndex/01_index_node_create.feature -p no:warnings
+
+# 运行任意指定的单个或多个feature文件夹。在 test_quick.py 中指定，文件右键运行（可使用pycharm测试运行器查看到文件树和执行结果详情）
+tests/tck/test_quick.py
 
 # 使用脚本运行
-./scripts/run_suite.sh --features 0-original/clauses/match
+./scripts/run_suite.sh --features 0-opencypher/clauses/match
 ```
 
 ### 运行指定图库后端的测试
@@ -188,7 +191,8 @@ GDM TCK 支持对多种 Bolt 兼容图库运行测试，通过 `server.backend` 
 uv run pytest tests/tck/ --alluredir=reports/allure-results
 
 # 基于 Neo4j 运行
-GDM_TCK_CONFIG=config/neo4j.toml uv run pytest tests/tck/ --alluredir=reports/allure-results
+GDM_TCK_CONFIG=neo4j.toml uv run pytest tests/tck/ --alluredir=reports/allure-results
+GDM_TCK_CONFIG=neo4j.toml uv run pytest tests/tck/ --features=4-Constraint/debug.feature -p no:warnings
 ```
 
 内置配置文件一览：
@@ -259,10 +263,10 @@ database = "default"
 uv run pytest tests/tck/ -n 4
 
 # 结合 --features 选项
-uv run pytest tests/tck/ --features=0-original -n 4
+uv run pytest tests/tck/ --features=0-opencypher -n 4
 
 # 使用脚本并行执行
-./scripts/run_suite.sh --features 0-original -- -n 4
+./scripts/run_suite.sh --features 0-opencypher -- -n 4
 ```
 
 ### 过滤测试
@@ -279,7 +283,7 @@ uv run pytest tests/tck/ -k "match"
 ### 生成测试报告
 ```bash
 # 运行测试并收集allure数据，生成allure报告
-GDM_TCK_CONFIG=config/neo4j.toml uv run pytest tests/tck/ --features=0-original/expressions/aggregation --alluredir=reports/allure-results
+GDM_TCK_CONFIG=config/neo4j.toml uv run pytest tests/tck/ --features=0-opencypher/expressions/aggregation --alluredir=reports/allure-results
 ./scripts/generate_report.sh reports/allure-results reports/allure-report
 （generate_report.sh 默认读取 allure-results 目录）
 
