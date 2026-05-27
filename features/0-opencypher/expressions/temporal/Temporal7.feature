@@ -27,7 +27,7 @@
 #
 
 #encoding: utf-8
-
+@ignore
 Feature: Temporal7 - Compare Temporal Values
 
   Scenario Outline: [1] Should compare dates

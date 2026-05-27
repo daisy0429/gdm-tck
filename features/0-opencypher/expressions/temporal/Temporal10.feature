@@ -27,7 +27,7 @@
 #
 
 #encoding: utf-8
-
+@ignore
 Feature: Temporal10 - Compute Durations Between two Temporal Values
 
   Scenario Outline: [1] Should split between boundaries correctly

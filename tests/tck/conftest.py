@@ -4,8 +4,8 @@
 支持指定目录或单个 .feature 文件。
 
 用法:
-    uv run pytest tests/tck/ --features=0-original
-    uv run pytest tests/tck/ --features=0-original/clauses/match
+    uv run pytest tests/tck/ --features=0-opencypher
+    uv run pytest tests/tck/ --features=0-opencypher/clauses/match
     uv run pytest tests/tck/ --features=1-metadata/Concurrent
     uv run pytest tests/tck/ --features=.
     uv run pytest tests/tck/ --features=3-Index/SecondaryIndex/01_index_node_create.feature
@@ -28,7 +28,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=None,
         help=(
             "指定 features/ 下的子路径来执行对应用例（支持目录或单个 .feature 文件）。"
-            " 例如: --features=0-original, --features=1-metadata/Concurrent, "
+            " 例如: --features=0-opencypher, --features=1-metadata/Concurrent, "
             "--features=3-Index/SecondaryIndex/01_index_node_create.feature, --features=."
         ),
     )

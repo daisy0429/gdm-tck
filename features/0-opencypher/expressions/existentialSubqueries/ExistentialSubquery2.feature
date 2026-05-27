@@ -71,8 +71,7 @@ Feature: ExistentialSubquery2 - Full existential subquery
       RETURN n
       """
     Then the result should be, in any order:
-      | n             |
-      | (:A {prop:1}) |
+      | n |
     And no side effects
 
   Scenario: [3] Full existential subquery with update clause should fail

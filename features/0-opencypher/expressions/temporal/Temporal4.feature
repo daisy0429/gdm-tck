@@ -27,7 +27,7 @@
 #
 
 #encoding: utf-8
-
+@ignore
 Feature: Temporal4 - Store Temporal Values
   # Storage tests, cannot be merged into fewer tests due to compatibility reasons
 

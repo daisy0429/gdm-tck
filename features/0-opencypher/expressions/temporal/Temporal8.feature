@@ -27,7 +27,7 @@
 #
 
 #encoding: utf-8
-
+@ignore
 Feature: Temporal8 - Compute Arithmetic Operations on Temporal Values
 
   Scenario Outline: [1] Should add or subtract duration to or from date

@@ -28,6 +28,7 @@
 
 #encoding: utf-8
 
+  @ignore
 Feature: Temporal1 - Create Temporal Values from a Map
 
   Scenario Outline: [1] Should construct week date

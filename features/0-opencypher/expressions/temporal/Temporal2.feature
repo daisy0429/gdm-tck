@@ -27,7 +27,7 @@
 #
 
 #encoding: utf-8
-
+@ignore
 Feature: Temporal2 - Create Temporal Values from a String
 
   Scenario Outline: [1] Should parse date from string

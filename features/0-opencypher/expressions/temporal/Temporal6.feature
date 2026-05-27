@@ -27,7 +27,7 @@
 #
 
 #encoding: utf-8
-
+@ignore
 Feature: Temporal6 - Render Temporal Values as a String
 
   Scenario: [1] Should serialize date

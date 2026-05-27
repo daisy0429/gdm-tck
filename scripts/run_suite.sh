@@ -5,7 +5,7 @@
 #   ./scripts/run_suite.sh --features <features_path> [options]
 # 套件: tck, clauses, expressions, ddl, dml, index, constraint, national_std, capacity, functional, performance, all
 # --features: 指定 features/ 下的子路径执行用例
-#   例如: --features 0-original/clauses/match
+#   例如: --features 0-opencypher/clauses/match
 #         --features 1-metadata/Concurrent
 
 set -euo pipefail
@@ -21,7 +21,7 @@ if [[ "${1:-}" == "--features" ]]; then
     if [[ -z "$FEATURES_PATH" ]]; then
         echo "Error: --features 需要指定路径参数"
         echo "用法: $0 --features <features_path> [options]"
-        echo "例如: $0 --features 0-original/clauses/match"
+        echo "例如: $0 --features 0-opencypher/clauses/match"
         exit 1
     fi
     shift 2 || true
@@ -93,7 +93,7 @@ case "$SUITE" in
     *)
         echo "Unknown suite: $SUITE"
         echo "Available: tck, clauses, expressions, ddl, dml, index, constraint, national_std, capacity, functional, performance, all"
-        echo "Or use: --features <path>  (e.g. --features 0-original/clauses/match)"
+        echo "Or use: --features <path>  (e.g. --features 0-opencypher/clauses/match)"
         exit 1
         ;;
 esac

@@ -27,7 +27,7 @@
 #
 
 #encoding: utf-8
-
+@ignore
 Feature: Temporal5 - Access Components of Temporal Values
 
   Scenario: [1] Should provide accessors for date

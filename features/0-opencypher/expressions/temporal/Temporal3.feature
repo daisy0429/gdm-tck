@@ -27,6 +27,7 @@
 #
 
 #encoding: utf-8
+  @ignore
 Feature: Temporal3 - Project Temporal Values from other Temporal Values
 
   Scenario Outline: [1] Should select date

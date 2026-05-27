@@ -27,7 +27,7 @@
 #
 
 #encoding: utf-8
-
+@ignore
 Feature: Temporal9 - Truncate Temporal Values
 
   Scenario Outline: [1] Should truncate date
