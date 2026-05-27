@@ -14,7 +14,8 @@ FEATURES_ROOT = Path(__file__).resolve().parents[2] / "features"
 
 # ============================================================
 #  在这里配置你想执行的 feature 路径。每行一个路径，相对于 features/ 目录
-#  修改运行配置- 添加环境变量：
+#  默认基于gdm实例运行测试。
+#  如果需要基于其他数据库进行测试，可以修改运行配置- 添加环境变量：
 #  neo4j:   GDM_TCK_SERVER__BACKEND=neo4j;GDM_TCK_SERVER__BOLT_URI=bolt://10.86.11.245:7687;GDM_TCK_SERVER__USERNAME=neo4j;GDM_TCK_SERVER__PASSWORD=12345678;GDM_TCK_SERVER__DATABASE=neo4j
 #  gdm:     GDM_TCK_SERVER__BACKEND=gdm;GDM_TCK_SERVER__BOLT_URI=bolt://10.86.11.245:7690;GDM_TCK_SERVER__USERNAME=admin;GDM_TCK_SERVER__PASSWORD=admin123;GDM_TCK_SERVER__DATABASE=default
 #  gdmbase: GDM_TCK_SERVER__BACKEND=gdmbase;GDM_TCK_SERVER__BOLT_URI=bolt://10.86.11.220:23990;GDM_TCK_SERVER__USERNAME=SYSDBA;GDM_TCK_SERVER__PASSWORD=SYSDBA;GDM_TCK_SERVER__DATABASE=default
