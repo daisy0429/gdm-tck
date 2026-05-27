@@ -30,7 +30,7 @@
 
 Feature: List4 - List Concatenation
 
-  Scenario: [1] Concatenating lists of same type-neo4jfail
+  Scenario: [1] Concatenating lists of same type
     Given any graph
     When executing query:
       """
@@ -41,7 +41,7 @@ Feature: List4 - List Concatenation
       | [1, 10, 100, 4, 5] |
     And no side effects
 
-  Scenario: [2] Concatenating a list with a scalar of same type-neo4jfail
+  Scenario: [2] Concatenating a list with a scalar of same type
     Given any graph
     When executing query:
       """

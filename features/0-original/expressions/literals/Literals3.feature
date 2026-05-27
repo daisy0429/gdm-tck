@@ -30,7 +30,7 @@
 
 Feature: Literals3 - Hexadecimal integer
 
-  Scenario: [1] Return a short positive hexadecimal integer-neo4jfail
+  Scenario: [1] Return a short positive hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -41,7 +41,7 @@ Feature: Literals3 - Hexadecimal integer
       | 1       |
     And no side effects
 
-  Scenario: [2] Return a long positive hexadecimal integer-neo4jfail
+  Scenario: [2] Return a long positive hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -52,7 +52,7 @@ Feature: Literals3 - Hexadecimal integer
       | 372036854  |
     And no side effects
 
-  Scenario: [3] Return the largest hexadecimal integer-neo4jfail
+  Scenario: [3] Return the largest hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -63,7 +63,7 @@ Feature: Literals3 - Hexadecimal integer
       | 9223372036854775807  |
     And no side effects
 
-  Scenario: [4] Return a positive hexadecimal zero-neo4jfail
+  Scenario: [4] Return a positive hexadecimal zero
     Given any graph
     When executing query:
       """
@@ -74,7 +74,7 @@ Feature: Literals3 - Hexadecimal integer
       | 0       |
     And no side effects
 
-  Scenario: [5] Return a negative hexadecimal zero-neo4jfail
+  Scenario: [5] Return a negative hexadecimal zero
     Given any graph
     When executing query:
       """
@@ -85,7 +85,7 @@ Feature: Literals3 - Hexadecimal integer
       | 0       |
     And no side effects
 
-  Scenario: [6] Return a short negative hexadecimal integer-neo4jfail
+  Scenario: [6] Return a short negative hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -96,7 +96,7 @@ Feature: Literals3 - Hexadecimal integer
       | -1      |
     And no side effects
 
-  Scenario: [7] Return a long negative hexadecimal integer-neo4jfail
+  Scenario: [7] Return a long negative hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -107,7 +107,7 @@ Feature: Literals3 - Hexadecimal integer
       | -372036854 |
     And no side effects
 
-  Scenario: [8] Return the smallest hexadecimal integer-neo4jfail
+  Scenario: [8] Return the smallest hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -118,7 +118,7 @@ Feature: Literals3 - Hexadecimal integer
       | -9223372036854775808 |
     And no side effects
 
-  Scenario: [9] Return a lower case hexadecimal integer-neo4jfail
+  Scenario: [9] Return a lower case hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -129,7 +129,7 @@ Feature: Literals3 - Hexadecimal integer
       | 460367961908983 |
     And no side effects
 
-  Scenario: [10] Return a upper case hexadecimal integer-neo4jfail
+  Scenario: [10] Return a upper case hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -140,7 +140,7 @@ Feature: Literals3 - Hexadecimal integer
       | 460367961908983 |
     And no side effects
 
-  Scenario: [11] Return a mixed case hexadecimal integer-neo4jfail
+  Scenario: [11] Return a mixed case hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -188,7 +188,7 @@ Feature: Literals3 - Hexadecimal integer
 #      """
 #    Then a SyntaxError should be raised at compile time: InvalidNumberLiteral
 
-  Scenario: [16] Fail on a too large hexadecimal integer-neo4jfail
+  Scenario: [16] Fail on a too large hexadecimal integer
     Given any graph
     When executing query:
       """
@@ -196,7 +196,7 @@ Feature: Literals3 - Hexadecimal integer
       """
     Then a SyntaxError should be raised at compile time: IntegerOverflow
 
-  Scenario: [17] Fail on a too small hexadecimal integer-neo4jfail
+  Scenario: [17] Fail on a too small hexadecimal integer
     Given any graph
     When executing query:
       """

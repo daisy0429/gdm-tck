@@ -63,7 +63,7 @@ Feature: Literals6 - String
       | '🧐🍌❖⋙⚐' |
     And no side effects
 
-  Scenario: [4] Return a single-quoted string with escaped single-quoted-neo4jfail
+  Scenario: [4] Return a single-quoted string with escaped single-quoted
     Given any graph
     When executing query:
       """
@@ -75,7 +75,7 @@ Feature: Literals6 - String
     And no side effects
 
   @skipStyleCheck
-  Scenario: [5] Return a single-quoted string with escaped characters-neo4jfail
+  Scenario: [5] Return a single-quoted string with escaped characters
     Given any graph
     When executing query:
       """
@@ -167,7 +167,7 @@ Feature: Literals6 - String
     And no side effects
 
   @skipGrammarCheck
-  Scenario: [13] Failing on incorrect unicode literal-neo4jfail
+  Scenario: [13] Failing on incorrect unicode literal
     Given any graph
     When executing query:
       """

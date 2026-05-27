@@ -30,7 +30,7 @@
 
 Feature: List9 - List Tail
 
-  Scenario: [1] Returning nested expressions based on list property-neo4jfail
+  Scenario: [1] Returning nested expressions based on list property
     Given an empty graph
     And having executed:
       """

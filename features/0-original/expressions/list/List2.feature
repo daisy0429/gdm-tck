@@ -126,7 +126,7 @@ Feature: List2 - List Slicing
       | [1, 2, 3] |
     And no side effects
 
-  Scenario Outline: [9] List slice with null range-neo4jfail
+  Scenario Outline: [9] List slice with null range
     Given any graph
     When executing query:
       """
