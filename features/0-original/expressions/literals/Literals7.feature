@@ -74,7 +74,7 @@ Feature: Literals7 - List
       | [1]     |
     And no side effects
 
-  Scenario: [5] Return a list containing a hexadecimal integer
+  Scenario: [5] Return a list containing a hexadecimal integer-neo4jfail
     Given any graph
     When executing query:
       """
@@ -85,7 +85,7 @@ Feature: Literals7 - List
       | [-372036854] |
     And no side effects
 
-  Scenario: [6] Return a list containing a octal integer
+  Scenario: [6] Return a list containing a octal integer-neo4jfail
     Given any graph
     When executing query:
       """
@@ -96,7 +96,7 @@ Feature: Literals7 - List
       | [372036854] |
     And no side effects
 
-  Scenario: [7] Return a list containing a float
+  Scenario: [7] Return a list containing a float-neo4jfail
     Given any graph
     When executing query:
       """

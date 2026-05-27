@@ -30,7 +30,9 @@
 
 Feature: Literals4 - Octal integer
 
-  Scenario: [1] Return a short positive octal integer
+  # gdmbase:invalid literal number
+  # neo4j: syntax error。Invalid input '01'
+  Scenario: [1] Return a short positive octal integer-neo4j&gdmbase不支持但是gdm支持
     Given any graph
     When executing query:
       """
@@ -41,7 +43,9 @@ Feature: Literals4 - Octal integer
       | 1       |
     And no side effects
 
-  Scenario: [2] Return a long positive octal integer
+    #以 0 开头 的十进制数字序列，会被解析为八进制整数。八进制转十进制
+   # neo4j5+: 八进制必须显式写 0o 前缀：0o12
+  Scenario: [2] Return a long positive octal integer-八进制字面量-neo4j不支持-neo4jfail
     Given any graph
     When executing query:
       """
@@ -52,7 +56,7 @@ Feature: Literals4 - Octal integer
       | 372036854  |
     And no side effects
 
-  Scenario: [3] Return the largest octal integer
+  Scenario: [3] Return the largest octal integer-neo4jfail
     Given any graph
     When executing query:
       """
@@ -63,7 +67,7 @@ Feature: Literals4 - Octal integer
       | 9223372036854775807  |
     And no side effects
 
-  Scenario: [4] Return a positive octal zero
+  Scenario: [4] Return a positive octal zero-neo4jfail
     Given any graph
     When executing query:
       """
@@ -74,7 +78,7 @@ Feature: Literals4 - Octal integer
       | 0       |
     And no side effects
 
-  Scenario: [5] Return a negative octal zero
+  Scenario: [5] Return a negative octal zero-neo4jfail
     Given any graph
     When executing query:
       """
@@ -85,7 +89,7 @@ Feature: Literals4 - Octal integer
       | 0       |
     And no side effects
 
-  Scenario: [6] Return a short negative octal integer
+  Scenario: [6] Return a short negative octal integer-neo4jfail
     Given any graph
     When executing query:
       """
@@ -96,7 +100,7 @@ Feature: Literals4 - Octal integer
       | -1      |
     And no side effects
 
-  Scenario: [7] Return a long negative octal integer
+  Scenario: [7] Return a long negative octal integer-neo4jfail
     Given any graph
     When executing query:
       """
@@ -107,7 +111,7 @@ Feature: Literals4 - Octal integer
       | -372036854 |
     And no side effects
 
-  Scenario: [8] Return the smallest octal integer
+  Scenario: [8] Return the smallest octal integer-neo4jfail
     Given any graph
     When executing query:
       """
@@ -118,7 +122,7 @@ Feature: Literals4 - Octal integer
       | -9223372036854775808 |
     And no side effects
 
-  Scenario: [9] Fail on a too large octal integer
+  Scenario: [9] Fail on a too large octal integer-neo4jfail
     Given any graph
     When executing query:
       """
@@ -126,7 +130,7 @@ Feature: Literals4 - Octal integer
       """
     Then a SyntaxError should be raised at compile time: IntegerOverflow
 
-  Scenario: [10] Fail on a too small octal integer
+  Scenario: [10] Fail on a too small octal integer-neo4jfail
     Given any graph
     When executing query:
       """

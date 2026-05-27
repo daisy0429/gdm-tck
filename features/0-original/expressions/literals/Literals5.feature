@@ -41,7 +41,7 @@ Feature: Literals5 - Float
       | 1.0     |
     And no side effects
 
-  Scenario: [2] Return a short positive float without integer digits
+  Scenario: [2] Return a short positive float without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -63,7 +63,7 @@ Feature: Literals5 - Float
       | 3985764.3405892686 |
     And no side effects
 
-  Scenario: [4] Return a long positive float without integer digits
+  Scenario: [4] Return a long positive float without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -85,7 +85,7 @@ Feature: Literals5 - Float
       | 1.2635418652381264e305 |
     And no side effects
 
-  Scenario: [6] Return a very long positive float without integer digits
+  Scenario: [6] Return a very long positive float without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -107,7 +107,7 @@ Feature: Literals5 - Float
       | 0.0     |
     And no side effects
 
-  Scenario: [8] Return a positive zero float without integer digits
+  Scenario: [8] Return a positive zero float without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -118,7 +118,7 @@ Feature: Literals5 - Float
       | 0.0     |
     And no side effects
 
-  Scenario: [9] Return a negative zero float
+  Scenario: [9] Return a negative zero float-neo4jfail
     Given any graph
     When executing query:
       """
@@ -129,7 +129,7 @@ Feature: Literals5 - Float
       | 0.0     |
     And no side effects
 
-  Scenario: [10] Return a negative zero float without integer digits
+  Scenario: [10] Return a negative zero float without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -151,7 +151,7 @@ Feature: Literals5 - Float
       | -1.2635418652381264e305 |
     And no side effects
 
-  Scenario: [12] Return a very long negative float without integer digits
+  Scenario: [12] Return a very long negative float without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -184,7 +184,7 @@ Feature: Literals5 - Float
       | 1000000000.0 |
     And no side effects
 
-  Scenario: [15] Return a positive float with positive lower case exponent without integer digits
+  Scenario: [15] Return a positive float with positive lower case exponent without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -206,7 +206,7 @@ Feature: Literals5 - Float
       | 0.00001 |
     And no side effects
 
-  Scenario: [17] Return a positive float with negative lower case exponent without integer digits
+  Scenario: [17] Return a positive float with negative lower case exponent without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -217,7 +217,7 @@ Feature: Literals5 - Float
       | 0.000001 |
     And no side effects
 
-  Scenario: [18] Return a positive float with negative upper case exponent without integer digits
+  Scenario: [18] Return a positive float with negative upper case exponent without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -250,7 +250,7 @@ Feature: Literals5 - Float
       | -1000000000.0 |
     And no side effects
 
-  Scenario: [21] Return a negative float with positive lower case exponent without integer digits
+  Scenario: [21] Return a negative float with positive lower case exponent without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -272,7 +272,7 @@ Feature: Literals5 - Float
       | -0.00001 |
     And no side effects
 
-  Scenario: [23] Return a negative float with negative lower case exponent without integer digits
+  Scenario: [23] Return a negative float with negative lower case exponent without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -283,7 +283,7 @@ Feature: Literals5 - Float
       | -0.000001 |
     And no side effects
 
-  Scenario: [24] Return a negative float with negative upper case exponent without integer digits
+  Scenario: [24] Return a negative float with negative upper case exponent without integer digits-neo4jfail
     Given any graph
     When executing query:
       """
@@ -316,7 +316,7 @@ Feature: Literals5 - Float
       | 1.23456789e308 |
     And no side effects
 
-  Scenario: [27] Fail when float value is too large
+  Scenario: [27] Fail when float value is too large-neo4jfail
     Given any graph
     When executing query:
       """

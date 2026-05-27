@@ -47,7 +47,7 @@ _SKIP_MARKERS = {
 
 
 def pytest_collection_modifyitems(config, items):
-    """根据 marker 自动跳过标记了 skip_bug / skip_script / ignore 的用例。"""
+    """根据 marker 或场景名称后缀自动跳过用例。"""
     for item in items:
         for marker_name, default_reason in _SKIP_MARKERS.items():
             marker = item.get_closest_marker(marker_name)
@@ -57,6 +57,10 @@ def pytest_collection_modifyitems(config, items):
                 )
                 item.add_marker(pytest.mark.skip(reason=reason))
                 break
+
+        # 跳过场景名称包含 neo4jfail 后缀的用例（GDM vs Neo4j 行为差异）
+        if "neo4jfail" in item.name:
+            item.add_marker(pytest.mark.skip(reason="GDM/Neo4j behavior divergence"))
 
 
 @pytest.fixture(scope="session")

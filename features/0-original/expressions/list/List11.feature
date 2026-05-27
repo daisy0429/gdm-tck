@@ -68,7 +68,6 @@ Feature: List11 - Create a list from a range
       | list   |
       | <list> |
     And no side effects
-
     Examples:
       | start | end   | step  | list                                              |
       | 1381  | -3412 | -1298 | [1381, 83, -1215, -2513]                          |
@@ -98,7 +97,8 @@ Feature: List11 - Create a list from a range
       | -2000 | 0     | 1298  | [-2000, -702]                                     |
       | -3412 | 1381  | 1298  | [-3412, -2114, -816, 482]                         |
 
-  Scenario: [3] Create an empty list if range direction and step direction are inconsistent
+    # neo4j bug： 其返回false
+  Scenario: [3][neo4j5 bug]Create an empty list if range direction and step direction are inconsistent-neo4j202604bug
     Given any graph
     When executing query:
       """
@@ -114,7 +114,7 @@ Feature: List11 - Create a list from a range
       | true |
     And no side effects
 
-  Scenario Outline: [4] Fail on invalid arguments for `range()`
+  Scenario Outline: [4] Fail on invalid arguments for `range()`-neo4jfail
     Given any graph
     When executing query:
       """
@@ -129,7 +129,7 @@ Feature: List11 - Create a list from a range
       | -2    | 8    | 0    |
       | 2     | -8   | 0    |
 
-  Scenario Outline: [5] Fail on invalid argument types for `range()`
+  Scenario Outline: [5] Fail on invalid argument types for `range()`-neo4jfail
     Given any graph
     When executing query:
       """

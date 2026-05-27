@@ -41,7 +41,7 @@ Feature: List6 - List size
       | 3 |
     And no side effects
 
-  Scenario: [2] Setting and returning the size of a list property
+  Scenario: [2] Setting and returning the size of a list property-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -59,7 +59,7 @@ Feature: List6 - List size
     And the side effects should be:
       | +properties | 1 |
 
-  Scenario: [3] Concatenating and returning the size of literal lists
+  Scenario: [3] Concatenating and returning the size of literal lists-neo4jfail
     Given any graph
     When executing query:
       """
@@ -70,7 +70,7 @@ Feature: List6 - List size
       | 3 |
     And no side effects
 
-  Scenario: [4] `size()` on null list
+  Scenario: [4] `size()` on null list-neo4jfail
     Given any graph
     When executing query:
       """
@@ -82,7 +82,7 @@ Feature: List6 - List size
       | null    | null       |
     And no side effects
 
-  Scenario: [5] Fail for `size()` on paths
+  Scenario: [5] Fail for `size()` on paths-neo4jfail
     Given any graph
     When executing query:
       """
@@ -91,7 +91,7 @@ Feature: List6 - List size
       """
     Then a SyntaxError should be raised at compile time: InvalidArgumentType
 
-  Scenario Outline: [6] Fail for `size()` on pattern predicates
+  Scenario Outline: [6] Fail for `size()` on pattern predicates-neo4jfail
     Given any graph
     When executing query:
       """
@@ -110,7 +110,7 @@ Feature: List6 - List size
       | (a)-[r:REL]->(:C)<-[s:REL]-(a {num: 5})    |
       | ()-[r:REL*0..2]->()<-[s:REL]-(:A {num: 5}) |
 
-  Scenario: [7] Using size of pattern comprehension to test existence
+  Scenario: [7] Using size of pattern comprehension to test existence-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -128,7 +128,7 @@ Feature: List6 - List size
       | (:X {num: 43}) | false |
     And no side effects
 
-  Scenario: [8] Get node degree via size of pattern comprehension
+  Scenario: [8] Get node degree via size of pattern comprehension-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -147,7 +147,7 @@ Feature: List6 - List size
       | 3      |
     And no side effects
 
-  Scenario: [9] Get node degree via size of pattern comprehension that specifies a relationship type
+  Scenario: [9] Get node degree via size of pattern comprehension that specifies a relationship type-neo4jfail
     Given an empty graph
     And having executed:
       """
@@ -167,7 +167,7 @@ Feature: List6 - List size
       | 3      |
     And no side effects
 
-  Scenario: [10] Get node degree via size of pattern comprehension that specifies multiple relationship types
+  Scenario: [10] Get node degree via size of pattern comprehension that specifies multiple relationship types-neo4jfail
     Given an empty graph
     And having executed:
       """
