@@ -554,7 +554,7 @@ Feature: Match3 - Match fixed length patterns
     And no side effects
 
     # neo4j支持该语法，gdmbase不支持:Cannot use the same relationship variable r for multiple patterns
-  Scenario: [29] Fail when re-using a relationship in the same pattern-gdmbase不支持该模式neo4j5支持该模式
+  Scenario: [29] Fail when re-using a relationship in the same pattern-gdmbase不支持该模式neo4j202604企业版支持该模式query succeeded
     Given any graph
     When executing query:
       """

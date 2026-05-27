@@ -33,7 +33,7 @@ Feature: With2 - Forward single expression
 
   # neo4j 5不支持： syntax error or access rule violation - invalid entity reference. Entity, 'a', cannot be created and referenced in the same clause
   # gdmbase支持
-  Scenario: [1] Forwarding a property to express a join
+  Scenario: [1] Forwarding a property to express a join-neo4j202604企业版fail
     Given an empty graph
     And having executed:
       """

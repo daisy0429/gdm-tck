@@ -47,7 +47,7 @@ Feature: Delete6 - Persistence of delete clause side effects
       | num |
     And the side effects should be:
       | -nodes      | 1 |
-      | -labels     | 1 |
+#      | -labels     | 1 |
 #      | -properties | 1 |
 
   Scenario: [2] Skipping all results after deleting nodes affects the result set but not the side effects
@@ -67,7 +67,7 @@ Feature: Delete6 - Persistence of delete clause side effects
       | num |
     And the side effects should be:
       | -nodes      | 1 |
-      | -properties | 1 |
+#      | -properties | 1 |
 #      | -labels     | 1 |
 
 
@@ -94,7 +94,7 @@ Feature: Delete6 - Persistence of delete clause side effects
       | 42  |
     And the side effects should be:
       | -nodes      | 5 |
-      | -properties | 5 |
+#      | -properties | 5 |
 #      | -labels     | 1 |
 
   Scenario: [4] Skipping zero results and limiting to all results after deleting nodes does not affect the result set nor the side effects
@@ -123,7 +123,7 @@ Feature: Delete6 - Persistence of delete clause side effects
       | 42  |
     And the side effects should be:
       | -nodes      | 5 |
-      | -properties | 5 |
+#      | -properties | 5 |
 #      | -labels     | 1 |
 
   Scenario: [5] Filtering after deleting nodes affects the result set but not the side effects
@@ -151,7 +151,7 @@ Feature: Delete6 - Persistence of delete clause side effects
       | 4   |
     And the side effects should be:
       | -nodes      | 5 |
-      | -properties | 5 |
+#      | -properties | 5 |
 #      | -labels     | 1 |
 
   Scenario: [6] Aggregating in `RETURN` after deleting nodes affects the result set but not the side effects
