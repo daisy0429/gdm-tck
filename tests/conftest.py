@@ -23,7 +23,10 @@ pytest_plugins = [
 
 from gdm_tck.config import load_settings, Settings
 from gdm_tck.connection import BoltConnectionPool
+from gdm_tck.parser_patch import apply_patch as _apply_parser_patch
 from gdm_tck.state import ScenarioContext
+
+_apply_parser_patch()
 
 logger = logging.getLogger(__name__)
 
