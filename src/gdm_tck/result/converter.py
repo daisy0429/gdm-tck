@@ -98,10 +98,11 @@ def _is_temporal(value: Any) -> bool:
 
 
 def _format_temporal(value: Any) -> str:
-    """格式化 neo4j 时间类型为 TCK 兼容的紧凑格式。
+    """格式化 neo4j 时间类型为 TCK 兼容的紧凑 ISO 8601 格式。
 
-    neo4j str() 总是输出纳秒精度（如 '10:35:00.000000000'），
-    但 TCK 期望简洁格式（如 '10:35'）。当纳秒和秒都为 0 时省略。
+    规则：
+    - 始终输出秒（即使为 0），仅在纳秒为 0 时省略小数部分。
+    - UTC 偏移量为 0 时使用 'Z'，非零时使用 '±HH:MM'。
     """
     if isinstance(value, neo4j.time.Date):
         return str(value)
@@ -113,12 +114,13 @@ def _format_temporal(value: Any) -> str:
 
 
 def _format_time(value: neo4j.time.Time) -> str:
-    """格式化 Time 为紧凑格式。"""
+    """格式化 Time 为紧凑 ISO 8601 格式。
+
+    始终输出秒（即使为 0），UTC 偏移量为 0 时使用 'Z'。
+    """
     ns = value.nanosecond
     sec = value.second
-    if ns == 0 and sec == 0:
-        time_str = f"{value.hour:02d}:{value.minute:02d}"
-    elif ns == 0:
+    if ns == 0:
         time_str = f"{value.hour:02d}:{value.minute:02d}:{sec:02d}"
     else:
         frac = f"{ns:09d}".rstrip("0")
@@ -127,38 +129,40 @@ def _format_time(value: neo4j.time.Time) -> str:
         offset = value.tzinfo.utcoffset(None)
         if offset is not None:
             offset_secs = int(offset.total_seconds())
-            sign = "+" if offset_secs >= 0 else "-"
-            abs_secs = abs(offset_secs)
-            offset_h, offset_m = divmod(abs_secs // 60, 60)
-            time_str += f"{sign}{offset_h:02d}:{offset_m:02d}"
+            if offset_secs == 0:
+                time_str += "Z"
+            else:
+                sign = "+" if offset_secs > 0 else "-"
+                abs_secs = abs(offset_secs)
+                offset_h, offset_m = divmod(abs_secs // 60, 60)
+                time_str += f"{sign}{offset_h:02d}:{offset_m:02d}"
     return time_str
 
 
 def _format_datetime(value: neo4j.time.DateTime) -> str:
-    """格式化 DateTime 为紧凑格式。"""
+    """格式化 DateTime 为紧凑 ISO 8601 格式。
+
+    始终输出秒（即使为 0），UTC 偏移量为 0 时使用 'Z'。
+    """
     ns = value.nanosecond
     sec = value.second
-    if ns == 0 and sec == 0:
-        dt_str = f"{value.year:04d}-{value.month:02d}-{value.day:02d}T{value.hour:02d}:{value.minute:02d}"
-    elif ns == 0:
-        dt_str = (
-            f"{value.year:04d}-{value.month:02d}-{value.day:02d}"
-            f"T{value.hour:02d}:{value.minute:02d}:{sec:02d}"
-        )
+    date_part = f"{value.year:04d}-{value.month:02d}-{value.day:02d}"
+    if ns == 0:
+        dt_str = f"{date_part}T{value.hour:02d}:{value.minute:02d}:{sec:02d}"
     else:
         frac = f"{ns:09d}".rstrip("0")
-        dt_str = (
-            f"{value.year:04d}-{value.month:02d}-{value.day:02d}"
-            f"T{value.hour:02d}:{value.minute:02d}:{sec:02d}.{frac}"
-        )
+        dt_str = f"{date_part}T{value.hour:02d}:{value.minute:02d}:{sec:02d}.{frac}"
     if value.tzinfo is not None:
         offset = value.tzinfo.utcoffset(None)
         if offset is not None:
             offset_secs = int(offset.total_seconds())
-            sign = "+" if offset_secs >= 0 else "-"
-            abs_secs = abs(offset_secs)
-            offset_h, offset_m = divmod(abs_secs // 60, 60)
-            dt_str += f"{sign}{offset_h:02d}:{offset_m:02d}"
+            if offset_secs == 0:
+                dt_str += "Z"
+            else:
+                sign = "+" if offset_secs > 0 else "-"
+                abs_secs = abs(offset_secs)
+                offset_h, offset_m = divmod(abs_secs // 60, 60)
+                dt_str += f"{sign}{offset_h:02d}:{offset_m:02d}"
     return dt_str
 
 

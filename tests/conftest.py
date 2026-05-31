@@ -17,10 +17,14 @@ pytest_plugins = [
     "steps.step_side_effects",
     "steps.step_parameters",
     "steps.step_schema_assert",
+    "steps.step_cli_exec",
+    "steps.step_admin_exec",
     "gdm_tck.reporting.allure_hooks",
     "gdm_tck.reporting.step_reporter",
 ]
 
+from gdm_tck.cli.admin_runner import AdminRunner
+from gdm_tck.cli.cli_runner import CliRunner
 from gdm_tck.config import load_settings, Settings
 from gdm_tck.connection import BoltConnectionPool
 from gdm_tck.parser_patch import apply_patch as _apply_parser_patch
@@ -87,3 +91,47 @@ def scenario_ctx(settings: Settings) -> ScenarioContext:
     ctx = ScenarioContext(current_database=settings.server.database)
     yield ctx
     ctx.reset()
+
+
+@pytest.fixture
+def cli_runner(settings: Settings) -> CliRunner:
+    """创建 gdm-cli 执行器（每个测试函数独立实例）。"""
+    from urllib.parse import urlparse
+
+    # 从 bolt_uri 解析 host
+    bolt_parsed = urlparse(settings.server.bolt_uri)
+    host = bolt_parsed.hostname or "127.0.0.1"
+    # 从 grpc.address 解析 port
+    grpc_addr = settings.grpc.address
+    port = int(grpc_addr.split(":")[-1]) if ":" in grpc_addr else 9830
+
+    return CliRunner(
+        binary_path=settings.cli.gdm_cli_path,
+        host=host,
+        port=port,
+        user=settings.server.username,
+        password=settings.server.password,
+        timeout=settings.cli.command_timeout_secs,
+    )
+
+
+@pytest.fixture
+def admin_runner(settings: Settings) -> AdminRunner:
+    """创建 gdm-admin 执行器（每个测试函数独立实例）。"""
+    from urllib.parse import urlparse
+
+    # 从 bolt_uri 解析 host
+    bolt_parsed = urlparse(settings.server.bolt_uri)
+    host = bolt_parsed.hostname or "127.0.0.1"
+    # 从 grpc.address 解析 port
+    grpc_addr = settings.grpc.address
+    port = int(grpc_addr.split(":")[-1]) if ":" in grpc_addr else 9830
+
+    return AdminRunner(
+        binary_path=settings.cli.gdm_admin_path,
+        host=host,
+        port=port,
+        user=settings.server.username,
+        password=settings.server.password,
+        timeout=settings.cli.command_timeout_secs,
+    )

@@ -97,6 +97,15 @@ class PerformanceSettings:
 
 
 @dataclass(frozen=True)
+class CliSettings:
+    """CLI 工具配置。连接参数从 server/grpc 配置中获取，此处仅定义工具路径和超时。"""
+
+    gdm_cli_path: str
+    gdm_admin_path: str
+    command_timeout_secs: float
+
+
+@dataclass(frozen=True)
 class Settings:
     """全局配置容器，聚合所有子配置。"""
 
@@ -105,6 +114,7 @@ class Settings:
     test: TestSettings
     report: ReportSettings
     performance: PerformanceSettings
+    cli: CliSettings
     project_root: Path
 
 
@@ -225,12 +235,20 @@ def _build_settings(config: dict) -> Settings:
         default_duration_secs=int(perf_cfg.get("default_duration_secs", 30)),
     )
 
+    cli_cfg = config.get("cli", {})
+    cli = CliSettings(
+        gdm_cli_path=str(cli_cfg.get("gdm_cli_path", "plugin/gdm-cli")),
+        gdm_admin_path=str(cli_cfg.get("gdm_admin_path", "plugin/gdm-admin")),
+        command_timeout_secs=float(cli_cfg.get("command_timeout_secs", 60.0)),
+    )
+
     return Settings(
         server=server,
         grpc=grpc,
         test=test,
         report=report,
         performance=performance,
+        cli=cli,
         project_root=PROJECT_ROOT,
     )
 

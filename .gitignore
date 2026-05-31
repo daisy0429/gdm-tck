@@ -33,6 +33,8 @@ debug/
 
 docs
 AGENTS.md
+.qoderignore
+.qoder
 
 # mypy
 .mypy_cache/

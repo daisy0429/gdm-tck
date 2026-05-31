@@ -1,0 +1,37 @@
+graph = "datatype"
+space = "default"
+
+[[vertices]]
+path = "typed_vertices.csv"
+label = "TypeVertex"
+id = ["id"]
+properties = [
+  { name = "id", type = "int" },
+  { name = "name", type = "string" },
+  { name = "age", type = "int" },
+  { name = "score", type = "float" },
+  { name = "active", type = "boolean" },
+  { name = "created_date", type = "date" },
+  { name = "created_datetime", type = "datetime" },
+  { name = "localdatetime_val", type = "localdatetime" },
+  { name = "localtime_val", type = "localtime" },
+  { name = "time_val", type = "time" },
+  { name = "duration_val", type = "duration" },
+]
+
+[[edges]]
+path = "typed_edges.csv"
+label = "TYPE_EDGE"
+src = { label = "TypeVertex", id = ["src"] }
+dst = { label = "TypeVertex", id = ["dst"] }
+properties = [
+  { name = "since", type = "int" },
+  { name = "weight", type = "float" },
+  { name = "active", type = "boolean" },
+  { name = "created_date", type = "date" },
+  { name = "created_datetime", type = "datetime" },
+  { name = "localdatetime_val", type = "localdatetime" },
+  { name = "localtime_val", type = "localtime" },
+  { name = "time_val", type = "time" },
+  { name = "duration_val", type = "duration" },
+]

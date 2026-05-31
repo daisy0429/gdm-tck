@@ -38,6 +38,9 @@ class ScenarioContext:
     # 多用户连接缓存（用户名 -> BoltClient列表）
     user_clients: dict[str, list[BoltClient]] = field(default_factory=dict)
 
+    # 最近一次 CLI 命令执行结果
+    last_command_result: "CommandResult | None" = None
+
     # 当前使用的数据库名
     current_database: str = "default"
     _initial_database: str = field(init=False, repr=False)
@@ -49,6 +52,7 @@ class ScenarioContext:
         """重置所有状态（场景开始前调用）。"""
         self.last_result = None
         self.last_error = None
+        self.last_command_result = None
         self.parameters = {}
         self._close_sessions()
         self._close_user_clients()

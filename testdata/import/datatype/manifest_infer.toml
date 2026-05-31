@@ -1,0 +1,25 @@
+graph = "datatype_infer"
+space = "default"
+
+[[vertices]]
+path = "basic_vertices.csv"
+label = "InferVertex"
+id = ["id"]
+properties = [
+  { name = "id" },
+  { name = "name" },
+  { name = "age" },
+  { name = "score" },
+  { name = "active" },
+]
+
+[[edges]]
+path = "basic_edges.csv"
+label = "INFER_EDGE"
+src = { label = "InferVertex", id = ["src"] }
+dst = { label = "InferVertex", id = ["dst"] }
+properties = [
+  { name = "since" },
+  { name = "weight" },
+  { name = "active" },
+]

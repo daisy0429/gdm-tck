@@ -1,0 +1,37 @@
+graph = "datatype_infer_time"
+space = "default"
+
+[[vertices]]
+path = "typed_vertices.csv"
+label = "InferTimeVertex"
+id = ["id"]
+properties = [
+  { name = "id" },
+  { name = "name" },
+  { name = "age" },
+  { name = "score" },
+  { name = "active" },
+  { name = "created_date" },
+  { name = "created_datetime" },
+  { name = "localdatetime_val" },
+  { name = "localtime_val" },
+  { name = "time_val" },
+  { name = "duration_val" },
+]
+
+[[edges]]
+path = "typed_edges.csv"
+label = "INFER_TIME_EDGE"
+src = { label = "InferTimeVertex", id = ["src"] }
+dst = { label = "InferTimeVertex", id = ["dst"] }
+properties = [
+  { name = "since" },
+  { name = "weight" },
+  { name = "active" },
+  { name = "created_date" },
+  { name = "created_datetime" },
+  { name = "localdatetime_val" },
+  { name = "localtime_val" },
+  { name = "time_val" },
+  { name = "duration_val" },
+]

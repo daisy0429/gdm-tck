@@ -55,6 +55,8 @@ markers = [
     "observability: Operations and observability tests",
     "capacity: Database capacity and scale limit tests",
     "concurrent: Concurrency tests",
+    "smoke: Smoke tests",
+    "import: Import tests",
     "ignore: Tests to be skipped",
     "skip_bug: Skipped due to known product bug",
     "skip_script: Skipped due to test script issue",
@@ -75,3 +77,8 @@ select = ["E", "F", "W", "I"]
 python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.12",
+]

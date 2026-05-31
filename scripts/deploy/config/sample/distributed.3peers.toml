@@ -1,0 +1,11 @@
+mode = "distributed"
+data_dir = "/var/lib/gdm"
+addr = "0.0.0.0:9800"
+bolt_addr = "0.0.0.0:7687"
+bolt_enabled = true
+rest_addr = "0.0.0.0:8080"
+rest_enabled = false
+
+[cluster]
+transport_addr = "0.0.0.0:9801"
+seeds = ["10.0.0.1:9801", "10.0.0.2:9801", "10.0.0.3:9801"]

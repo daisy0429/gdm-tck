@@ -10,6 +10,7 @@
 #   -p, --pkg-path <PATH> 指定远程服务器上已有的安装包路径
 #   --no-stop             不停止已有服务（默认会先停止）
 #   --no-verify           跳过环境可用性验证
+#   --force-clean         强制清理集群数据目录（即使已有 identity 也重新 bootstrap）
 #   -h, --help            显示帮助信息
 
 set -euo pipefail
@@ -31,6 +32,7 @@ SKIP_DOWNLOAD=false
 REMOTE_PKG_PATH=""
 STOP_EXISTING=true
 DO_VERIFY=true
+FORCE_CLEAN=false
 
 print_usage() {
     cat <<EOF
@@ -46,6 +48,7 @@ GDM 测试环境自动部署脚本
   -p, --pkg-path <PATH> 指定远程服务器上已有的安装包路径
   --no-stop             不停止已有服务
   --no-verify           跳过环境可用性验证
+  --force-clean         强制清理集群数据目录（重新 bootstrap）
   -h, --help            显示帮助信息
 
 示例:
@@ -57,6 +60,9 @@ GDM 测试环境自动部署脚本
 
   # 使用服务器上已有的安装包
   $0 -s -p '/ssd/workspace/gdm-v0.1.0.preview-linux-amd64-2.17.tar.gz'
+
+  # 部署集群（强制重新 bootstrap）
+  $0 -s -p '/ssd/workspace/gdm-v0.1.0.preview-linux-amd64-2.17.tar.gz' -m cluster --force-clean
 
 EOF
 }
@@ -86,6 +92,10 @@ parse_args() {
                 ;;
             --no-verify)
                 DO_VERIFY=false
+                shift
+                ;;
+            --force-clean)
+                FORCE_CLEAN=true
                 shift
                 ;;
             -h|--help)
@@ -133,6 +143,9 @@ main() {
     log_info "目标服务器: ${REMOTE_USER}@${REMOTE_HOST}"
     log_info "工作目录: ${REMOTE_WORK_DIR}"
     log_info "部署模式: ${DEPLOY_MODE}"
+    if [ "$FORCE_CLEAN" = true ]; then
+        log_info "强制清理: 开启（集群将重新 bootstrap）"
+    fi
     log_separator
 
     # 1. 前置检查
@@ -180,7 +193,14 @@ main() {
     # 6. 上传配置文件
     upload_configs "$base_dir"
 
-    # 7. 启动服务
+    # 7. 集群强制清理（--force-clean 时无条件清理数据）
+    if [[ "$DEPLOY_MODE" == "cluster" || "$DEPLOY_MODE" == "all" ]]; then
+        if [ "$FORCE_CLEAN" = true ]; then
+            cleanup_cluster_data "$base_dir"
+        fi
+    fi
+
+    # 8. 启动服务
     if [[ "$DEPLOY_MODE" == "standalone" || "$DEPLOY_MODE" == "all" ]]; then
         start_standalone "$base_dir"
     fi
@@ -189,7 +209,7 @@ main() {
         start_cluster "$base_dir"
     fi
 
-    # 8. 验证环境可用性
+    # 9. 验证环境可用性
     if [ "$DO_VERIFY" = true ]; then
         log_step "等待服务启动..."
         sleep 5
@@ -212,7 +232,7 @@ main() {
         fi
     fi
 
-    # 9. 完成
+    # 10. 完成
     log_separator
     log_info "部署完成"
     show_tmux_status

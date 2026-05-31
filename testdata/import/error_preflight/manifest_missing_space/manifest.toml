@@ -1,0 +1,11 @@
+graph = "error_preflight_missing_space"
+# 缺少 space 字段
+
+[[vertices]]
+path = "vertices.csv"
+label = "Person"
+id = ["id"]
+properties = [
+  { name = "id", type = "int" },
+  { name = "name", type = "string" },
+]

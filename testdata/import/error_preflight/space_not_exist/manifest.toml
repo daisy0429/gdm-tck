@@ -1,0 +1,11 @@
+graph = "error_preflight_space_not_exist"
+space = "nonexistent_space_12345"
+
+[[vertices]]
+path = "vertices.csv"
+label = "Person"
+id = ["id"]
+properties = [
+  { name = "id", type = "int" },
+  { name = "name", type = "string" },
+]

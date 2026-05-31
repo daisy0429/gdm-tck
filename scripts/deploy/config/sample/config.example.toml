@@ -1,0 +1,527 @@
+# GDM 配置示例（7 个一级表 + 顶层接入点）
+#
+# 配置分类（每字段上一行注释标注）：
+#   [S] Strict     — 所有节点必须一致；BootstrapHandshake / RaftMetaJoin 校验 hash
+#   [R] Replicated — 首启由 meta leader 写入 SM cluster_config；变更用 gdm-admin cluster set-config，重启生效
+#   [N] Node-local — 节点本地（监听地址、路径、池化调优等），允许节点间差异
+#
+# 约定：
+# - 顶层：部署模式、数据目录、引擎、对外协议监听与开关。
+# - `[cluster]`：内部监听、seed list、bootstrap quorum、Raft / seed / 判活。
+# - 其余一级表：server / storage / graph / runtime / security / observability。
+# - 非顶层表中与代码默认相同的项以注释形式保留，便于按需取消注释。
+
+# =============================================================================
+# 顶层
+# =============================================================================
+
+# [S] 部署模式。枚举：standalone | distributed
+mode = "standalone"
+
+# [S] 集群可读名称；未配置时默认 default，distributed 下所有节点必须一致。
+# cluster_id = "default"
+
+# [N] 对外 gRPC API（catalog / query / data 等）。standalone 下即客户端入口。
+addr = "127.0.0.1:9800"
+
+# 优雅退出：收到 SIGTERM/SIGINT 后等待 in-flight 任务结束的秒数（>0）。
+shutdown_grace_secs = 30
+
+# 持久化数据根目录。
+data_dir = "./data"
+
+# 存储引擎。枚举：rocksdb | memory
+engine = "rocksdb"
+
+# Bolt 协议监听地址（须与 bolt_enabled 同时生效）。
+bolt_addr = "0.0.0.0:7687"
+
+# 是否启动 Bolt 服务。
+bolt_enabled = true
+
+# HTTP JSON REST 监听地址（须与 rest_enabled 同时生效）。
+rest_addr = "127.0.0.1:8080"
+
+# 是否启动 REST 网关。
+rest_enabled = false
+
+# 是否暴露 Prometheus /metrics。
+metrics_enabled = true
+
+# Prometheus scrape 绑定地址（metrics_enabled=true 时必填）。
+metrics_addr = "127.0.0.1:9090"
+
+
+# 全局 TLS 总开关；各协议可在 [server.<proto>.tls] 单独覆盖。
+tls_enabled = false
+
+# 共享服务端证书与私钥（PEM）。协议未单独配置 cert_file / key_file 时继承此处。
+# tls_cert_file = "certs/server.crt.pem"
+# tls_key_file = "certs/server.key.pem"
+
+# 可选：客户端 CA（启用 mTLS 时校验客户端证书）。
+# tls_client_ca_file = "certs/client_ca.pem"
+
+
+# =============================================================================
+# [cluster] 拓扑与分布式运行时
+# =============================================================================
+
+[cluster]
+
+# 集群内部 gRPC（Raft + InternalStore）。distributed 必填；须与顶层 addr 不同地址/端口。
+# standalone 可省略（运行时回退为 addr）。
+# transport_addr = "127.0.0.1:19800"
+
+# Seed list 只用于发现和 first bootstrap；节点身份不在配置文件中声明。
+# distributed 模式要求 seeds 去重后数量为奇数且 >= 3；顺序不重要，运行时会排序。
+# 所有 distributed 节点可共用同一份 TOML。
+# seeds = [
+#   "10.0.0.1:9801",
+#   "10.0.0.2:9801",
+#   "10.0.0.3:9801",
+# ]
+
+# 首次 bootstrap quorum 等待超时，秒。超时后进程退出并打印可达节点数。
+# bootstrap_quorum_timeout_secs = 300
+
+# --- [cluster.liveness] 节点心跳与失效判定（默认见注释）---
+# [cluster.liveness]
+# heartbeat_interval_ms = 5000   # 心跳上报间隔（毫秒），>0
+# heartbeat_timeout_ms = 30000   # 判定节点失联的超时（毫秒），> heartbeat_interval_ms
+
+# --- [cluster.seed] 分布式 seed / 分片协调退避（默认见注释）---
+# [cluster.seed]
+# initial_backoff_ms = 200
+# max_backoff_ms = 30000
+# multiplier = 1.501
+# grpc_ready_timeout_ms = 30000
+# grpc_ready_poll_ms = 100
+# meta_leader_wait_timeout_ms = 30000
+# shard_reconcile_interval_ms = 10000
+
+# --- [cluster.raft] Raft 核心参数（默认见注释）---
+# [cluster.raft]
+# tick_interval_ms = 100
+# log_dir = "/var/lib/gdm/raft-logs"   # 可选；fold_meta_raft_log 时建议显式配置
+# election_tick = 10
+# heartbeat_tick = 3
+# max_size_per_msg = 1048576
+# max_inflight_msgs = 256
+# snapshot_interval = 10000
+# fold_meta_raft_log = false          # 仅 distributed + rocksdb 有意义
+# engine_bytes_per_sync = 1048576
+
+# --- [cluster.raft.driver] 线性一致读 / propose 超时（默认见注释）---
+# [cluster.raft.driver]
+# leader_linearizable_fast_path = true
+# linearizable_store_reads = true
+# follower_read_index_cache_ms = 50
+# write_precheck_linearizable = false
+# read_index_wait_ms = 3000
+# read_index_apply_wait_ms = 3000
+# read_index_poll_ms = 5
+# propose_timeout_ms = 30000
+# conf_change_timeout_ms = 30000
+# startup_grpc_ready_timeout_ms = 30000
+# startup_meta_leader_timeout_ms = 30000
+# startup_poll_interval_ms = 100
+
+# --- [cluster.raft.transport] Raft gRPC 客户端传输（默认见注释）---
+# [cluster.raft.transport]
+# compress_large_messages = false
+# max_frame_bytes = 16777216
+# max_message_bytes = 67108864
+# max_inflight = 256
+# connect_timeout_ms = 2000
+# request_timeout_ms = 30000
+# max_connect_retries = 60
+# initial_backoff_ms = 5000
+# max_backoff_ms = 5000
+# 生产多节点分钟级启动差异：固定 5s 退避 × 60 次 ≈ 5min 总窗口；ListenersUp 后每 5s WARN，用尽后 ERROR
+
+# --- [cluster.raft.fast_ack] 快速确认路径（默认见注释）---
+# [cluster.raft.fast_ack]
+# enabled = false
+# async_sm_apply = false
+# async_sm_apply_max_pending = 1024
+
+
+# =============================================================================
+# [server] 协议调优（监听地址与开关仅在顶层）
+# =============================================================================
+
+# --- [server.grpc] gRPC/HTTP2 服务限制（默认见注释）---
+# [server.grpc]
+# max_connections = 2048
+# max_concurrent_streams = 256
+# concurrency_limit_per_connection = 1024
+# request_timeout_secs = 660
+# tcp_keepalive_secs = 60
+# http2_keepalive_interval_secs = 20
+# http2_keepalive_timeout_secs = 5
+# max_connection_age_secs = 0      # 0 = 不限制连接存活时间
+# stream_buffer = 128
+# slow_query_threshold_ms = 1000
+#
+# [server.grpc.tls]
+# enabled = true                      # 省略则继承顶层 tls_enabled
+# cert_file = "certs/grpc-only.crt.pem"
+# key_file = "certs/grpc-only.key.pem"
+# client_ca_file = "certs/grpc.client_ca.pem"
+
+# --- [server.bolt] Bolt 会话（默认见注释）---
+# [server.bolt]
+# advertise_address = "route.example.com:7687"
+# max_sessions = 8192
+# idle_timeout_secs = 0          # 0 = 不超时
+# handshake_timeout_ms = 30000
+# accept_backlog = 1024
+# shutdown_drain_secs = 5
+# tcp_keepalive_secs = 60
+# tcp_nodelay = true
+# slow_query_threshold_ms = 1000
+# expose_internal_cause = false   # true: Bolt FAILURE wire message includes internal cause
+#
+# [server.bolt.tls]
+# enabled = false                     # 示例：顶层 tls_enabled=true 时仅关闭 Bolt TLS
+# cert_file = "certs/bolt.crt.pem"
+# key_file = "certs/bolt.key.pem"
+
+# --- [server.rest] REST 行为（默认见注释）---
+# [server.rest]
+# request_timeout_secs = 120
+# max_body_bytes = 10485760
+# cors_origins = []
+#
+# [server.rest.tls]
+# enabled = true
+# cert_file = "certs/rest.crt.pem"
+# key_file = "certs/rest.key.pem"
+
+
+# =============================================================================
+# [storage]
+# =============================================================================
+
+[storage]
+
+# 进程内缓存容量（字节）。
+cache_capacity_bytes = 268435456
+
+# 去重 TTL（秒）。
+dedup_ttl_secs = 300
+
+# 单点/边最大属性数（>0，受系统硬上限约束）。
+max_props_per_element = 128
+
+# --- [storage.gc] MVCC 垃圾回收（默认见注释）---
+# [storage.gc]
+# interval_secs = 300
+# retention_secs = 3600
+# max_versions_per_pass = 4096
+
+# --- [storage.txn_recovery] 悬挂锁扫描（默认见注释）---
+# [storage.txn_recovery]
+# interval_secs = 5
+# record_retention_secs = 86400
+# commit_unknown_interval_secs = 1
+# max_locks_per_pass = 1024
+# backlog_threshold = 10000
+# oldest_pending_age_not_ready_ms = 300000
+
+# --- [storage.rocksdb] 全局 RocksDB（默认见注释）---
+# [storage.rocksdb]
+# commit_durability = "sync_each_batch"   # 枚举：sync_each_batch | group_commit | ...
+# enable_pipelined_write = true
+# allow_concurrent_memtable_write = true
+# enable_write_thread_adaptive_yield = true
+# max_subcompactions = 4
+# max_open_files = -1
+# max_background_jobs = 4
+# total_write_buffer_bytes = 1073741824
+# total_block_cache_bytes = 536870912
+# sync_writes = false
+# sm_disable_wal = false
+
+# 以下为 data CF 示例覆盖（其余 CF 默认同代码内建 RocksDbTuningConfig）：
+[storage.rocksdb.data]
+write_buffer_size = 67108864
+max_write_buffer_number = 3
+compression = "lz4"              # 枚举：none | snappy | lz4 | zstd | ...
+block_size = 16384
+bloom_bits_per_key = 10.0
+whole_key_filtering = true
+cache_index_and_filter_blocks = true
+pin_l0_filter_and_index_blocks = true
+partition_filters = true
+two_level_index = true
+memtable_prefix_bloom_ratio = 0.1
+
+[storage.rocksdb.data.blob]
+min_blob_size = 1024
+file_size = 268435456
+compression = "lz4"
+enable_gc = true
+gc_age_cutoff = 0.25
+
+
+# =============================================================================
+# [graph]
+# =============================================================================
+
+[graph]
+
+# 默认图空间分片数（>0）。
+space_shard_count = 8
+
+# 默认副本因子。standalone 须为 1；distributed 建议奇数且 ≤ 节点数。
+space_replication_factor = 1
+
+# =============================================================================
+# [replication] 跨集群主从（可选）
+# =============================================================================
+# role = "single"   # single | primary | standby
+# [replication.default]
+# write_consistency = "async"
+# read_consistency = "bounded_staleness"
+# bounded_staleness_ms = 200
+# bookmark_wait_timeout_ms = 1000
+# [replication.subscriber]
+# primary_addr = "http://127.0.0.1:9800"
+# fetch_snapshot_on_init = true
+
+# =============================================================================
+# [cdc] 变更数据捕获（可选，primary 节点）
+# =============================================================================
+# enabled = false
+# [cdc.slots]
+# slot_id = "analytics"
+# spaces = ["default"]
+
+# 事务 BEGIN 默认超时（毫秒）。
+txn_default_begin_timeout_ms = 60000
+
+# TSO 批量预取大小。
+tso_batch_size = 50000
+
+# --- [graph.metadata] 元数据策略（默认见注释）---
+# [graph.metadata]
+# strict_schema = true                  # 默认 false（非 strict，首次写入自动注册 label）
+# auto_create_graph_routing = false
+# propose_compaction_threshold = 1000
+# propose_max_wait_ms = 15000
+# propose_retry_backoff_ms = 100
+# propose_local_apply_max_wait_ms = 5000
+# propose_local_apply_poll_ms = 20
+
+# --- [graph.query] 查询执行（默认见注释）---
+# [graph.query]
+# scan_page_size = 1024
+# plan_cache_enabled = true
+# plan_cache_max_entries = 10000
+
+# --- [graph.query.cypher] Cypher 保护阈值（默认见注释）---
+# [graph.query.cypher]
+# varlen_max_paths_per_start = 32
+# shortest_path_max_visited = 100000
+# shortest_path_max_fanout_per_vertex = 10000
+
+[graph.index.fulltext]
+enabled = true
+data_dir = "derived/fulltext"
+writer_heap_bytes = 50000000
+flush_interval_ms = 1000
+flush_batch_size = 1024
+query_default_limit = 25
+query_max_limit = 1000
+journal_retain_seconds = 86400
+query_default_await = "now"      # 枚举：now | eventual
+system_dict_paths = []           # jieba/cjk analyzer 的节点级自定义词典文件
+
+[graph.index.vector]
+root_dir = "derived/vector"
+flush_interval_ms = 1000
+batch_size = 1024
+default_ef_search = 128
+max_k = 1000
+max_dimensions = 16384
+query_timeout_ms = 5000
+build_concurrency = 2
+memory_budget_bytes = 1073741824
+journal_retain_seconds = 86400
+query_default_await = "now"      # 枚举：now | eventual
+
+# --- [graph.udf] 用户自定义函数（默认见注释）---
+# [graph.udf]
+# enabled = false
+# policy = "overwrite"                  # 枚举：overwrite | skip（以代码为准）
+# on_error = "continue"                 # 枚举：continue | abort（以代码为准）
+# exclude = []
+
+
+# =============================================================================
+# [runtime]
+# =============================================================================
+
+# --- [runtime] 调度器（默认见注释）---
+# [runtime]
+# scheduler_v1 = true
+# scheduler_tick_ms = 500
+# pools_total_memory_bytes = 8589934592
+# distributed_planner_enabled = false
+# executor_row_channel_capacity = 1024
+
+# --- [runtime.spill] 算子外溢与内存压力（默认见注释）---
+# [runtime.spill]
+# pressure_threshold_pct = 80
+# sort_max_rows = 200000
+# sort_max_bytes = 0
+# hash_agg_partitions = 16
+# hash_agg_max_rows = 0
+# hash_agg_max_bytes = 0
+# hash_join_partitions = 16
+# hash_join_build_max_rows = 0
+# hash_join_build_max_bytes = 0
+# spill_dir = ""
+# operator_parallelism = 0
+
+# --- [runtime.pools.*] 资源池（默认见注释；旧 [runtime.pools.query] 已废弃）---
+# [runtime.pools.cypher_read]
+# max_concurrency = 64
+# memory_bytes = 3221225472
+# max_memory_per_task = 536870912
+# default_timeout_ms = 600000
+# rate_limit_rps = 0
+# max_waiters = 2048
+#
+# [runtime.pools.cypher_write]
+# max_concurrency = 32
+# memory_bytes = 2147483648
+# max_memory_per_task = 536870912
+# default_timeout_ms = 600000
+# rate_limit_rps = 2000
+# max_waiters = 1024
+#
+# [runtime.pools.system]
+# max_concurrency = 8
+# memory_bytes = 2147483648
+# max_memory_per_task = 1073741824
+# default_timeout_ms = 0
+# rate_limit_rps = 0
+# max_waiters = 128
+#
+# [runtime.pools.maintenance]
+# max_concurrency = 2
+# memory_bytes = 536870912
+# max_memory_per_task = 268435456
+# default_timeout_ms = 0
+# rate_limit_rps = 0
+# max_waiters = 32
+#
+# [runtime.pools.admin]
+# max_concurrency = 16
+# memory_bytes = 268435456
+# max_memory_per_task = 67108864
+# default_timeout_ms = 10000
+# rate_limit_rps = 0
+# max_waiters = 256
+
+
+# =============================================================================
+# [security]
+# =============================================================================
+
+# --- [security] 认证与凭据（默认见注释）---
+# [security]
+# bootstrap_password_change_required = false
+# credentials_storage = "inline"        # 枚举：inline | system_graph（以代码为准）
+
+# [security.password]
+# m_cost_kib = 19456
+# t_cost = 2
+# p_cost = 1
+# output_len = 32
+
+# [security.audit]
+# enabled = true
+# ring_cap = 256
+# ring_enabled = true
+# flush_every_entries = 64
+# flush_interval_ms = 1000
+# rotation = "never"                    # 枚举：never | daily | ...（以代码为准）
+# max_files = 0
+# sample_allow = 1.0
+# max_per_sec = 0
+# flush_drain_secs = 2
+
+# [security.providers]
+# schemes = ["basic"]
+# ldap_enabled = false
+# oidc_enabled = false
+
+# [security.sessions]
+# enabled = false
+# access_token_ttl_secs = 900
+# refresh_token_ttl_secs = 604800
+# max_sessions_per_user = 32
+# gc_interval_secs = 60
+# login_fail_window_secs = 60
+# login_fail_limit = 20
+
+
+# =============================================================================
+# [observability]
+# =============================================================================
+
+[observability]
+
+# 日志格式。枚举：json | plain
+log_format = "json"
+
+# 默认日志级别（RUST_LOG 风格过滤器由 observability 段扩展）。
+default_level = "info"
+
+# 是否输出到 stderr。
+console_enabled = true
+
+# 控制台级别；省略时与 default_level 一致。
+# console_level = "info"
+
+# 是否在日志行/JSON 中输出 tracing target（默认 false，避免暴露 crate 模块路径）。
+# show_target = false
+
+# --- [observability.filters] 生产推荐 per-target 级别（复制到正式配置；RUST_LOG 可覆盖）---
+# [observability.filters]
+# "gdm::raft::internal" = "warn"
+# "gdm::raft" = "info"
+# "gdm::raft::transport" = "info"
+# "gdm::raft::forwarder" = "warn"
+# "gdm::metadata::log" = "info"
+# "gdm::metadata::bootstrap" = "info"
+# "gdm::bootstrap::seed" = "info"
+# "gdm::lifecycle" = "info"
+# "gdm::shutdown" = "info"
+# "gdm::grpc::internal" = "warn"
+# "raft" = "warn"
+
+# --- [observability.trace] OpenTelemetry（默认见注释）---
+# [observability.trace]
+# tracing_enabled = false
+# otlp_endpoint = "http://127.0.0.1:4317"
+# service_name = "gdm"
+# service_namespace = "graphdb"
+# trace_sample_ratio = 0.01
+# trace_export_timeout_ms = 3000
+# propagate_internal = true
+
+# --- [observability.file] 文件日志（默认见注释）---
+# [observability.file]
+# enabled = false
+# dir = "./logs"
+# prefix = "gdm"
+# rotation = "daily"                    # 枚举：daily | hourly | ...（以代码为准）
+# max_files = 7
+
+# [observability.trace_resource_attrs]
+# "deployment.environment" = "dev"

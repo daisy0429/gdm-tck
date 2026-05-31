@@ -1,0 +1,11 @@
+graph = "error_preflight_csv_not_found"
+space = "default"
+
+[[vertices]]
+path = "nonexistent_vertices.csv"
+label = "Person"
+id = ["id"]
+properties = [
+  { name = "id", type = "int" },
+  { name = "name", type = "string" },
+]

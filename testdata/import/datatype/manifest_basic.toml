@@ -1,0 +1,25 @@
+graph = "datatype_basic"
+space = "default"
+
+[[vertices]]
+path = "basic_vertices.csv"
+label = "BasicVertex"
+id = ["id"]
+properties = [
+  { name = "id", type = "int" },
+  { name = "name", type = "string" },
+  { name = "age", type = "int" },
+  { name = "score", type = "float" },
+  { name = "active", type = "boolean" },
+]
+
+[[edges]]
+path = "basic_edges.csv"
+label = "BASIC_EDGE"
+src = { label = "BasicVertex", id = ["src"] }
+dst = { label = "BasicVertex", id = ["dst"] }
+properties = [
+  { name = "since", type = "int" },
+  { name = "weight", type = "float" },
+  { name = "active", type = "boolean" },
+]

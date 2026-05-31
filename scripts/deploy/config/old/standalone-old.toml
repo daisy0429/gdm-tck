@@ -36,6 +36,7 @@ engine = "rocksdb"
 #by AI 典型场景：
 #防数据损坏：你重建了集群（新 peers/新节点ID），但 data_dir 还是旧的。GDM 启动时比对 data_dir 内存储的 deployment_id 与配置值，不一致则拒绝启动，避免旧数据与新集群冲突。
 #distributed 模式必填（不能为空）；standalone 可不配（启动日志显示为 -）
+# 参考nebula：Nebula 集群在首次初始化 meta 时，会生成一个唯一的集群标识符（cluster ID），确保不同集群的数据不会混在一起。
 # deployment_id = "gdm-dev"
 
 
@@ -976,19 +977,35 @@ exclude = []
 [security.credentials]
 # 密码材料存储位置。枚举值：inline、system_graph。
 # 兼容别名：system-graph、systemgraph。
-storage = "inline"
+# by AI:inline = 跟配置走，简单直接，适合开发 / 单库。每个别名单独维护密码
+# 账号密钥、凭据存储策略。影响系统启动时如何加载用户密码信息
+#启动时 → 读取storage配置 → 根据类型选择CredentialStore实现
+#├── inline: 从配置文件解析Base64/加密的密码串
+#└── system_graph: 连接系统图数据库，执行Cypher查询获取凭证
+storage = "system_graph"
 
 [security.password]
+# by AI:底层逻辑
+# 用户注册 / 改密：明文密码 → Argon2id 加盐哈希 → 生成不可逆密文
+#密文统一存入system_graph系统私密图库，永不存明文
+#登录校验：拿输入密码重复相同算法参数哈希，和库内密文比对
+#多维度内存 + 算力门槛，抵御撞库、爆破、离线破解
+#  Argon2id 参数。Argon2id 是2015年Password Hashing Competition冠军算法，抗GPU/ASIC攻击。
 # Argon2id 内存成本，单位：KiB；必须 >= 8。
+# by AI: 用户密码哈希加密算法参数。Argon2id行业主流抗暴力破解哈希算法，不会明文存密码。加密占用内存大小默认值=19MB。
+# 占用内存越高，GPU 暴力跑字典破解难度越大
 m_cost_kib = 19456
 
 # Argon2id 迭代次数；必须 >= 1。
+# by AI: 算法迭代运算次数.提升计算耗时，拉长破解时间成本
 t_cost = 2
 
 # Argon2id 并行度；必须 >= 1。
+# by AI:控制算力开销，平衡加密速度与安全性
 p_cost = 1
 
 # Argon2id 输出长度，单位：字节；范围 [16, 64]。
+# by AI:最终生成密码哈希串长度，单位字节. 作用：固定密文长度，用于登录比对校验
 output_len = 32
 
 [security.audit]
@@ -996,18 +1013,35 @@ output_len = 32
 enabled = true
 
 # 审计 JSONL 文件路径；不配置时只保留内存 ring。
-# path = "./audit/audit.jsonl"
+ path = "./audit/audit.jsonl"
 
 # 内存审计 ring 容量；必须大于 0。
+# by AI: 环形缓冲区（Circular Buffer），是一种固定大小的队列，当写满时覆盖最旧的数据
+# 作用：
+#缓冲文件写入失败的审计事件。断电/重启丢失
+#提供SHOW AUDIT EVENTS命令查看最近审计记录
+#防止审计系统阻塞正常查询
+## 查看内存ring中所有审计事件
+#SHOW AUDIT EVENTS;
+## 查看最近N条
+#SHOW AUDIT EVENTS LIMIT 100;
+## 查看特定时间范围（如果支持）
+#SHOW AUDIT EVENTS FROM TIME '2026-05-24 10:00:00';
 ring_cap = 256
 
 # 是否启用内存 ring。
+# by AI:#作用：
+#防止审计影响数据库性能（异步刷盘）
+#保留最近N条审计用于故障排查
+#避免文件I/O阻塞
 ring_enabled = true
 
-# JSONL writer 每多少条刷盘；0 表示不按条数刷盘。
-flush_every_entries = 64
+# JSONL writer 每多少条刷盘；0 表示不按条数刷盘。默认64
+# by AI: 累积多少条审计事件后强制刷盘。0：不按条数触发刷盘（仅依赖定时刷盘）
+flush_every_entries = 0
 
 # JSONL writer 至少多久刷盘一次，单位：毫秒；0 表示禁用定时刷盘。
+# by AI: 定时将缓冲区刷到磁盘的最长间隔
 flush_interval_ms = 1000
 
 # 审计文件轮转策略。枚举值：never、daily；兼容别名：off、none、day。
@@ -1017,24 +1051,109 @@ rotation = "daily"
 max_files = 0
 
 # allow 决策采样率，范围 [0, 1]；deny 不会被采样丢弃。
+# by AI:对允许（成功）的操作进行采样的比例
+# def audit_decision(event, sample_rate):
+#    if event.status == "deny":
+#        return True  # 拒绝事件总是记录
+#    # allow事件按概率记录
+#    return random.random() < sample_rate
+# 安全审计、开发调试 =1: 记录所有操作
+# 生产高负载=0.1:只记录10%的成功操作
+# 极高并发=0.01:只记录1%的成功操作。减少99%审计量
 sample_allow = 1.0
 
 # 每秒最多记录多少条 allow 审计；0 表示不限制；deny 不受此限制。
+# by AI:每秒最多记录的allow审计事件数。目的是限流/by 限流算法
+# 0：不限制（可能被高流量打爆磁盘）
+# 1000：每秒最多1000条
 max_per_sec = 0
 
 # shutdown cancel 后最多等待多久 drain 审计队列，单位：秒；必须大于 0。
+# by AI: 数据库shutdown时，最多等待多少秒让审计队列排空。 （Drain 在审计上下文中指 排空队列，优雅关闭过程） 关闭流程：
+#func Shutdown() {
+#    // 1. 标记停止接收新审计
+#    audit.StopAccepting()
+#    // 2. 等待现有队列排空
+#    select {
+#    case <-audit.DrainComplete():
+#        // 全部写入磁盘
+#    case <-time.After(flush_drain_secs * time.Second):
+#        log.Warn("Audit drain timeout, dropping remaining events")
+#    }
+#    // 3. 关闭文件
+#    audit.Close()
+#}
 flush_drain_secs = 2
 
 [security.providers]
 # 对外声明/启用的认证 scheme。枚举值：basic、scram-sha-256。
 # 当前 NativeAuthProvider 要求包含 basic。
-schemes = ["basic"]
+# by AI:负责验证用户身份的组件。支持多种认证方式共存，按配置顺序尝试。
+# 对外暴露的认证Scheme列表，客户端需选择其中一种进行认证
+# basic: 用户名+密码Base64编码
+# scram-sha-256: 挑战-响应机制，密码不明文传输。 （密码不明文，但客户端需实现）
+schemes = ["basic", "scram-sha-256"]
 
 # 是否启用 LDAP provider。
+# by AI: 将认证委托给企业目录服务
+#用户请求认证
+#    ↓
+#ldap_enabled=true？
+#    ↓ Yes
+#尝试LDAP Provider
+#    ↓
+#建立LDAPS连接（通常端口636）
+#    ↓
+#执行 bind 操作（用户DN + 密码）
+#    ↓
+#bind成功？──Yes──→ 认证成功
+#    ↓ No
+#fallback到其他Provider（Native/SCRAM）
+#1. 用户输入：username="zhangsan", password="mypass"
+#2. 服务端查找用户DN（Distinguished Name）：
+#   - 配置base_dn: "ou=people,dc=company,dc=com"
+#   - 配置search_filter: "(uid={0})"
+#   - 查询得到DN: "uid=zhangsan,ou=people,dc=company,dc=com"
+#3. 服务端作为LDAP客户端，尝试bind：
+#   - 使用找到的DN + 用户密码
+#4. LDAP服务器验证：
+#   - 成功 → 认证通过，查询用户组/角色
+#   - 失败 → 认证失败
 ldap_enabled = false
+#[security.ldap]  # 配套配置段
+#url = ["ldaps://ldap1.company.com:636", "ldaps://ldap2.company.com:636"] #多个LDAP服务器（故障转移）
+#base_dn = "ou=people,dc=company,dc=com"
+#bind_dn = "cn=readonly,dc=company,dc=com"
+#bind_password = "readonly_pass"
+#search_filter = "(uid={0})"
+#user_to_dn_mapping = "search"
+## TLS配置
+#tls_enabled = true
+#tls_skip_verify = false
+#tls_ca_cert = "/etc/ssl/certs/ca.crt"
+# 角色映射
+#[security.ldap.roles]
+## LDAP组 → 数据库角色
+#"cn=admins,ou=groups,dc=company,dc=com" = "admin"
+#"cn=analysts,ou=groups,dc=company,dc=com" = "reader"
+#"*" = "public"  # 默认角色
 
 # 是否启用 OIDC provider。
+# by AI: OpenID Connect.基于OAuth 2.0的身份层，适用于现代SSO场景
 oidc_enabled = false
+#[security.oidc]
+## 提供商配置
+#issuer_url = "https://keycloak.company.com/auth/realms/myrealm"
+#client_id = "graphdb-client"
+#client_secret = "your-client-secret"
+## 端点自动发现（通过well-known）
+## 自动获取：authorization_endpoint, token_endpoint, jwks_uri
+## 回调地址
+#redirect_uri = "https://graphdb.company.com:7687/oidc/callback"
+## JWT验证
+#audience = ["graphdb-api"]
+#validate_issuer = true
+#validate_audience = true
 
 [security.bootstrap]
 # 初始 admin 是否要求首次登录后修改密码。

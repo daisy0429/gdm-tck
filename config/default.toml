@@ -5,7 +5,7 @@
 [server]
 backend = "gdm"                        # gdm | neo4j | gdmbase | 其他 Bolt 兼容图库
 mode = "standalone"                    # standalone | distributed
-bolt_uri = "bolt://10.86.11.245:7690"
+bolt_uri = "bolt://127.0.0.1:7690"
 bolt_uris = []                         # 分布式模式下多节点URI列表
 username = "admin"
 password = "admin123"
@@ -22,11 +22,11 @@ max_retries = 10
 max_size = 100
 
 [server.metrics]
-url = "http://10.86.11.245:9095"
+url = "http://127.0.0.1:9095"
 
 [grpc]
-enabled = false
-address = "10.86.11.245:9830"
+enabled = true
+address = "127.0.0.1:9830"
 
 [test]
 tags = "not ignore"
@@ -35,6 +35,11 @@ feature_base_path = "features"
 
 [report]
 allure_results_dir = "allure-results"
+
+[cli]
+gdm_cli_path = "plugin/gdm-cli"
+gdm_admin_path = "plugin/gdm-admin"
+command_timeout_secs = 60.0
 
 [performance]
 default_workers = 4
