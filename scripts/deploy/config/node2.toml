@@ -1,0 +1,491 @@
+# GDM 三节点最小生产集群 — 节点 2 配置
+#
+# 服务器: 10.86.11.245 | 部署路径: ./node2/
+# 基于新配置模板 sample/config.example.toml 生成
+#
+# 全局端口规划（三节点同机部署）:
+#   节点 1: addr=9800, transport=9801, Bolt=7691, REST=8091, Metrics=9081
+#   节点 2: addr=9810, transport=9811, Bolt=7692, REST=8092, Metrics=9082
+#   节点 3: addr=9820, transport=9821, Bolt=7693, REST=8093, Metrics=9083
+#
+# seeds 指向三节点的 transport_addr（Raft + InternalStore）。
+# 所有 distributed 节点可共用同一份 TOML（本例按节点独立配置）。
+#
+# 配置分类（每字段上一行注释标注）：
+#   [S] Strict     — 所有节点必须一致；BootstrapHandshake / RaftMetaJoin 校验 hash
+#   [R] Replicated — 首启由 meta leader 写入 SM cluster_config；变更用 gdm-admin cluster set-config，重启生效
+#   [N] Node-local — 节点本地（监听地址、路径、池化调优等），允许节点间差异
+
+
+# =============================================================================
+# 顶层
+# =============================================================================
+
+# [S] 部署模式。枚举：standalone | distributed
+mode = "distributed"
+
+# [S] 集群可读名称；distributed 下所有节点必须一致。
+cluster_id = "gdm-prod"
+
+# [N] 对外 gRPC API（catalog / query / data 等）。
+addr = "10.86.11.245:9810"
+
+# 优雅退出：收到 SIGTERM/SIGINT 后等待 in-flight 任务结束的秒数（>0）。
+shutdown_grace_secs = 30
+
+# [N] 持久化数据根目录。
+data_dir = "./data"
+
+# 存储引擎。枚举：rocksdb | memory
+engine = "rocksdb"
+
+# [N] Bolt 协议监听地址（须与 bolt_enabled 同时生效）。
+bolt_addr = "0.0.0.0:7692"
+
+# 是否启动 Bolt 服务。
+bolt_enabled = true
+
+# [N] HTTP JSON REST 监听地址（须与 rest_enabled 同时生效）。
+rest_addr = "10.86.11.245:8092"
+
+# 是否启动 REST 网关。
+rest_enabled = true
+
+# 是否暴露 Prometheus /metrics。
+metrics_enabled = true
+
+# [N] Prometheus scrape 绑定地址（metrics_enabled=true 时必填）。
+metrics_addr = "10.86.11.245:9082"
+
+
+# 全局 TLS 总开关；各协议可在 [server.<proto>.tls] 单独覆盖。
+tls_enabled = false
+
+# tls_cert_file = "certs/server.crt.pem"
+# tls_key_file = "certs/server.key.pem"
+# tls_client_ca_file = "certs/client_ca.pem"
+
+
+# =============================================================================
+# [cluster] 拓扑与分布式运行时
+# =============================================================================
+
+[cluster]
+
+# [N] 集群内部 gRPC（Raft + InternalStore）。distributed 必填；须与顶层 addr 不同地址/端口。
+transport_addr = "10.86.11.245:9811"
+
+# [S] Seed list — 仅用于发现和 first bootstrap；节点身份不在配置文件中声明。
+seeds = [
+  "10.86.11.245:9801",
+  "10.86.11.245:9811",
+  "10.86.11.245:9821",
+]
+
+# 首次 bootstrap quorum 等待超时，秒。
+# bootstrap_quorum_timeout_secs = 300
+
+# --- [cluster.liveness] 节点心跳与失效判定 ---
+[cluster.liveness]
+heartbeat_interval_ms = 5000
+heartbeat_timeout_ms = 30000
+
+# --- [cluster.seed] 分布式 seed / 分片协调退避 ---
+[cluster.seed]
+initial_backoff_ms = 200
+max_backoff_ms = 30000
+multiplier = 1.501
+grpc_ready_timeout_ms = 30000
+grpc_ready_poll_ms = 100
+meta_leader_wait_timeout_ms = 30000
+shard_reconcile_interval_ms = 10000
+
+# --- [cluster.raft] Raft 核心参数 ---
+[cluster.raft]
+tick_interval_ms = 100
+log_dir = "./log/raft-log"
+election_tick = 30
+heartbeat_tick = 3
+max_size_per_msg = 1048576
+max_inflight_msgs = 256
+snapshot_interval = 10000
+fold_meta_raft_log = false
+engine_bytes_per_sync = 1048576
+
+# --- [cluster.raft.driver] 线性一致读 / propose 超时 ---
+[cluster.raft.driver]
+leader_linearizable_fast_path = false
+linearizable_store_reads = true
+follower_read_index_cache_ms = 50
+write_precheck_linearizable = false
+read_index_wait_ms = 10000
+read_index_apply_wait_ms = 10000
+read_index_poll_ms = 5
+propose_timeout_ms = 30000
+conf_change_timeout_ms = 30000
+startup_grpc_ready_timeout_ms = 30000
+startup_meta_leader_timeout_ms = 30000
+startup_poll_interval_ms = 100
+
+# --- [cluster.raft.transport] Raft gRPC 客户端传输 ---
+[cluster.raft.transport]
+compress_large_messages = false
+max_frame_bytes = 16777216
+max_message_bytes = 67108864
+max_inflight = 256
+connect_timeout_ms = 5000
+request_timeout_ms = 30000
+max_connect_retries = 20
+initial_backoff_ms = 50
+max_backoff_ms = 2000
+
+# --- [cluster.raft.fast_ack] 快速确认路径 ---
+[cluster.raft.fast_ack]
+enabled = false
+async_sm_apply = false
+async_sm_apply_max_pending = 1024
+
+
+# =============================================================================
+# [server] 协议调优（监听地址与开关仅在顶层）
+# =============================================================================
+
+[server.grpc]
+max_connections = 2048
+max_concurrent_streams = 256
+concurrency_limit_per_connection = 1024
+request_timeout_secs = 660
+tcp_keepalive_secs = 60
+http2_keepalive_interval_secs = 20
+http2_keepalive_timeout_secs = 5
+max_connection_age_secs = 0
+stream_buffer = 128
+slow_query_threshold_ms = 1000
+
+# [server.grpc.tls]
+# enabled = true
+# cert_file = "certs/grpc-only.crt.pem"
+# key_file = "certs/grpc-only.key.pem"
+# client_ca_file = "certs/grpc.client_ca.pem"
+
+[server.bolt]
+advertise_address = "10.86.11.245:7692"
+max_sessions = 8192
+idle_timeout_secs = 0
+handshake_timeout_ms = 30000
+accept_backlog = 1024
+shutdown_drain_secs = 5
+tcp_keepalive_secs = 60
+tcp_nodelay = true
+slow_query_threshold_ms = 1000
+expose_internal_cause = false
+
+# [server.bolt.tls]
+# enabled = false
+# cert_file = "certs/bolt.crt.pem"
+# key_file = "certs/bolt.key.pem"
+
+[server.rest]
+request_timeout_secs = 120
+max_body_bytes = 10485760
+cors_origins = []
+
+# [server.rest.tls]
+# enabled = true
+# cert_file = "certs/rest.crt.pem"
+# key_file = "certs/rest.key.pem"
+
+
+# =============================================================================
+# [storage]
+# =============================================================================
+
+[storage]
+
+cache_capacity_bytes = 268435456
+
+dedup_ttl_secs = 300
+
+max_props_per_element = 128
+
+# --- [storage.gc] MVCC 垃圾回收 ---
+[storage.gc]
+interval_secs = 300
+retention_secs = 3600
+max_versions_per_pass = 4096
+
+# --- [storage.txn_recovery] 悬挂锁扫描 ---
+[storage.txn_recovery]
+interval_secs = 5
+record_retention_secs = 86400
+commit_unknown_interval_secs = 1
+max_locks_per_pass = 1024
+backlog_threshold = 10000
+oldest_pending_age_not_ready_ms = 300000
+
+# --- [storage.rocksdb] 全局 RocksDB ---
+[storage.rocksdb]
+commit_durability = "sync_each_batch"
+enable_pipelined_write = true
+allow_concurrent_memtable_write = true
+enable_write_thread_adaptive_yield = true
+max_subcompactions = 4
+max_open_files = -1
+max_background_jobs = 4
+total_write_buffer_bytes = 1073741824
+total_block_cache_bytes = 536870912
+sync_writes = false
+sm_disable_wal = false
+
+[storage.rocksdb.data]
+write_buffer_size = 67108864
+max_write_buffer_number = 3
+compression = "lz4"
+block_size = 16384
+bloom_bits_per_key = 10.0
+whole_key_filtering = true
+cache_index_and_filter_blocks = true
+pin_l0_filter_and_index_blocks = true
+partition_filters = true
+two_level_index = true
+memtable_prefix_bloom_ratio = 0.1
+
+[storage.rocksdb.data.blob]
+min_blob_size = 1024
+file_size = 268435456
+compression = "lz4"
+enable_gc = true
+gc_age_cutoff = 0.25
+
+
+# =============================================================================
+# [graph]
+# =============================================================================
+
+[graph]
+
+space_shard_count = 8
+
+# distributed 3 节点集群副本数为 3，保证每个 shard 有 3 个副本（可容忍 1 节点故障）。
+space_replication_factor = 3
+
+# 事务 BEGIN 默认超时（毫秒）。
+txn_default_begin_timeout_ms = 60000
+
+# TSO 批量预取大小。
+tso_batch_size = 50000
+
+# --- [graph.metadata] 元数据策略 ---
+[graph.metadata]
+strict_schema = true
+auto_create_graph_routing = false
+propose_compaction_threshold = 1000
+propose_max_wait_ms = 15000
+propose_retry_backoff_ms = 100
+propose_local_apply_max_wait_ms = 5000
+propose_local_apply_poll_ms = 20
+
+# --- [graph.query] 查询执行 ---
+[graph.query]
+scan_page_size = 1024
+plan_cache_enabled = true
+plan_cache_max_entries = 4096
+
+# --- [graph.query.cypher] Cypher 保护阈值 ---
+[graph.query.cypher]
+varlen_max_paths_per_start = 10000
+shortest_path_max_visited = 50000
+shortest_path_max_fanout_per_vertex = 5000
+
+[graph.index.fulltext]
+enabled = true
+data_dir = "derived/fulltext"
+writer_heap_bytes = 50000000
+flush_interval_ms = 1000
+flush_batch_size = 1024
+query_default_limit = 25
+query_max_limit = 1000
+journal_retain_seconds = 86400
+query_default_await = "now"
+system_dict_paths = []
+
+[graph.index.vector]
+root_dir = "derived/vector"
+flush_interval_ms = 1000
+batch_size = 1024
+default_ef_search = 128
+max_k = 1000
+max_dimensions = 16384
+query_timeout_ms = 5000
+build_concurrency = 2
+memory_budget_bytes = 1073741824
+journal_retain_seconds = 86400
+query_default_await = "now"
+
+# --- [graph.udf] 用户自定义函数 ---
+# [graph.udf]
+# enabled = false
+# policy = "overwrite"
+# on_error = "continue"
+# exclude = []
+
+
+# =============================================================================
+# [runtime]
+# =============================================================================
+
+[runtime]
+scheduler_v1 = true
+scheduler_tick_ms = 500
+pools_total_memory_bytes = 8589934592
+distributed_planner_enabled = false
+executor_row_channel_capacity = 1024
+
+# --- [runtime.spill] 算子外溢与内存压力 ---
+# [runtime.spill]
+# pressure_threshold_pct = 80
+# sort_max_rows = 200000
+# sort_max_bytes = 0
+# hash_agg_partitions = 16
+# hash_agg_max_rows = 0
+# hash_agg_max_bytes = 0
+# hash_join_partitions = 16
+# hash_join_build_max_rows = 0
+# hash_join_build_max_bytes = 0
+# spill_dir = ""
+# operator_parallelism = 0
+
+# --- [runtime.pools.*] 资源池（单机三节点共享内存，需合理分配）---
+[runtime.pools.cypher_read]
+max_concurrency = 64
+memory_bytes = 4294967296
+max_memory_per_task = 536870912
+default_timeout_ms = 600000
+rate_limit_rps = 2000
+max_waiters = 1024
+
+[runtime.pools.cypher_write]
+max_concurrency = 32
+memory_bytes = 2147483648
+max_memory_per_task = 536870912
+default_timeout_ms = 600000
+rate_limit_rps = 2000
+max_waiters = 1024
+
+[runtime.pools.system]
+max_concurrency = 8
+memory_bytes = 2147483648
+max_memory_per_task = 1073741824
+default_timeout_ms = 0
+rate_limit_rps = 0
+max_waiters = 128
+
+[runtime.pools.maintenance]
+max_concurrency = 2
+memory_bytes = 536870912
+max_memory_per_task = 268435456
+default_timeout_ms = 0
+rate_limit_rps = 0
+max_waiters = 32
+
+[runtime.pools.admin]
+max_concurrency = 16
+memory_bytes = 268435456
+max_memory_per_task = 67108864
+default_timeout_ms = 10000
+rate_limit_rps = 0
+max_waiters = 256
+
+
+# =============================================================================
+# [security]
+# =============================================================================
+
+[security]
+bootstrap_password_change_required = false
+credentials_storage = "system_graph"
+
+[security.password]
+m_cost_kib = 19456
+t_cost = 2
+p_cost = 1
+output_len = 32
+
+[security.audit]
+enabled = true
+ring_cap = 256
+ring_enabled = true
+flush_every_entries = 64
+flush_interval_ms = 1000
+rotation = "daily"
+max_files = 30
+sample_allow = 1.0
+max_per_sec = 0
+flush_drain_secs = 2
+
+[security.providers]
+schemes = ["basic"]
+ldap_enabled = false
+oidc_enabled = false
+
+[security.sessions]
+enabled = false
+access_token_ttl_secs = 900
+refresh_token_ttl_secs = 604800
+max_sessions_per_user = 32
+gc_interval_secs = 60
+login_fail_window_secs = 60
+login_fail_limit = 20
+
+
+# =============================================================================
+# [observability]
+# =============================================================================
+
+[observability]
+
+log_format = "json"
+
+default_level = "info"
+
+console_enabled = true
+
+# console_level = "info"
+
+# show_target = false
+
+# --- [observability.filters] 生产推荐 per-target 级别 ---
+[observability.filters]
+"gdm::raft::internal" = "warn"
+"gdm::raft" = "info"
+"gdm::raft::transport" = "info"
+"gdm::raft::forwarder" = "warn"
+"gdm::metadata::log" = "info"
+"gdm::metadata::bootstrap" = "info"
+"gdm::bootstrap::seed" = "info"
+"gdm::lifecycle" = "info"
+"gdm::shutdown" = "info"
+"gdm::grpc::internal" = "warn"
+"raft" = "warn"
+
+# --- [observability.trace] OpenTelemetry ---
+[observability.trace]
+tracing_enabled = false
+otlp_endpoint = "http://127.0.0.1:4317"
+service_name = "gdm-node2"
+service_namespace = "graphdb"
+trace_sample_ratio = 0.01
+trace_export_timeout_ms = 3000
+propagate_internal = true
+
+# --- [observability.file] 文件日志 ---
+[observability.file]
+enabled = true
+dir = "./logs"
+prefix = "gdm-node2"
+rotation = "daily"
+max_files = 14
+
+[observability.trace_resource_attrs]
+"deployment.environment" = "prod"
+"service.instance.id" = "node2"

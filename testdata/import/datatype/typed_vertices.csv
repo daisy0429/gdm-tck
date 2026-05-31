@@ -1,0 +1,4 @@
+id,name,age,score,active,created_date,created_datetime,localdatetime_val,localtime_val,time_val,duration_val
+1,Alice,30,3.14,true,2024-01-15,2024-01-15T12:30:00Z,2024-01-15T12:30:00,12:30:00,12:30:00+08:00,P1DT2H
+2,Bob,25,2.71,false,2024-02-20,2024-02-20T08:00:00Z,2024-02-20T08:00:00,08:00:00,08:00:00Z,PT30M
+3,Charlie,35,99.9,true,2024-03-10,2024-03-10T18:45:00Z,2024-03-10T18:45:00,18:45:00,18:45:00-05:00,P3DT4H
