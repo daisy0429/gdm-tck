@@ -269,6 +269,27 @@ space_shard_count = 8
 # distributed 3 节点集群副本数为 3，保证每个 shard 有 3 个副本（可容忍 1 节点故障）。
 space_replication_factor = 3
 
+# =============================================================================
+# [replication] 跨集群主从（可选）
+# =============================================================================
+# role = "single"   # single | primary | standby
+# [replication.default]
+# write_consistency = "async"
+# read_consistency = "bounded_staleness"
+# bounded_staleness_ms = 200
+# bookmark_wait_timeout_ms = 1000
+# [replication.subscriber]
+# primary_addr = "http://127.0.0.1:9800"
+# fetch_snapshot_on_init = true
+
+# =============================================================================
+# [cdc] 变更数据捕获（可选，primary 节点）
+# =============================================================================
+# enabled = false
+# [cdc.slots]
+# slot_id = "analytics"
+# spaces = ["default"]
+
 # 事务 BEGIN 默认超时（毫秒）。
 txn_default_begin_timeout_ms = 60000
 
@@ -289,7 +310,7 @@ propose_local_apply_poll_ms = 20
 [graph.query]
 scan_page_size = 1024
 plan_cache_enabled = true
-plan_cache_max_entries = 4096
+plan_cache_max_entries = 10000
 
 # --- [graph.query.cypher] Cypher 保护阈值 ---
 [graph.query.cypher]
@@ -308,6 +329,16 @@ query_max_limit = 1000
 journal_retain_seconds = 86400
 query_default_await = "now"
 system_dict_paths = []
+
+[graph.index.spatial]
+enabled = true
+data_dir = "derived/spatial"
+flush_interval_ms = 1000
+flush_batch_size = 1024
+query_default_limit = 25
+query_max_limit = 1000
+journal_retain_seconds = 86400
+query_default_await = "now"      # 枚举：now | eventual
 
 [graph.index.vector]
 root_dir = "derived/vector"
@@ -335,7 +366,6 @@ query_default_await = "now"
 # =============================================================================
 
 [runtime]
-scheduler_v1 = true
 scheduler_tick_ms = 500
 pools_total_memory_bytes = 8589934592
 distributed_planner_enabled = false
