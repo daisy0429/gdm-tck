@@ -1,0 +1,12 @@
+graph = "error_handling_with_error"
+space = "default"
+
+[[vertices]]
+path = "persons_with_error.csv"
+label = "ErrorPerson"
+id = ["id"]
+properties = [
+  { name = "id", type = "int" },
+  { name = "name", type = "string" },
+  { name = "age", type = "int" },
+]

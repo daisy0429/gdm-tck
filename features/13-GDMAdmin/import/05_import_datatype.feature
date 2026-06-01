@@ -19,22 +19,10 @@ Feature: GDM Admin Import - Data Type Coverage
   Background:
     Given having executed:
       """
-      DROP GRAPH datatype_basic
-      """
-    And having executed:
-      """
-      DROP GRAPH datatype
-      """
-    And having executed:
-      """
-      DROP GRAPH datatype_null
-      """
-    And having executed:
-      """
-      DROP GRAPH datatype_infer
-      """
-    And having executed:
-      """
+      DROP GRAPH datatype_basic;
+      DROP GRAPH datatype;
+      DROP GRAPH datatype_null;
+      DROP GRAPH datatype_infer;
       DROP GRAPH datatype_infer_time
       """
 

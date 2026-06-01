@@ -1,4 +1,5 @@
 graph = "datatype_basic"
+#graph = "My strictGraph"
 space = "default"
 
 [[vertices]]

@@ -1,0 +1,15 @@
+graph = "charset_utf8"
+space = "default"
+
+[[vertices]]
+path = "vertices_utf8.csv"
+label = "Utf8Vertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_utf8.csv"
+label = "UTF8_EDGE"
+src = { label = "Utf8Vertex", id = ["src"] }
+dst = { label = "Utf8Vertex", id = ["dst"] }
+properties = "*"

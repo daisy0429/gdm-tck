@@ -107,18 +107,32 @@ def the_binary_tree_graph(
     logger.debug("Initialized binary-tree-%d graph", gid)
 
 
+def _split_having_executed(cypher: str) -> list[str]:
+    """将 having executed 的内容按分号分割为多条查询。
+
+    支持单条语句（无分号）和分号分隔的多条语句，保持向后兼容。
+    """
+    text = cypher.strip()
+    if ";" not in text:
+        return [text]
+    return [q.strip() for q in text.split(";") if q.strip()]
+
+
 @given(parsers.parse('having executed:\n"""\n{cypher}\n"""'))
 def having_executed(cypher: str, bolt_pool: BoltConnectionPool, scenario_ctx: ScenarioContext):
     """在场景开始前执行初始化查询。
 
     用于 Given 步骤中设置前置数据。
+    支持分号分隔的多条语句，逐条执行，失败仅记录警告。
     """
     client = bolt_pool.primary
-    result, error = client.execute_no_throw(
-        cypher, scenario_ctx.parameters, scenario_ctx.current_database
-    )
-    if error:
-        logger.warning("Pre-execution query failed: %s", error)
+    queries = _split_having_executed(cypher)
+    for q in queries:
+        result, error = client.execute_no_throw(
+            q, scenario_ctx.parameters, scenario_ctx.current_database
+        )
+        if error:
+            logger.warning("Pre-execution query failed: %s", error)
 
 
 @given(parsers.re(r"there exists a procedure (?P<proc_signature>.+)", re.DOTALL))

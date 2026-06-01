@@ -1,0 +1,3 @@
+src_country,src_place,dst_country,dst_place,distance
+US,1,CN,2,10000
+CN,2,US,3,9000

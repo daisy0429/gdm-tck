@@ -1,0 +1,16 @@
+graph = "delimiter_semicolon"
+space = "default"
+delimiter = ";"
+
+[[vertices]]
+path = "vertices_semicolon.csv"
+label = "SemicolonVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_semicolon.csv"
+label = "SEMICOLON_EDGE"
+src = { label = "SemicolonVertex", id = ["src"] }
+dst = { label = "SemicolonVertex", id = ["dst"] }
+properties = "*"

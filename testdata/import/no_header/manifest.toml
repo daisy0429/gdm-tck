@@ -1,0 +1,38 @@
+graph = "no_header"
+space = "default"
+
+[[vertices]]
+path = "organisations_no_header.csv"
+label = "Organisation"
+header = false
+columns = ["org_id", "org_name", "org_type", "country"]
+id = [{ index = 0, name = "org_id" }]
+properties = [
+  { name = "org_name", type = "string" },
+  { index = 2, name = "type", type = "string" },
+  { column = "country", name = "country", type = "string" },
+]
+
+[[vertices]]
+path = "persons_no_header.csv"
+label = "Person"
+header = false
+columns = ["id", "name", "age", "city"]
+id = [{ index = 0, name = "id" }]
+properties = [
+  { name = "name", type = "string" },
+  { index = 2, name = "age", type = "int" },
+  { column = "city", name = "city", type = "string" },
+]
+
+[[edges]]
+path = "person_work_at_org_no_header.csv"
+label = "WORK_AT"
+header = false
+columns = ["person_id", "org_id", "start_year", "end_year"]
+src = { label = "Person", id = [{ index = 0, name = "id" }] }
+dst = { label = "Organisation", id = [{ index = 1, name = "org_id" }] }
+properties = [
+  { index = 2, name = "startYear", type = "int" },
+  { index = 3, name = "endYear", type = "int" },
+]

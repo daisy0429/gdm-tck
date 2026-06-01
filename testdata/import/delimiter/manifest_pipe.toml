@@ -1,0 +1,16 @@
+graph = "delimiter_pipe"
+space = "default"
+delimiter = "|"
+
+[[vertices]]
+path = "vertices_pipe.csv"
+label = "PipeVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_pipe.csv"
+label = "PIPE_EDGE"
+src = { label = "PipeVertex", id = ["src"] }
+dst = { label = "PipeVertex", id = ["dst"] }
+properties = "*"

@@ -1,0 +1,20 @@
+graph = "composite_id_edge"
+space = "default"
+
+[[vertices]]
+path = "places.csv"
+label = "Place"
+id = ["country_code", "place_id"]
+properties = [
+  { name = "name", type = "string" },
+  { name = "country", type = "string" },
+]
+
+[[edges]]
+path = "place_routes.csv"
+label = "ROUTE_TO"
+src = { label = "Place", id = ["src_country", "src_place"] }
+dst = { label = "Place", id = ["dst_country", "dst_place"] }
+properties = [
+  { name = "distance", type = "int" },
+]

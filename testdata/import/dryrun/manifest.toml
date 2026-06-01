@@ -1,0 +1,15 @@
+graph = "dryrun"
+space = "default"
+
+[[vertices]]
+path = "persons.csv"
+label = "Person"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "knows.csv"
+label = "KNOWS"
+src = { label = "Person", id = ["src"] }
+dst = { label = "Person", id = ["dst"] }
+properties = "*"

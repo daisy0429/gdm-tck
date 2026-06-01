@@ -1,0 +1,12 @@
+graph = "error_importnode_delimiter_in_value2"
+space = "default"
+
+[[vertices]]
+path = "vertices.csv"
+label = "Person"
+id = ["id"]
+properties = [
+  { name = "id", type = "int" },
+  { name = "name", type = "string" },
+  { name = "age", type = "int" },
+]

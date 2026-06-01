@@ -1,0 +1,8 @@
+graph = "dryrun_invalid"
+space = "default"
+
+[[vertices]]
+path = "nonexistent.csv"
+label = "Person"
+id = ["id"]
+properties = "*"

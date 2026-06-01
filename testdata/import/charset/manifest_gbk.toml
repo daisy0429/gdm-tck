@@ -1,0 +1,16 @@
+graph = "charset_gbk"
+space = "default"
+charset = "gbk"
+
+[[vertices]]
+path = "vertices_gbk.csv"
+label = "GbkVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_gbk.csv"
+label = "GBK_EDGE"
+src = { label = "GbkVertex", id = ["src"] }
+dst = { label = "GbkVertex", id = ["dst"] }
+properties = "*"

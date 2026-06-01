@@ -1,0 +1,284 @@
+# GDM import manifest 完整示例
+#
+# 用途：
+# - 本文件用于 `gdm-admin import --manifest <path>`。
+# - manifest 描述要导入到哪个 graph/space、CSV 文件如何读取、顶点和边如何映射。
+# - CSV 相对路径默认相对 manifest 所在目录；也可以通过 `gdm-admin import --import-root <dir>` 覆盖根目录。
+# - `gdm-admin import` 会在目标 space 已存在时自动创建 graph；space 需要提前创建。
+
+
+# 目标图名称。不能为空。
+# 导入完成后，使用 `gdm-cli -g quickstart` 查询该图。
+graph = "quickstart"
+
+# 目标 space。不能为空，且导入前必须已存在。
+space = "quickstart_space"
+
+# 全局文件格式。当前仅支持 csv。
+# 枚举值：csv。
+format = "csv"
+
+# 全局 CSV 分隔符。必须是单个字符。
+# 常见值：","、"|"、"\t"。
+delimiter = ","
+
+# 全局 CSV 是否包含表头。
+# true：第一行是列名，可使用列名映射。
+# false：文件无表头；如果使用列名映射，必须在具体数据源里配置 columns。
+header = true
+
+# 全局输入文件字符集。
+# 枚举值：utf8、gb18030、gbk、big5、latin1。
+# 兼容别名示例：utf-8、utf8mb4、cp936、windows-936、big-5、iso-8859-1、cp1252。
+charset = "utf8"
+
+
+# ---- 顶点：显式属性映射 ---------------------------------------------------
+
+[[vertices]]
+# 顶点 CSV 文件路径。相对路径默认相对 manifest 所在目录。
+path = "persons.csv"
+
+# 顶点 label。不能为空。
+label = "Person"
+
+# 顶点业务主键列。不能为空。
+# 写法 1：按列名映射，适用于 header = true，或 header = false 且配置了 columns。
+# 同一 label 多个顶点数据源必须使用完全一致的 id 定义。
+id = ["id"]
+
+# 当前数据源覆盖全局 format。当前仅支持 csv。
+# 枚举值：csv。
+format = "csv"
+
+# 当前数据源覆盖全局 delimiter。必须是单个字符。
+delimiter = ","
+
+# 当前数据源覆盖全局 header。
+header = true
+
+# 当前数据源覆盖全局 charset。
+# 枚举值：utf8、gb18030、gbk、big5、latin1。
+charset = "utf8"
+
+# 无表头 CSV 使用列名映射时填写列名顺序。
+# header = true 时通常不需要配置。
+columns = []
+
+# 属性映射方式 1：显式列出要导入的属性。
+# 支持字段：
+# - name：写入 GDM 的属性名，必填，不能为空。
+# - column：CSV 列名；省略时默认使用 name。
+# - index：CSV 列下标，从 0 开始；不能和 column 同时配置。
+# - type：类型提示；省略时由导入工具自动推断/按字符串处理。
+# type 可选值：
+# - string、str
+# - int64、int、i64
+# - float64、float、double、f64
+# - bool、boolean
+# - date
+# - localtime、time_without_timezone
+# - time、zonedtime、time_with_timezone
+# - localdatetime、timestamp_ntz、timestamp_without_time_zone
+# - datetime、zoneddatetime、timestamp、timestamptz、timestamp_tz、timestamp_with_time_zone
+# - duration、interval
+# - null
+properties = [
+  # 从 CSV 的 id 列读取，写入属性 id，按 int 类型处理。
+  { name = "id", type = "int" },
+
+  # 从 CSV 的 name 列读取，写入属性 name，按 string 类型处理。
+  { name = "name", type = "string" },
+
+  # 从 CSV 的 age 列读取，写入属性 age，按 int 类型处理。
+  { name = "age", type = "int" },
+
+  # 从 CSV 的 city 列读取，写入属性 city，按 string 类型处理。
+  { name = "city", type = "string" },
+
+  # 从 CSV 的 birth_year 列读取，写入属性 birthYear，按 int64 类型处理。
+  { column = "birth_year", name = "birthYear", type = "int64" },
+]
+
+
+# ---- 顶点：导入全部属性 ---------------------------------------------------
+
+[[vertices]]
+# 标签字典 CSV 文件路径。
+path = "tags.csv"
+
+# 顶点 label。
+label = "Tag"
+
+# 按列名设置主键。
+id = ["id"]
+
+# 属性映射方式 2：导入除 id 映射列处理之外的全部列。
+# 注意：properties = "*" 依赖表头，或在 header = false 时依赖 columns。
+properties = "*"
+
+
+# ---- 顶点：导入全部属性但排除部分列 ---------------------------------------
+
+[[vertices]]
+# 地点 CSV 文件路径。
+path = "places.csv"
+
+# 顶点 label。
+label = "Place"
+
+# 复合主键。多列会共同决定内部顶点 ID。
+id = ["country_code", "place_id"]
+
+# 属性映射方式 3：include = "*" 表示导入全部列，exclude 用于排除不需要写入属性的列。
+properties = { include = "*", exclude = ["debug_column", "raw_payload"] }
+
+
+# ---- 顶点：无表头 CSV + 下标映射 ------------------------------------------
+
+[[vertices]]
+# 无表头组织 CSV 文件路径。
+path = "organisations_no_header.csv"
+
+# 顶点 label。
+label = "Organisation"
+
+# 当前文件无表头。
+header = false
+
+# 无表头文件的列名声明。使用列名映射、properties="*" 或 include="*" 时必须配置。
+columns = ["org_id", "org_name", "org_type", "country"]
+
+# 主键写法 2：按列下标映射。
+# index 从 0 开始；name 是该主键字段的稳定名称。
+id = [{ index = 0, name = "org_id" }]
+
+# 无表头文件也可以显式属性映射。
+properties = [
+  # 省略 column/index 时，默认读取 name 同名列；这里读取 org_name 列。
+  { name = "org_name", type = "string" },
+
+  # 按下标读取第 2 列，写入属性 type。
+  { index = 2, name = "type", type = "string" },
+
+  # 按列名读取 country 列，写入属性 country。
+  { column = "country", name = "country", type = "string" },
+]
+
+
+# ---- 边：显式属性映射 -----------------------------------------------------
+
+[[edges]]
+# 边 CSV 文件路径。
+path = "knows.csv"
+
+# 边 label/type。不能为空。
+label = "KNOWS"
+
+# 起点顶点匹配规则。
+# label：起点顶点 label。
+# id：边 CSV 中用于匹配起点顶点业务主键的列；字段数量和含义应与对应顶点 label 的 id 定义一致。
+src = { label = "Person", id = ["src_id"] }
+
+# 终点顶点匹配规则。
+# label：终点顶点 label。
+# id：边 CSV 中用于匹配终点顶点业务主键的列；字段数量和含义应与对应顶点 label 的 id 定义一致。
+dst = { label = "Person", id = ["dst_id"] }
+
+# 当前边数据源覆盖全局 format。当前仅支持 csv。
+# 枚举值：csv。
+format = "csv"
+
+# 当前边数据源覆盖全局 delimiter。必须是单个字符。
+delimiter = ","
+
+# 当前边数据源覆盖全局 header。
+header = true
+
+# 当前边数据源覆盖全局 charset。
+# 枚举值：utf8、gb18030、gbk、big5、latin1。
+charset = "utf8"
+
+# 无表头 CSV 使用列名映射时填写列名顺序。
+columns = []
+
+# 边属性显式映射。
+properties = [
+  # 从 since 列读取，写入 since 属性。
+  { name = "since", type = "int" },
+
+  # 从 weight_score 列读取，写入 weight 属性。
+  { column = "weight_score", name = "weight", type = "double" },
+]
+
+
+# ---- 边：复合端点 ID + 全属性排除 -----------------------------------------
+
+[[edges]]
+# Person 位于 Place 的边 CSV。
+path = "person_is_located_in_place.csv"
+
+# 边 label/type。
+label = "IS_LOCATED_IN"
+
+# 起点 Person 使用单列业务主键。
+src = { label = "Person", id = ["person_id"] }
+
+# 终点 Place 使用复合业务主键。
+dst = { label = "Place", id = ["country_code", "place_id"] }
+
+# 导入全部属性，但排除端点列和临时列。
+properties = { include = "*", exclude = ["person_id", "country_code", "place_id", "tmp"] }
+
+
+# ---- 边：无表头 CSV + 下标端点映射 ----------------------------------------
+
+[[edges]]
+# 无表头的组织归属边 CSV。
+path = "person_work_at_org_no_header.csv"
+
+# 边 label/type。
+label = "WORK_AT"
+
+# 当前文件无表头。
+header = false
+
+# 无表头边文件的列名声明。
+columns = ["person_id", "org_id", "start_year", "end_year"]
+
+# 起点按下标读取第 0 列，稳定主键字段名为 id。
+src = { label = "Person", id = [{ index = 0, name = "id" }] }
+
+# 终点按下标读取第 1 列，稳定主键字段名为 org_id。
+dst = { label = "Organisation", id = [{ index = 1, name = "org_id" }] }
+
+# 显式导入边属性。
+properties = [
+  # 读取第 2 列，写入 startYear。
+  { index = 2, name = "startYear", type = "int" },
+
+  # 读取第 3 列，写入 endYear。
+  { index = 3, name = "endYear", type = "int" },
+]
+
+
+# ---- 最小配置模板 ---------------------------------------------------------
+#
+# 一个最小 manifest 只需要 graph、space、至少一个 vertices 或 edges 数据源。
+# 示例：
+#
+# graph = "quickstart"
+# space = "quickstart_space"
+#
+# [[vertices]]
+# path = "persons.csv"
+# label = "Person"
+# id = ["id"]
+# properties = "*"
+#
+# [[edges]]
+# path = "knows.csv"
+# label = "KNOWS"
+# src = { label = "Person", id = ["src"] }
+# dst = { label = "Person", id = ["dst"] }
+# properties = "*"

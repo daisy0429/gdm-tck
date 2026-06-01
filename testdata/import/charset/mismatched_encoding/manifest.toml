@@ -1,0 +1,9 @@
+graph = "charset_mismatched"
+space = "default"
+charset = "gbk"
+
+[[vertices]]
+path = "vertices.csv"
+label = "Person"
+id = ["id"]
+properties = "*"

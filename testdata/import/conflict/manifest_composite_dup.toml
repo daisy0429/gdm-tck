@@ -1,0 +1,10 @@
+graph = "conflict_composite_dup"
+space = "default"
+
+[[vertices]]
+path = "places_composite_dup.csv"
+label = "Place"
+id = ["country_code", "place_id"]
+properties = [
+  { name = "name", type = "string" },
+]

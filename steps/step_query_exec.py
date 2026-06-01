@@ -115,14 +115,22 @@ def given_having_executed(
 
     与 When 不同，这里执行的查询是场景的前置条件，
     失败时仍存入 last_error 但通常不期望失败。
+    支持分号分隔的多条语句，逐条执行。
     """
-    query = _clean_docstring(cypher)
+    queries = _split_queries(cypher)
     client = bolt_pool.primary
-    result, error = client.execute_no_throw(
-        query, scenario_ctx.parameters, scenario_ctx.current_database
-    )
-    scenario_ctx.last_result = result
-    scenario_ctx.last_error = error
+    last_result = None
+    last_error = None
+    for q in queries:
+        result, error = client.execute_no_throw(
+            q, scenario_ctx.parameters, scenario_ctx.current_database
+        )
+        last_result = result
+        if error:
+            last_error = error
+            logger.warning("Pre-execution query failed: %s", error)
+    scenario_ctx.last_result = last_result
+    scenario_ctx.last_error = last_error
 
 
 @given(parsers.parse("test data cleared: {cypher}"))

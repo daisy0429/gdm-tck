@@ -1,0 +1,22 @@
+graph = "mapping_explicit"
+space = "default"
+
+[[vertices]]
+path = "persons.csv"
+label = "Person"
+id = ["id"]
+properties = [
+  { name = "id", type = "int" },
+  { name = "name", type = "string" },
+  { name = "age", type = "int" },
+  { name = "city", type = "string" },
+]
+
+[[edges]]
+path = "knows.csv"
+label = "KNOWS"
+src = { label = "Person", id = ["src"] }
+dst = { label = "Person", id = ["dst"] }
+properties = [
+  { name = "since", type = "int" },
+]

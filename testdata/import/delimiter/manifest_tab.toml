@@ -1,0 +1,16 @@
+graph = "delimiter_tab"
+space = "default"
+delimiter = "\t"
+
+[[vertices]]
+path = "vertices_tab.csv"
+label = "TabVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_tab.csv"
+label = "TAB_EDGE"
+src = { label = "TabVertex", id = ["src"] }
+dst = { label = "TabVertex", id = ["dst"] }
+properties = "*"

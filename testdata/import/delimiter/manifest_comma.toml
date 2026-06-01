@@ -1,0 +1,15 @@
+graph = "delimiter_comma"
+space = "default"
+
+[[vertices]]
+path = "vertices_comma.csv"
+label = "CommaVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_comma.csv"
+label = "COMMA_EDGE"
+src = { label = "CommaVertex", id = ["src"] }
+dst = { label = "CommaVertex", id = ["dst"] }
+properties = "*"

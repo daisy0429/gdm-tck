@@ -1,0 +1,17 @@
+graph = "delimiter_override"
+space = "default"
+delimiter = ","
+
+[[vertices]]
+path = "vertices_comma.csv"
+label = "OverrideVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_tab.csv"
+label = "OVERRIDE_EDGE"
+delimiter = "\t"
+src = { label = "OverrideVertex", id = ["src"] }
+dst = { label = "OverrideVertex", id = ["dst"] }
+properties = "*"

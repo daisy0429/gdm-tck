@@ -1,0 +1,9 @@
+graph = "charset_unsupported"
+space = "default"
+charset = "utf-16"
+
+[[vertices]]
+path = "vertices.csv"
+label = "Person"
+id = ["id"]
+properties = "*"

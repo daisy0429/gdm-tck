@@ -24,36 +24,18 @@
 # ./plugin/gdm-admin -u admin -p admin123 catalog space create --space-id nonexistent_space_12345 --shard-count 2 --replication-factor 1
 #Error: tonic::transport::Error(Transport, ConnectError(ConnectError("tcp connect error", 127.0.0.1:9800, Os { code: 61, kind: ConnectionRefused, message: "Connection refused" })))
 
-@admin @import  @preflight
+@admin @import
 Feature: GDM Admin Import - Error Handling - Preflight Phase
 
   Background:
     Given having executed:
       """
-      DROP GRAPH error_preflight_invalid_toml
-      """
-    And having executed:
-      """
-      DROP GRAPH error_preflight_missing_graph
-      """
-    And having executed:
-      """
-      DROP GRAPH error_preflight_missing_space
-      """
-    And having executed:
-      """
-      DROP GRAPH error_preflight_csv_not_found
-      """
-    And having executed:
-      """
-      DROP GRAPH error_preflight_space_not_exist
-      """
-    And having executed:
-      """
-      DROP GRAPH error_preflight_empty_csv
-      """
-    And having executed:
-      """
+      DROP GRAPH error_preflight_invalid_toml;
+      DROP GRAPH error_preflight_missing_graph;
+      DROP GRAPH error_preflight_missing_space;
+      DROP GRAPH error_preflight_csv_not_found;
+      DROP GRAPH error_preflight_space_not_exist;
+      DROP GRAPH error_preflight_empty_csv;
       DROP GRAPH error_preflight_invalid_encoding
       """
 

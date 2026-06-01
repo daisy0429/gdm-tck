@@ -1,0 +1,13 @@
+#graph = "error_importnode_type_mismatch_array_to_time"
+graph = "My strictGraph"
+space = "default"
+
+[[vertices]]
+path = "vertices.csv"
+label = "Person"
+id = ["id"]
+properties = [
+  { name = "id", type = "int" },
+  { name = "name", type = "string" },
+  { name = "created_date", type = "date" },
+]

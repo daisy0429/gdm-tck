@@ -1,0 +1,24 @@
+graph = "composite_id"
+space = "default"
+
+[[vertices]]
+path = "places.csv"
+label = "Place"
+id = ["country_code", "place_id"]
+properties = [
+  { name = "name", type = "string" },
+  { name = "country", type = "string" },
+]
+
+[[vertices]]
+path = "persons.csv"
+label = "Person"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "person_isLocated.csv"
+label = "IS_LOCATED_IN"
+src = { label = "Person", id = ["person_id"] }
+dst = { label = "Place", id = ["country_code", "place_id"] }
+properties = "*"

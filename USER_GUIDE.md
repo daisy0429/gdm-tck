@@ -480,6 +480,9 @@ uv run pytest tests/tck/ -v -s
 
 # 关闭警告输出
 uv run pytest tests/tck/ -p no:warnings
+
+# 运行特定测试用例
+uv run pytest tests/tck/test_admin.py -v -k "string value cannot be converted to int" --features=13-GDMAdmin/import
 ```
 
 ---

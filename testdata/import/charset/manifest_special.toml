@@ -1,0 +1,15 @@
+graph = "charset_special"
+space = "default"
+
+[[vertices]]
+path = "vertices_special.csv"
+label = "SpecialCharVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_special.csv"
+label = "SPECIAL_EDGE"
+src = { label = "SpecialCharVertex", id = ["src"] }
+dst = { label = "SpecialCharVertex", id = ["dst"] }
+properties = "*"
