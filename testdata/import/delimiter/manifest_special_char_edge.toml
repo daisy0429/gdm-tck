@@ -1,0 +1,16 @@
+graph = "delimiter_special_char_edge"
+space = "default"
+delimiter = "\u0000"
+
+[[vertices]]
+path = "vertices_comma.csv"
+label = "SpecialCharEdgeVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_special_char.csv"
+label = "SPECIAL_CHAR_EDGE"
+src = { label = "SpecialCharEdgeVertex", id = ["src"] }
+dst = { label = "SpecialCharEdgeVertex", id = ["dst"] }
+properties = "*"

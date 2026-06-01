@@ -1,0 +1,16 @@
+graph = "delimiter_asterisk"
+space = "default"
+delimiter = "*"
+
+[[vertices]]
+path = "vertices_asterisk.csv"
+label = "AsteriskVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_asterisk.csv"
+label = "ASTERISK_EDGE"
+src = { label = "AsteriskVertex", id = ["src"] }
+dst = { label = "AsteriskVertex", id = ["dst"] }
+properties = "*"

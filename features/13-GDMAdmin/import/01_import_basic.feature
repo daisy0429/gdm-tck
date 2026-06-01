@@ -12,7 +12,7 @@
 # Neo4j 参考:
 #   N/A - This is GDM-specific import tool testing
 #
-@admin @import 
+@admin @import
 Feature: GDM Admin Import - Basic Import
 
   Background:

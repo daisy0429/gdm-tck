@@ -1,0 +1,16 @@
+graph = "delimiter_multi_char_edge"
+space = "default"
+delimiter = "##"
+
+[[vertices]]
+path = "vertices_comma.csv"
+label = "MultiCharEdgeVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_multi_char.csv"
+label = "MULTI_CHAR_EDGE"
+src = { label = "MultiCharEdgeVertex", id = ["src"] }
+dst = { label = "MultiCharEdgeVertex", id = ["dst"] }
+properties = "*"

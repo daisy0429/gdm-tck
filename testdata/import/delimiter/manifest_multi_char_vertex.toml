@@ -1,0 +1,9 @@
+graph = "delimiter_multi_char_vertex"
+space = "default"
+delimiter = "##"
+
+[[vertices]]
+path = "vertices_multi_char.csv"
+label = "MultiCharVertex"
+id = ["id"]
+properties = "*"

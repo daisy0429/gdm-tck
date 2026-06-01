@@ -1,0 +1,16 @@
+graph = "delimiter_hash"
+space = "default"
+delimiter = "#"
+
+[[vertices]]
+path = "vertices_hash.csv"
+label = "HashVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_hash.csv"
+label = "HASH_EDGE"
+src = { label = "HashVertex", id = ["src"] }
+dst = { label = "HashVertex", id = ["dst"] }
+properties = "*"

@@ -1,0 +1,16 @@
+graph = "delimiter_yen"
+space = "default"
+delimiter = "￥"
+
+[[vertices]]
+path = "vertices_yen.csv"
+label = "YenVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_yen.csv"
+label = "YEN_EDGE"
+src = { label = "YenVertex", id = ["src"] }
+dst = { label = "YenVertex", id = ["dst"] }
+properties = "*"

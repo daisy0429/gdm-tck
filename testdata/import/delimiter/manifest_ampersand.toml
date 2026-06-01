@@ -1,0 +1,16 @@
+graph = "delimiter_ampersand"
+space = "default"
+delimiter = "&"
+
+[[vertices]]
+path = "vertices_ampersand.csv"
+label = "AmpersandVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_ampersand.csv"
+label = "AMPERSAND_EDGE"
+src = { label = "AmpersandVertex", id = ["src"] }
+dst = { label = "AmpersandVertex", id = ["dst"] }
+properties = "*"

@@ -1,0 +1,16 @@
+graph = "delimiter_exclamation"
+space = "default"
+delimiter = "!"
+
+[[vertices]]
+path = "vertices_exclamation.csv"
+label = "ExclamationVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_exclamation.csv"
+label = "EXCLAMATION_EDGE"
+src = { label = "ExclamationVertex", id = ["src"] }
+dst = { label = "ExclamationVertex", id = ["dst"] }
+properties = "*"

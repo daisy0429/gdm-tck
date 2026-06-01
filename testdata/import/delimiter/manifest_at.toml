@@ -1,0 +1,16 @@
+graph = "delimiter_at"
+space = "default"
+delimiter = "@"
+
+[[vertices]]
+path = "vertices_at.csv"
+label = "AtVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_at.csv"
+label = "AT_EDGE"
+src = { label = "AtVertex", id = ["src"] }
+dst = { label = "AtVertex", id = ["dst"] }
+properties = "*"

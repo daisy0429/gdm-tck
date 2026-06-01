@@ -223,6 +223,18 @@ def import_summary_rows_errored(n: int, scenario_ctx: ScenarioContext):
         )
 
 
+@then(parsers.parse('the errors-out file "{file_path}" should exist'))
+def errors_out_file_should_exist(file_path: str):
+    """断言 --errors-out 指定的错误记录文件存在且非空。"""
+    import os
+
+    if not os.path.isfile(file_path):
+        raise AssertionError(f"errors-out file does not exist: {file_path}")
+
+    if os.path.getsize(file_path) == 0:
+        raise AssertionError(f"errors-out file is empty: {file_path}")
+
+
 # ---------------------------------------------------------------------------
 # Then Steps - Graph Data Verification via Bolt
 # ---------------------------------------------------------------------------

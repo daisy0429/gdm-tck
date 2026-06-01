@@ -1,0 +1,9 @@
+graph = "delimiter_special_char_vertex"
+space = "default"
+delimiter = "\u0000"
+
+[[vertices]]
+path = "vertices_special_char.csv"
+label = "SpecialCharVertex"
+id = ["id"]
+properties = "*"

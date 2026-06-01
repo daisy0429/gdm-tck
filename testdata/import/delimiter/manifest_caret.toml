@@ -1,0 +1,16 @@
+graph = "delimiter_caret"
+space = "default"
+delimiter = "^"
+
+[[vertices]]
+path = "vertices_caret.csv"
+label = "CaretVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_caret.csv"
+label = "CARET_EDGE"
+src = { label = "CaretVertex", id = ["src"] }
+dst = { label = "CaretVertex", id = ["dst"] }
+properties = "*"

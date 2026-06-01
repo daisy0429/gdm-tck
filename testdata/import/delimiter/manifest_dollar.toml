@@ -1,0 +1,16 @@
+graph = "delimiter_dollar"
+space = "default"
+delimiter = "$"
+
+[[vertices]]
+path = "vertices_dollar.csv"
+label = "DollarVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_dollar.csv"
+label = "DOLLAR_EDGE"
+src = { label = "DollarVertex", id = ["src"] }
+dst = { label = "DollarVertex", id = ["dst"] }
+properties = "*"

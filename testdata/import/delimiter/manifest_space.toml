@@ -1,0 +1,16 @@
+graph = "delimiter_space"
+space = "default"
+delimiter = " "
+
+[[vertices]]
+path = "vertices_space.csv"
+label = "SpaceVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_space.csv"
+label = "SPACE_EDGE"
+src = { label = "SpaceVertex", id = ["src"] }
+dst = { label = "SpaceVertex", id = ["dst"] }
+properties = "*"

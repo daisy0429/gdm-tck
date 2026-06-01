@@ -1,0 +1,16 @@
+graph = "delimiter_percent"
+space = "default"
+delimiter = "%"
+
+[[vertices]]
+path = "vertices_percent.csv"
+label = "PercentVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_percent.csv"
+label = "PERCENT_EDGE"
+src = { label = "PercentVertex", id = ["src"] }
+dst = { label = "PercentVertex", id = ["dst"] }
+properties = "*"

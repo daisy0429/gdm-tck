@@ -65,3 +65,5 @@ config/local.toml
 features/*.md
 features/**/*.md
 features/0-debug
+plugin
+testdata/import/sf1-csvbasic

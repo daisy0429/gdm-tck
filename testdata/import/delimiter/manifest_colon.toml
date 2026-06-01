@@ -1,0 +1,16 @@
+graph = "delimiter_colon"
+space = "default"
+delimiter = ":"
+
+[[vertices]]
+path = "vertices_colon.csv"
+label = "ColonVertex"
+id = ["id"]
+properties = "*"
+
+[[edges]]
+path = "edges_colon.csv"
+label = "COLON_EDGE"
+src = { label = "ColonVertex", id = ["src"] }
+dst = { label = "ColonVertex", id = ["dst"] }
+properties = "*"
